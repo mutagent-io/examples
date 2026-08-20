@@ -1,0 +1,38 @@
+# Never commit real data. These patterns are a safety net, not a substitute for
+# reading what you are about to commit — see CONTRIBUTING.md.
+datasets/
+.analysis/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules/
+bun.lock
+
+# Build output
+dist/
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# Per-developer coding-agent settings
+.claude/settings.local.json
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
