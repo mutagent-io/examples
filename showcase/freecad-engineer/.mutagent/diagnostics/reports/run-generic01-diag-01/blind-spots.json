@@ -1,0 +1,65 @@
+{
+  "rows": [
+    {
+      "signal": "latency-spike",
+      "measurable": "Tier-0",
+      "checkedBy": "tier-0 scan",
+      "result": "Measured deterministically (no LLM needed)."
+    },
+    {
+      "signal": "low-score",
+      "measurable": "Tier-0",
+      "checkedBy": "tier-0 scan",
+      "result": "Measured deterministically (no LLM needed)."
+    },
+    {
+      "signal": "user-complaint",
+      "measurable": "Tier-0",
+      "checkedBy": "tier-0 scan",
+      "result": "Measured deterministically (no LLM needed)."
+    },
+    {
+      "signal": "cost-overshoot",
+      "measurable": "Tier-0",
+      "checkedBy": "tier-0 scan",
+      "result": "Measured deterministically (no LLM needed)."
+    },
+    {
+      "signal": "wrong-output",
+      "measurable": "No",
+      "checkedBy": "awareness LLM sample",
+      "result": "not observed in awareness sample"
+    },
+    {
+      "signal": "missing-output",
+      "measurable": "No",
+      "checkedBy": "awareness LLM sample",
+      "result": "not observed in awareness sample"
+    },
+    {
+      "signal": "loop",
+      "measurable": "No",
+      "checkedBy": "awareness LLM sample",
+      "result": "not observed in awareness sample"
+    },
+    {
+      "signal": "format-violation",
+      "measurable": "No",
+      "checkedBy": "awareness LLM sample",
+      "result": "not observed in awareness sample"
+    },
+    {
+      "signal": "hallucination",
+      "measurable": "No",
+      "checkedBy": "awareness LLM sample",
+      "result": "not observed in awareness sample"
+    },
+    {
+      "signal": "missing-context",
+      "measurable": "No",
+      "checkedBy": "awareness LLM sample",
+      "result": "not observed in awareness sample"
+    }
+  ],
+  "discoveredBlindSpot": false
+}

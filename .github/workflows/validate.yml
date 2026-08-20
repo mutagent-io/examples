@@ -1,0 +1,45 @@
+name: Validate
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  # Re-run the scan on demand, without needing a commit to hang it on.
+  workflow_dispatch:
+
+# Default to read-only. Jobs that need more must opt in explicitly.
+permissions:
+  contents: read
+
+jobs:
+  secrets:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # gitleaks scans history as well as the tree; it needs the full clone.
+          fetch-depth: 0
+          persist-credentials: false
+
+      # The gitleaks GitHub Action requires a paid licence for organizations. The gitleaks
+      # CLI itself is MIT-licensed and free, so install the pinned release binary and run
+      # it directly. Same scanner, no licence, and the version is explicit rather than
+      # floating behind a tag.
+      - name: Install gitleaks
+        env:
+          GITLEAKS_VERSION: 8.30.1
+        run: |
+          set -euo pipefail
+          curl -sSfL -o /tmp/gitleaks.tar.gz \
+            "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          tar -xzf /tmp/gitleaks.tar.gz -C /tmp gitleaks
+          sudo install -m 0755 /tmp/gitleaks /usr/local/bin/gitleaks
+          gitleaks version
+
+      - name: Scan the working tree
+        run: gitleaks dir . --redact --verbose
+
+      - name: Scan the full history
+        run: gitleaks git . --redact --verbose

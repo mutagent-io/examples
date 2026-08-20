@@ -1,0 +1,27 @@
+# .mutagent/config.yaml — cad-agents (minimal, written 2026-08-19 for the
+# retroactive ④ DIAGNOSE run on the cadbench-crusher harness; project was previously
+# un-onboarded — earlier stages ran on documented defaults, see evaluator scorecard).
+config_version: "0.3.0"
+
+global:
+  sources:
+    - name: harbor-trials
+      platform: claude-code
+      format: claude-code
+      default: true
+  targets:
+    - name: freecad-engineer-definition
+      platform: report-only
+      mode: local
+      subject: agent
+      artifact_format: markdown
+      root: freecad-agent/harness
+      apply:
+        kind: report-only
+      default: true
+
+lifecycle:
+  diagnostics:
+    apply: report-only
+    ask_tool:
+      runtime: claude-code

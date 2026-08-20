@@ -1,0 +1,8 @@
+{
+ "step": "deep-read-gate",
+ "ranAt": "2026-08-19T09:00:58Z",
+ "ok": true,
+ "note": "stamp written retroactively by orchestrator; step executed inline (see runMeta.decisions)",
+ "refused": false,
+ "llmReadCount": 11
+}

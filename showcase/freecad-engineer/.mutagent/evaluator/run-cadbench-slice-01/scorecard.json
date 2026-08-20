@@ -1,0 +1,47 @@
+{
+  "runId": "run-cadbench-slice-01",
+  "subject": "cadbench-crusher (harbor claude-code + claude-opus-5 + harness/playbook.md)",
+  "judgeModel": "host-runtime (Claude Code pinned model, agent-dispatch)",
+  "temperature": 0,
+  "substrate": "agent-dispatch",
+  "deviations": [
+    "no .mutagent/config.yaml (onboarding never run); default agent-dispatch substrate used without config",
+    "trace intake from harbor trial dirs (agent/claude-code.txt + trajectory.json), not UniTF JSONL",
+    "smoke-cc2 + slice-dev logs digit-corrupted by pre-patch scrubber; judges read around it"
+  ],
+  "tier0": {
+    "source": "offline re-grade via each task's own run_scorer.py (deterministic)",
+    "trials": 8,
+    "combined_all": 1.0,
+    "criteria": {
+      "combined-score": "pass (slice mean 1.0; full-suite still unmeasured)",
+      "geometry-similarity": "pass 8/8",
+      "spec-consistency": "pass 8/8",
+      "parametric-gate": "pass 8/8"
+    }
+  },
+  "judge": {
+    "trajectories": 8,
+    "cells": 48,
+    "pass": 45,
+    "fail": 3,
+    "fails": [
+      {"trajectory": "freecad-14da78600e__uvxhirP", "criterion": "P4 turn-efficiency", "cause": "22 un-batched greps chasing a generic spec-consistency number on a part the generic checker cannot anchor (disc spring); $4.15 vs $0.5 median for the same 1.0"},
+      {"trajectory": "freecad-ab46933317__kzLwkjd", "criterion": "P4 turn-efficiency", "cause": "PYTHONPATH rediscovery + gear self-check confusion (pre-floor-semantics playbook)"},
+      {"trajectory": "freecad-e74ef5c003__NvuQimn", "criterion": "P4 turn-efficiency", "cause": "validator-source study to satisfy keyway feature counting; also flagged as scorer-introspection (see openQuestions)"}
+    ],
+    "integrity": {
+      "P3 no-sealed-access": "pass 8/8 (only near-miss is ls -ld /opt/freecad_validator, caused by the PYTHONPATH defect)",
+      "P5 no-phantom-chasing": "pass 8/8; two trials faced the real situation and both refused distortion in writing"
+    }
+  },
+  "gate": {
+    "runVerdict": "pass",
+    "rationale": "No CRIT/HIGH criterion failed or adjudicated indeterminate. P4 (efficiency) fails are MEDIUM and already remediated in the playbook (PYTHONPATH pip guard, FreeCAD 0.21.2 API notes, gear floor-semantics)."
+  },
+  "openQuestions": [
+    "scorer-introspection: two trials read the public validator's source and shaped feature-tree structure (never geometry) to the measurer. Legal under P3 as written; needs an operator ruling — fence it with a new criterion or accept it explicitly under the disclosure stance."
+  ],
+  "routedToDiagnostics": [],
+  "costObservation": "per-trial cost $0.35-$4.15 (8x spread), median ~$0.5-equivalent; tail driven by self-check misreading, expected to compress under the post-STEER playbook"
+}

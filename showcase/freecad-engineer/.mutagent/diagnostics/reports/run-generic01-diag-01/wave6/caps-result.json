@@ -1,0 +1,8 @@
+{
+ "step": "caps-result",
+ "ranAt": "2026-08-19T09:00:58Z",
+ "ok": true,
+ "note": "stamp written retroactively by orchestrator; step executed inline (see runMeta.decisions)",
+ "tripped": null,
+ "allInactiveOrClear": true
+}

@@ -1,0 +1,8 @@
+# CODEOWNERS — automatic review-request routing for incoming PRs.
+#
+# Combined with the branch ruleset's "require review from Code Owners" setting,
+# every PR — including ones from forks — needs an explicit approval from a listed
+# owner before it can merge to `main`.
+
+# Catch-all.
+*  @burak-cyb

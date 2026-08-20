@@ -1,0 +1,20 @@
+name: Example request
+description: Suggest an example you would like to see.
+labels: ["enhancement"]
+body:
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Which kind
+      options:
+        - cookbook recipe (one task, runs as-is)
+        - showcase entry (a complete agent and its artifacts)
+    validations:
+      required: true
+  - type: textarea
+    id: task
+    attributes:
+      label: What should it demonstrate
+      description: What would you be able to do after reading it that you cannot do now?
+    validations:
+      required: true
