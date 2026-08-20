@@ -1,0 +1,25 @@
+name: Broken example
+description: An entry in showcase/ or cookbooks/ does not work as documented.
+labels: ["bug"]
+body:
+  - type: input
+    id: entry
+    attributes:
+      label: Which entry
+      placeholder: cookbooks/install-an-agent
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected, and what happened instead
+      description: Include the exact command you ran and the full output.
+    validations:
+      required: true
+  - type: textarea
+    id: env
+    attributes:
+      label: Environment
+      description: OS, runtime version (node/python/bun), and the MutagenT version you used.
+    validations:
+      required: true
