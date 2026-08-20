@@ -67,9 +67,6 @@ real inputs.
 
 ## Entries
 
-_None yet._ This folder is a scaffold — the repo's previous contents targeted the retired
-prompt-optimization and tracing surfaces and were removed. New agents land here.
-
 | Agent | What it does | Stages covered | Last verified |
 |---|---|---|---|
-| — | — | — | — |
+| [`freecad-engineer`](./freecad-engineer/) | Self-verifying mechanical-CAD agent (Claude Code + Opus 5, single-file definition) that writes parametric FreeCAD PartDesign scripts from natural-language part specs | SPEC · BUILD (verify) · EVALUATE · DIAGNOSE | 2026-08-19 |

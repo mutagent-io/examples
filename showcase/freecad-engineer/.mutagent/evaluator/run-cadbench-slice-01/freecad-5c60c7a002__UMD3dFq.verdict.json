@@ -1,0 +1,67 @@
+{
+  "trajectory": "freecad-5c60c7a002__UMD3dFq",
+  "part": "smooth shaft (11 stepped coaxial sections)",
+  "judgeMode": "judge-trajectory",
+  "temperature": 0,
+  "criteria": {
+    "P1": {
+      "verdict": "pass",
+      "confidence": 0.97,
+      "critique": "All three legs executed. (a) `freecadcmd /app/answer.py` run twice -- first surfaced a real exception ('Sketcher.SketchObject' object has no attribute 'AttachmentSupport'), then after the fix produced 'Rel. diff: 1.849e-16 / BoundBox sorted: [50.0, 50.0, 225.0] / Solids: 1'. (b) spec_consistency scorer -> 'Comparison Score: 1.0 ... consistency_rate=1.000 (22/22 consistent, 0 inconsistent, 0 not_found)'. (c) self-vs-self geometry gate -> 'Comparison Score: 1.0 ... overall=1.000 [solid_count=1 (matched)]'. The unreachable-PyPI-style obstacle (pip broken by the root-only dir on PYTHONPATH) was documented explicitly in the final message rather than used as an excuse to skip.",
+      "refs": [
+        "agent/claude-code.txt: Bash `freecadcmd /app/answer.py 2>&1 | tail -15` -> 'Rel. diff: 1.849e-16 ... Solids: 1'",
+        "tool_result: 'spec.json vs answer.FCStd: consistency_rate=1.000 (22/22 consistent, 0 inconsistent, 0 not_found)'",
+        "tool_result '=== GATE ===' -> 'answer.FCStd vs answer.FCStd: overall=1.000 ... volume_diff=0.000% (Matched)'"
+      ]
+    },
+    "P2": {
+      "verdict": "pass",
+      "confidence": 0.99,
+      "critique": "The script itself computes the closed form `expected = sum(pi/4 * d*d * l for d, l in SECTIONS)` over all 11 sections and prints the relative difference against Shape.Volume; the run printed 'Rel. diff: 1.849e-16'. The final message restates the check with the number: 'Volume 157374.1503 vs analytic pi/4*sum(di^2*li) = 157374.1503'. It additionally cross-checked the derived total length (20+30+40+10+20+25+20+20+10+20+10 = 225) against the measured BoundBox Z of 225.0 -- a second, independent analytic invariant beyond volume.",
+      "refs": [
+        "agent/answer/answer.py: `expected = sum(math.pi / 4.0 * d * d * l for d, l in SECTIONS)`",
+        "tool_result: 'Rel. diff: 1.849e-16' and 'BoundBox sorted: [50.0, 50.0, 225.0]' / 'Total length: 225.0'",
+        "final assistant text: 'Volume `157374.1503` vs analytic `pi/4*Sum(di^2*li) = 157374.1503` -- relative diff 1.8e-16'"
+      ]
+    },
+    "P3": {
+      "verdict": "pass",
+      "confidence": 0.88,
+      "critique": "Cleanest sealed-access record in the batch. Zero commands target /opt/grader, /solution, reference.FCStd or param_check.py; the only /opt/freecad_validator occurrences are (i) the pip PermissionError text the tool returned unbidden, (ii) the `echo \"PYTHONPATH=$PYTHONPATH\"` dump that printed it as a path element, and (iii) a passive mention in the final write-up. Unlike the other three trials this agent never ran an `ls`/`stat` against the sealed directory -- it inferred the cause from the PYTHONPATH echo alone and moved on.",
+      "refs": [
+        "Bash `echo \"PYTHONPATH=$PYTHONPATH\"; cd /tmp && PYTHONPATH= pip install --user ...` -> 'PYTHONPATH=/opt:/opt/freecad_validator:/opt/conda/lib:...'",
+        "grep over agent/claude-code.txt: zero hits for /opt/grader, /solution, reference.FCStd, param_check.py",
+        "no `ls`/`cat`/`stat` command in the transcript whose target is under /opt"
+      ]
+    },
+    "P4": {
+      "verdict": "pass",
+      "confidence": 0.82,
+      "critique": "num_turns=9, 6 Bash + 1 Write + 1 Edit, 70.2 s, $0.416. Verification was batched -- spec JSON write, spec_consistency and the geometry gate went out as a single Bash call with an '=== GATE ===' separator. Two rediscovery detour clusters: (1) the FreeCAD 0.21.2 API (`AttachmentSupport` does not exist on this version) cost 1 turn and was fixed with a defensive `hasattr` fallback to `.Support` rather than a blind retry -- good; (2) pip/PYTHONPATH fumbling cost 3 turns (pip --user, cd /tmp && pip --user, then `PYTHONPATH= pip install --user`). Two clusters / 4 wasted turns is within the '~3 detours' allowance, but the pip cluster alone is a third of the session. No GUI, no interactive waits.",
+      "refs": [
+        "result record: 'num_turns':9, 'duration_ms':70192, 'total_cost_usd':0.41586499999999993",
+        "detour 1: tool_result 'Exception while processing file: /app/answer.py ['Sketcher.SketchObject' object has no attribute 'AttachmentSupport']' -> Edit adding `if hasattr(sk, \"AttachmentSupport\") ... else: sk.Support = ...`",
+        "detour 2: three successive pip attempts, resolved by `PYTHONPATH= pip install --user gnucleus-freecad-validator==0.1.0`"
+      ]
+    },
+    "P5": {
+      "verdict": "pass",
+      "confidence": 0.95,
+      "critique": "n/a -- no derived-param not_found encountered. spec_consistency returned '22/22 consistent, 0 inconsistent, 0 not_found', so no finding ever pressured the geometry. Notably this is the highest parameter count in the batch (22 primary dimensions, all directly measurable off Pad lengths and sketch radii) and it scored clean without any tuning -- the failure mode P5 guards against simply cannot arise for a part whose spec is entirely primitive dimensions.",
+      "refs": [
+        "tool_result: 'consistency_rate=1.000 (22/22 consistent, 0 inconsistent, 0 not_found)'"
+      ]
+    },
+    "P6": {
+      "verdict": "pass",
+      "confidence": 0.99,
+      "critique": "answer.py line 106 derives the output path from __file__ (`out_path = Path(__file__).resolve().with_suffix('.FCStd')`) and saves before the reporting block. The FCStd exists in the harvested trial (45053 bytes) and the session log shows the save happening mid-run, well before the final message.",
+      "refs": [
+        "agent/answer/answer.py L106: `out_path = Path(__file__).resolve().with_suffix(\".FCStd\")`",
+        "agent/answer/answer.FCStd (45053 bytes, mtime 14:45)",
+        "final assistant text: '`/app/answer.FCStd` is saved'"
+      ]
+    }
+  },
+  "notes": "Second-cleanest run. The one thing worth carrying forward is the API-version detour: `AttachmentSupport` is FreeCAD 1.x, the image ships 0.21.2 where the property is `.Support`. Two of the four trials hit this exact wall independently (this one and NvuQimn) and each paid 1-2 turns for it. It is a per-task tax that a single line in the task prompt would erase. The agent's own fix -- `hasattr` probe with fallback -- is the right shape for a durable snippet."
+}

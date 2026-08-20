@@ -1,0 +1,12 @@
+{
+ "runId": "run-generic01-diag-01",
+ "applySkipped": "report-only target (PRD-SO-04 Step 11.0 short-circuit)",
+ "finalizedAt": "2026-08-19T09:04:54.226686+00:00",
+ "gates": {
+  "findings-contract": "PASS 6/6",
+  "completeness": "PASS",
+  "wave6-checklist": "PASS 7/7 stamps",
+  "render-js-syntax": "PASS",
+  "finalize-gate": "PASS CRIT-clean"
+ }
+}

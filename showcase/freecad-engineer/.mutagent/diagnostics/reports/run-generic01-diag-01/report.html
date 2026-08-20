@@ -1,0 +1,2031 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<title>cadbench-crusher — generic-01 sub-1.0 diagnosis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0a0a12;--bg2:#14141d;--bg3:#1a1a25;--surf:#14141d;--surf-r:#1a1a25;--surf-e:#22222f;--surf-h:#22222f;--text:#eef1f6;--muted:#a6a2b4;--dim:#6a6678;--border:rgba(255,255,255,0.09);--bstr:rgba(255,255,255,0.16);--p:#b794f4;--p-strong:#7E47D7;--c:#45b8cc;--g:#43c39a;--y:#e8a64d;--r:#e06666;--m:#c9a8e6;--recommend:#67a0aa;--recommend-bg:rgba(103,160,170,0.05);--glow:rgba(126,71,215,0.15);--gglow:rgba(69,184,204,0.15);--fs:'Space Grotesk',system-ui,sans-serif;--fm:'IBM Plex Mono',ui-monospace,monospace;}
+  *{box-sizing:border-box;}body{margin:0;font-family:var(--fs);color:var(--text);background:var(--bg);font-size:14px;line-height:1.55;}
+  header.banner{background:var(--bg2);border-bottom:1px solid var(--bstr);padding:20px 32px;position:relative;}
+  header.banner::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--p-strong),var(--c),transparent);opacity:0.55;}
+  .brand{display:flex;align-items:baseline;gap:14px;margin-bottom:6px;}
+  .logo{font-family:var(--fs);font-weight:700;font-size:22px;letter-spacing:0.18em;background:linear-gradient(135deg,var(--primary-soft,var(--p)) 0%,var(--c) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+  .product{font-size:14px;font-weight:500;color:var(--muted);letter-spacing:0.04em;}
+  .meta{font-size:11.5px;font-family:var(--fm);color:var(--muted);letter-spacing:0.02em;}
+  .meta .mk{color:var(--c);font-weight:600;}.meta .mv{color:var(--text);font-weight:600;}.meta .sep{color:var(--dim);margin:0 6px;}
+  /* tabs — ported from the evaluator report's unified-brand treatment: void background,
+     NO box-shadow (restrained brand), --fs-xs(12px) floor, subtle surf hover, and the
+     active tab underlines in the STRONG primary (--p-strong) for clear affordance. */
+  nav.tabs{background:var(--bg);border-bottom:1px solid var(--border);padding:0 12px;position:sticky;top:0;z-index:100;overflow-x:auto;white-space:nowrap;}
+  nav.tabs button{background:none;border:none;padding:10px 12px;font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;transition:all 0.15s;font-family:inherit;letter-spacing:0.01em;text-decoration:none;}
+  nav.tabs button:hover{color:var(--text);background:var(--surf);}
+  nav.tabs button.active{color:var(--p);border-bottom-color:var(--p-strong);font-weight:600;}
+  nav.tabs button.internal{color:var(--c);} nav.tabs button.internal.active{border-bottom-color:var(--c);}
+  nav.tabs button .sev-dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:5px;vertical-align:middle;}
+  /* DX-3: kind-partition separators in the finding tab strip. */
+  nav.tabs .tab-sep{display:inline-block;width:1px;height:16px;background:var(--bstr);margin:0 8px;vertical-align:middle;}
+  nav.tabs .tab-group-label{display:inline-block;padding:10px 6px 10px 4px;font-family:var(--fm);font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--dim);vertical-align:middle;}
+  /* DX-3: kind-partition header rows in the Overview findings summary table. */
+  tr.kind-group-row td{background:var(--bg2);color:var(--muted);font-family:var(--fm);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;border-top:2px solid var(--bstr);}
+  .sev-crit{background:var(--r);}.sev-high{background:var(--y);}.sev-med{background:var(--c);}.sev-info{background:var(--dim);}
+  main{max-width:1200px;margin:0 auto;padding:28px 32px 140px 32px;}
+  .panel{display:none;}.panel.active{display:block;animation:fade 0.2s ease-out;}
+  @keyframes fade{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+  h2{font-size:22px;font-weight:600;margin:0 0 8px 0;padding-bottom:10px;border-bottom:1px solid var(--bstr);color:var(--text);}
+  .sub{color:var(--muted);font-size:13px;margin-bottom:24px;}
+  h3{font-size:16px;font-weight:600;margin-top:24px;color:var(--p);}
+  h4{font-size:13px;font-weight:600;margin-top:14px;color:var(--text);text-transform:uppercase;letter-spacing:0.04em;font-family:var(--fm);}
+  p{line-height:1.6;color:var(--muted);}strong{color:var(--text);}
+  table{border-collapse:collapse;margin:12px 0;font-size:12px;width:100%;border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+  th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;vertical-align:top;color:var(--muted);}
+  th{background:var(--surf-r);font-weight:600;color:var(--text);}tr:nth-child(even) td{background:var(--bg3);}
+  code{background:var(--bg);color:var(--m);padding:2px 6px;border-radius:4px;font-size:max(11px,0.88em);font-family:var(--fm);border:1px solid var(--border);}
+  .crit{background:rgba(224,102,102,0.08);border-left:3px solid var(--r);padding:14px 18px;margin:14px 0;}.crit strong{color:var(--r);}
+  .warn{background:rgba(232,166,77,0.08);border-left:3px solid var(--y);padding:14px 18px;margin:14px 0;}.warn strong{color:var(--y);}
+  .alert{background:rgba(67,195,154,0.08);border-left:3px solid var(--g);padding:14px 18px;margin:14px 0;}.alert strong{color:var(--g);}
+  .internal-banner{background:rgba(69,184,204,0.08);border:1px dashed rgba(69,184,204,0.45);padding:10px 16px;margin:0 0 18px 0;font-family:var(--fm);font-size:11px;color:var(--c);letter-spacing:0.03em;}
+  .badge{display:inline-block;padding:2px 6px;font-size:11px;border-radius:3px;font-weight:600;letter-spacing:0.04em;font-family:var(--fm);margin-right:4px;}
+  .b-crit{background:rgba(224,102,102,0.18);color:var(--r);border:1px solid rgba(224,102,102,0.35);}
+  .b-high{background:rgba(232,166,77,0.18);color:var(--y);border:1px solid rgba(232,166,77,0.35);}
+  .b-med{background:rgba(69,184,204,0.18);color:var(--c);border:1px solid rgba(69,184,204,0.35);}
+  .b-info{background:rgba(112,112,136,0.18);color:var(--dim);border:1px solid rgba(112,112,136,0.35);}
+  .b-tool{background:rgba(201,168,230,0.15);color:var(--m);border:1px solid rgba(201,168,230,0.3);padding:2px 7px;border-radius:3px;font-family:var(--fm);font-size:11px;margin:2px;display:inline-block;}
+  /* DX-1: finding KIND badges — neutral surfaces, hue carried by a thin border + text
+     (no saturated fills). defect=red accent · enhancement=cyan · control=muted · rec=purple. */
+  .k-defect{background:transparent;color:var(--r);border:1px solid rgba(224,102,102,0.45);}
+  .k-enhancement{background:transparent;color:var(--c);border:1px solid rgba(69,184,204,0.45);}
+  .k-control{background:transparent;color:var(--dim);border:1px solid var(--bstr);}
+  .k-recommendation{background:transparent;color:var(--p);border:1px solid rgba(126,71,215,0.45);}
+  /* DX-1: tone the ISSUES page (per-finding panels) — "too rainbowy". Neutral surfaces,
+     colour carried by a thin left border + the text, NOT saturated fills. Scoped to
+     .finding-panel so the Overview / Methodology / Decisions tabs keep their palette. */
+  .finding-panel .badge{background:transparent;}
+  .finding-panel .b-crit{color:var(--r);border:1px solid rgba(224,102,102,0.45);}
+  .finding-panel .b-high{color:var(--y);border:1px solid rgba(232,166,77,0.45);}
+  .finding-panel .b-med{color:var(--c);border:1px solid rgba(69,184,204,0.45);}
+  .finding-panel .b-info{color:var(--dim);border:1px solid var(--bstr);}
+  .finding-panel .crit{background:transparent;border-left:3px solid var(--r);}
+  .finding-panel .warn{background:transparent;border-left:3px solid var(--y);}
+  .finding-panel .alert{background:transparent;border-left:3px solid var(--g);}
+  .taxonomy{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 14px 0;}
+  .tax-chip{font-family:var(--fm);font-size:11px;padding:4px 8px;border-radius:4px;background:var(--surf-r);border:1px solid var(--border);color:var(--muted);}
+  .tax-chip strong{color:var(--p);font-weight:600;}
+  /* DX-2: drill-in links (session <-> finding) + the flash on the drilled row. */
+  a.drill{color:var(--c);cursor:pointer;text-decoration:none;border-bottom:1px dotted var(--c);}
+  a.drill:hover{color:var(--text);}
+  a.tax-chip.drill{color:var(--muted);border-bottom:1px solid var(--border);}
+  a.tax-chip.drill strong{color:var(--c);}
+  .session-summary a.drill{font-family:var(--fm);}
+  tr.drill-flash td{background:rgba(126,71,215,0.18);transition:background 0.3s ease;}
+  .whychain{margin:10px 0;padding:0;list-style:none;}
+  .whychain li{position:relative;padding:8px 0 8px 18px;font-size:13px;color:var(--muted);border-left:2px solid var(--border);margin-left:8px;}
+  .whychain li.origin{border-left-color:var(--r);color:var(--text);}
+  .whychain li.origin::after{content:'← ORIGIN';font-family:var(--fm);font-size:11px;color:var(--r);margin-left:8px;font-weight:600;letter-spacing:0.04em;}
+  .whychain li em{display:block;font-style:normal;color:var(--dim);font-size:11px;font-family:var(--fm);margin-top:3px;}
+  /* EV-1: trace narration line — "trace <id> — <whatHappened> «example»" */
+  .ev-narration{font-size:13px;color:var(--muted);}
+  .ev-narration code{font-family:var(--fm);font-size:11px;color:var(--p);}
+  .ev-example{display:block;margin-top:4px;font-style:normal;color:var(--dim);font-size:11px;font-family:var(--fm);quotes:none;}
+  .whychain li em .ev-example{margin-top:2px;}
+  .assumptions{background:rgba(232,166,77,0.06);border:1px solid rgba(232,166,77,0.25);border-radius:6px;padding:10px 14px;margin:12px 0;}
+  .assumptions h4{margin-top:0;color:var(--y);}
+  .assumptions li{font-size:12px;color:var(--muted);margin:4px 0;}
+  .assumptions .verified{color:var(--g);font-family:var(--fm);font-size:11px;}
+  .assumptions .unverified{color:var(--r);font-family:var(--fm);font-size:11px;}
+  .assumptions .hypothesis-pending{color:var(--y);font-family:var(--fm);font-size:11px;}
+  .remedy{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:12px 14px;margin:10px 0;display:flex;align-items:flex-start;gap:12px;position:relative;}
+  .remedy.recommended{border:1px solid var(--recommend);border-left:3px solid var(--recommend);background:var(--recommend-bg);}
+  .remedy.recommended::before{content:'★ RECOMMENDED';position:absolute;top:-9px;left:12px;background:var(--recommend);color:var(--bg);font-family:var(--fm);font-size:11px;font-weight:700;letter-spacing:0.06em;padding:2px 8px;}
+  .remedy-cb{accent-color:var(--p);cursor:pointer;flex-shrink:0;margin-top:3px;}
+  .remedy.recommended .remedy-cb{accent-color:var(--g);}
+  .remedy-id{font-family:var(--fm);font-weight:700;color:var(--c);font-size:11px;min-width:95px;padding-top:1px;}
+  .remedy.recommended .remedy-id{color:var(--g);}
+  .remedy-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px;}.remedy-what{font-weight:500;color:var(--text);font-size:13px;line-height:1.5;}
+  .remedy-meta{font-family:var(--fm);font-size:11px;color:var(--dim);margin-top:6px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+  .rank-pill{font-family:var(--fm);font-size:11px;font-weight:700;padding:1px 7px;border-radius:3px;background:var(--surf-e);color:var(--muted);border:1px solid var(--bstr);}
+  .apply-pill{font-family:var(--fm);font-size:11px;padding:1px 7px;border-radius:3px;}
+  .apply-code{background:rgba(224,102,102,0.15);color:var(--r);border:1px solid rgba(224,102,102,0.3);}
+  .apply-prompt{background:rgba(126,71,215,0.15);color:var(--p);border:1px solid rgba(126,71,215,0.3);}
+  .apply-config{background:rgba(69,184,204,0.15);color:var(--c);border:1px solid rgba(69,184,204,0.3);}
+  .apply-none{background:rgba(112,112,136,0.15);color:var(--dim);border:1px solid rgba(112,112,136,0.3);}
+  .b-cost-low{background:rgba(67,195,154,0.18);color:var(--g);border:1px solid rgba(67,195,154,0.35);padding:1px 6px;border-radius:3px;}
+  .b-cost-med{background:rgba(232,166,77,0.18);color:var(--y);border:1px solid rgba(232,166,77,0.35);padding:1px 6px;border-radius:3px;}
+  .b-cost-high{background:rgba(224,102,102,0.18);color:var(--r);border:1px solid rgba(224,102,102,0.35);padding:1px 6px;border-radius:3px;}
+  .entity{background:var(--surf-r);border:1px solid var(--bstr);border-radius:10px;padding:18px 20px;margin:16px 0;}
+  .entity-head{display:flex;align-items:baseline;gap:12px;margin-bottom:12px;}
+  .entity-name{font-size:18px;font-weight:700;color:var(--text);}
+  .entity-grid{display:grid;grid-template-columns:140px 1fr;gap:8px 16px;font-size:13px;}
+  .entity-grid .k{color:var(--dim);font-family:var(--fm);font-size:11px;text-transform:uppercase;letter-spacing:0.04em;padding-top:3px;}
+  .entity-grid .v{color:var(--muted);}
+  .access-yes{color:var(--g);font-weight:600;}.access-no{color:var(--r);font-weight:600;}
+  details.expand{margin-top:12px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);}
+  details.expand summary{cursor:pointer;padding:9px 12px;font-family:var(--fm);font-size:11px;color:var(--c);font-weight:600;list-style:none;}
+  details.expand summary::-webkit-details-marker{display:none;}
+  details.expand summary::before{content:'▶ ';color:var(--dim);}details.expand[open] summary::before{content:'▼ ';}
+  details.expand pre{margin:0;padding:12px;background:#0a0a14;color:#c4c4d4;font-family:var(--fm);font-size:11px;white-space:pre-wrap;word-break:break-word;border-top:1px solid var(--border);max-height:340px;overflow:auto;border-radius:0 0 6px 6px;}
+  .f-desc{margin:10px 0;font-size:13px;color:var(--muted);line-height:1.6;}
+  .f-desc strong{color:var(--text);}
+  .big-stat{display:flex;gap:18px;flex-wrap:wrap;margin:16px 0;}
+  .big-stat .s{background:var(--surf-r);border:1px solid var(--border);border-radius:8px;padding:12px 16px;min-width:96px;}
+  .big-stat .v{font-size:22px;font-weight:700;font-family:var(--fm);}
+  .big-stat .l{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:0.06em;margin-top:2px;}
+  /* scan-coverage funnel */
+  .funnel{display:flex;align-items:stretch;gap:0;margin:14px 0;border-radius:8px;overflow:hidden;border:1px solid var(--border);}
+  .funnel .seg{padding:12px 16px;display:flex;flex-direction:column;justify-content:center;position:relative;}
+  .funnel .seg .fv{font-family:var(--fm);font-weight:700;font-size:20px;}
+  .funnel .seg .fl{font-size:11px;text-transform:uppercase;letter-spacing:0.05em;margin-top:2px;}
+  .funnel .seg .fp{font-family:var(--fm);font-size:11px;opacity:0.7;margin-top:2px;}
+  .funnel .s-total{background:var(--surf-r);flex:3;}
+  .funnel .s-code{background:rgba(69,184,204,0.10);flex:3;border-left:1px solid var(--border);}
+  .funnel .s-llm{background:rgba(126,71,215,0.12);flex:1;border-left:1px solid var(--border);}
+  .funnel .s-total .fv{color:var(--text);}.funnel .s-code .fv{color:var(--c);}.funnel .s-llm .fv{color:var(--p);}
+  /* heatmap */
+  .heat{display:flex;flex-wrap:wrap;gap:3px;margin:12px 0;}
+  .heat .cell{width:42px;height:42px;border-radius:5px;border:1px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--fm);cursor:default;}
+  .heat .cell .ch{font-size:11px;color:rgba(255,255,255,0.55);}
+  .heat .cell .cn{font-size:11px;font-weight:600;color:#fff;}
+  .heat-legend{display:flex;gap:10px;align-items:center;font-family:var(--fm);font-size:11px;color:var(--dim);margin-top:6px;}
+  .heat-legend .sw{width:14px;height:14px;border-radius:3px;display:inline-block;vertical-align:middle;margin-right:3px;}
+  .l0{background:rgba(67,195,154,0.25);}.l1{background:rgba(232,166,77,0.28);}.l2{background:rgba(232,166,77,0.40);}.l3{background:rgba(224,102,102,0.42);}.l4{background:rgba(224,102,102,0.58);}
+  .mermaid{background:var(--surf-r);border:1px solid var(--bstr);border-radius:8px;padding:18px;margin:14px 0;text-align:center;overflow-x:auto;}
+  .action-bar{position:fixed;bottom:24px;right:24px;display:flex;gap:10px;z-index:1000;}
+  .action-bar button{padding:11px 18px;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,0.35);font-family:var(--fs);}
+  .action-bar button#reset-all{background:var(--surf-e);color:var(--muted);border:1px solid var(--bstr);}
+  /* D2: the Copy-decisions CTA is the PRIMARY action of the Decisions panel — it lives
+     INSIDE that panel (renderDecisionsTab) and sticks to the panel's top-right edge just
+     below the sticky tab bar. The transparent bar lets content scroll under it on the
+     left while the opaque purple button covers it on the right. */
+  .decisions-cta-bar{position:sticky;top:44px;z-index:50;display:flex;justify-content:flex-end;margin:-8px 0 14px 0;pointer-events:none;}
+  .decisions-cta-bar button#copy-decisions{pointer-events:auto;background:var(--p-strong);color:#fff;border:1px solid var(--p);padding:11px 18px;cursor:pointer;font-size:13px;font-weight:600;box-shadow:0 2px 10px rgba(0,0,0,0.45);font-family:var(--fs);}
+  .decisions-cta-bar button#copy-decisions:hover{filter:brightness(1.08);}
+  .approved-count{position:fixed;bottom:24px;left:24px;background:var(--surf-e);border:1px solid var(--bstr);border-radius:8px;padding:9px 16px;font-family:var(--fm);font-size:12px;color:var(--muted);z-index:1000;}
+  .approved-count strong{color:var(--p);font-weight:700;}
+  .remedy-notes{width:100%;margin-top:8px;min-height:40px;padding:7px 10px;font-family:var(--fm);font-size:11px;background:#0a0a14;color:var(--text);border:1px solid var(--bstr);border-radius:4px;resize:vertical;line-height:1.45;}
+  .remedy-notes::placeholder{color:var(--dim);font-style:italic;}
+  .remedy-notes:focus{outline:none;border-color:var(--p);box-shadow:0 0 0 2px rgba(126,71,215,0.15);}
+  .gfeedback{background:var(--surf-e);border:1px solid var(--bstr);border-radius:10px;padding:18px 20px;margin:16px 0;}
+  .gfeedback h4{margin:0 0 8px 0;color:var(--p);font-size:12px;text-transform:uppercase;letter-spacing:0.06em;font-family:var(--fm);}
+  .gfeedback textarea{width:100%;min-height:120px;padding:11px 14px;font-family:var(--fm);font-size:13px;background:#0a0a14;color:var(--text);border:1px solid var(--bstr);border-radius:8px;resize:vertical;line-height:1.6;}
+  .gfeedback textarea::placeholder{color:var(--dim);font-style:italic;}
+  .gfeedback textarea:focus{outline:none;border-color:var(--p);box-shadow:0 0 0 2px rgba(126,71,215,0.15);}
+  /* Wave-6 R2.5 — coverage proof */
+  .coverage-proof{margin:16px 0;}
+  /* PRD-CC-05 — canonical remedy card anatomy (D1/D3/D4/D5/D6) */
+  .remedy-header{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;}
+  .remedy-rank-id{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+  /* OPT-2: same-apply-target collision warning on a remedy (apply at most one). */
+  .r-collision{background:rgba(232,166,77,0.08);border-left:3px solid var(--y);padding:8px 12px;margin:8px 0;}
+  .r-collision-label{font-family:var(--fm);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--y);}
+  .r-collision p{margin:3px 0 0 0;font-size:12px;color:var(--muted);}
+  /* DX-4: labelled "described change (architectural)" block — the third remedy emit case
+     (a known non-line-edit fix), distinct from the source-not-found caveat. */
+  .r-described-change{background:rgba(69,184,204,0.08);border-left:3px solid var(--c);padding:10px 14px;margin:10px 0;}
+  .r-described-change-label{font-family:var(--fm);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--c);margin-bottom:4px;}
+  .r-described-change p{margin:4px 0 0 0;font-size:13px;color:var(--muted);line-height:1.55;}
+  .r-rationale{background:rgba(126,71,215,0.10);border-left:3px solid var(--p);padding:10px 14px;margin:10px 0;}
+  .r-why-works{background:rgba(69,184,204,0.10);border-left:3px solid var(--c);padding:10px 14px;margin:10px 0;}
+  .r-rationale p,.r-why-works p{margin:4px 0 0 0;font-size:13px;color:var(--muted);line-height:1.55;}
+  .r-block-label{font-family:var(--fm);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--dim);}
+  .r-rationale .r-block-label{color:var(--p);}
+  .r-why-works .r-block-label{color:var(--c);}
+  .r-target{border:1px dashed var(--border);border-radius:5px;padding:7px 12px;margin:8px 0;display:flex;align-items:center;gap:8px;font-size:12px;}
+  .r-target-label{font-family:var(--fm);font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:var(--dim);flex-shrink:0;}
+  .r-diff-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:10px 0;}
+  .diff-col{display:flex;flex-direction:column;}
+  .diff-col pre{margin:0;padding:10px;background:#0a0a14;color:#c4c4d4;font-family:var(--fm);font-size:11px;white-space:pre-wrap;word-break:break-word;border:1px solid var(--border);border-radius:0 0 5px 5px;flex:1;}
+  .diff-label{padding:4px 10px;font-family:var(--fm);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;border-radius:5px 5px 0 0;}
+  .diff-label.label-before{background:rgba(224,102,102,0.18);color:var(--r);}
+  .diff-label.label-after{background:rgba(67,195,154,0.18);color:var(--g);}
+  /* W12-08: source-not-found caveat shown in place of the Before/After grid (PR-052 proposed). */
+  .r-diff-caveat{border:1px dashed var(--y);border-radius:5px;padding:10px 12px;margin:10px 0;background:rgba(232,166,77,0.07);}
+  .r-diff-caveat-label{font-family:var(--fm);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--y);margin-bottom:5px;}
+  .r-diff-caveat p{margin:0;font-size:12px;color:var(--dim);}
+  .r-apply-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:10px 0;}
+  .apply-col{background:var(--surf-e);border:1px solid var(--border);border-radius:6px;padding:12px 14px;}
+  .apply-col-empty{opacity:0.6;}
+  .apply-col-label{font-family:var(--fm);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--c);margin-bottom:6px;}
+  .r-apply-plan,.r-apply-instr{margin:6px 0;padding-left:16px;font-size:12px;color:var(--muted);}
+  .r-apply-plan li,.r-apply-instr li{margin:3px 0;}
+  .r-verify-label{font-family:var(--fm);font-size:11px;text-transform:uppercase;color:var(--dim);margin-top:6px;}
+  .r-acceptance{font-size:12px;color:var(--g);margin-top:6px;font-style:italic;}
+  .r-commit{font-size:11px;color:var(--dim);margin-top:4px;}
+  .r-line-range{color:var(--dim);font-size:11px;}
+  .r-muted{font-size:12px;color:var(--dim);margin:4px 0 0 0;}
+  .r-count{font-family:var(--fm);font-size:11px;color:var(--dim);font-weight:400;}
+  /* PRD-CC-05 — feedback block (D5/D9 — no emojis) */
+  .feedback-list{margin:12px 0;}
+  .feedback-list h3{margin-top:0;color:var(--c);}
+  .fb-item{border-radius:6px;padding:10px 14px;margin:8px 0;border-left:3px solid var(--border);}
+  .fb-item blockquote{margin:6px 0 0 0;font-size:13px;color:var(--muted);border-left:none;padding:0;}
+  .fb-item.fb-chat{border-left-color:var(--c);background:rgba(69,184,204,0.07);}
+  .fb-item.fb-trace-score{border-left-color:var(--y);background:rgba(232,166,77,0.07);}
+  .fb-item.fb-external{border-left-color:var(--p);background:rgba(126,71,215,0.07);}
+  .fb-head{font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px;align-items:center;}
+  .fb-source-type{font-family:var(--fm);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;}
+  .fb-item.fb-chat .fb-source-type{color:var(--c);}
+  .fb-item.fb-trace-score .fb-source-type{color:var(--y);}
+  .fb-item.fb-external .fb-source-type{color:var(--p);}
+  .fb-score-note{font-family:var(--fm);font-size:11px;color:var(--dim);}
+  /* PRD-CC-05 — targetClass + changeType pills */
+  .tclass-pill{font-family:var(--fm);font-size:11px;padding:1px 7px;border-radius:3px;}
+  .tclass-local-agent{background:rgba(126,71,215,0.15);color:var(--p);border:1px solid rgba(126,71,215,0.3);}
+  .tclass-local-code-construct{background:rgba(69,184,204,0.15);color:var(--c);border:1px solid rgba(69,184,204,0.3);}
+  .tclass-remote{background:rgba(232,166,77,0.15);color:var(--y);border:1px solid rgba(232,166,77,0.3);}
+  .ctype-pill{font-family:var(--fm);font-size:11px;padding:1px 7px;border-radius:3px;}
+  .ctype-add{background:rgba(67,195,154,0.15);color:var(--g);border:1px solid rgba(67,195,154,0.3);}
+  .ctype-modify{background:rgba(69,184,204,0.15);color:var(--c);border:1px solid rgba(69,184,204,0.3);}
+  .ctype-replace{background:rgba(126,71,215,0.15);color:var(--p);border:1px solid rgba(126,71,215,0.3);}
+  .ctype-delete{background:rgba(224,102,102,0.15);color:var(--r);border:1px solid rgba(224,102,102,0.3);}
+  /* PRD-CC-05 — correctness badge */
+  .b-correctness-low{background:rgba(224,102,102,0.18);color:var(--r);border:1px solid rgba(224,102,102,0.35);padding:1px 6px;border-radius:3px;}
+  .b-correctness-med{background:rgba(232,166,77,0.18);color:var(--y);border:1px solid rgba(232,166,77,0.35);padding:1px 6px;border-radius:3px;}
+  .b-correctness-high{background:rgba(67,195,154,0.18);color:var(--g);border:1px solid rgba(67,195,154,0.35);padding:1px 6px;border-radius:3px;}
+  /* PRD-CC-06 — live preview textarea in Decisions panel */
+  .live-preview{background:var(--surf-e);border:1px solid var(--bstr);border-radius:8px;padding:14px 16px;margin:16px 0;}
+  .lp-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+  .lp-label{font-family:var(--fm);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--c);}
+  .lp-meta{font-family:var(--fm);font-size:11px;color:var(--dim);}
+  .lp-body{width:100%;min-height:160px;padding:10px 12px;font-family:var(--fm);font-size:11px;background:#0a0a14;color:#c4c4d4;border:1px solid var(--bstr);border-radius:6px;resize:vertical;line-height:1.5;}
+  /* PRD-SD-06 — decisions subject row */
+  .decisions-subject-row{font-family:var(--fm);font-size:12px;color:var(--dim);margin:8px 0;padding:6px 10px;background:var(--surf-r);border-radius:5px;display:flex;gap:8px;align-items:center;}
+  /* Wave-6 R2.4 — methodology widgets (tier pie · selection cards · trace) */
+  .pie-legend{display:flex;flex-wrap:wrap;gap:12px;margin:8px 0 4px 0;font-size:12px;font-family:var(--fm);}
+  .pie-leg{display:inline-flex;align-items:center;gap:6px;color:var(--muted);}
+  .pie-sw{display:inline-block;width:12px;height:12px;border-radius:3px;}
+  .sel-cards{display:flex;flex-wrap:wrap;gap:12px;margin:10px 0;}
+  .sel-card{flex:1 1 220px;background:var(--surf-e);border:1px solid var(--bstr);border-radius:8px;padding:12px 14px;}
+  .sel-card-head{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+  .sel-card-body{font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;}
+  .sel-k{text-transform:uppercase;letter-spacing:0.05em;font-size:11px;color:var(--dim);font-family:var(--fm);}
+  /* D3: richer dataset-candidate detail rows — each links the discovered signal to its
+     finding's RCA narrative (scenario · edge-case · why-failed · why-high-value · prevents). */
+  .sel-detail{font-size:12px;color:var(--muted);line-height:1.5;margin-top:7px;width:100%;}
+  .sel-detail .sel-k{display:block;margin-bottom:1px;color:var(--c);}
+  .sel-detail.sel-prevents .sel-k{color:var(--g);}
+  .sel-detail.sel-value .sel-k{color:var(--p);}
+  /* design-system: SHARP corners (radius 0) is the brand — enforce across every element,
+     including inline-styled nodes emitted by render.ts and the structured-report template. */
+  *,*::before,*::after{border-radius:0!important;}
+</style></head><body>
+<header class="banner">
+  <div class="brand"><div class="logo">MUTAGENT</div><div class="product">cadbench-crusher — generic-01 sub-1.0 diagnosis</div></div>
+  <div class="meta"><span class="mk">generated</span> <span class="mv">2026-08-19T09:04:42Z</span><span class="sep">·</span><span class="mk">source</span> claude-code<span class="sep">·</span><span class="mv">11 traces</span><span class="sep">·</span><span class="mv">6 findings</span></div>
+</header>
+
+
+<nav class="tabs" id="tabnav"><button data-tab="t0" class="internal active">⚙ Methodology [INTERNAL]</button>
+  <button data-tab="t1">① Overview</button>
+  <span class="tab-group-label" data-kind="defect">Defects</span>
+  <button data-tab="t2"><span class="sev-dot sev-crit"></span>F-slice-all-3 On freecad-0fe9d9e3ce the live v…</button>
+  <button data-tab="t3"><span class="sev-dot sev-crit"></span>F-slice-all-4 The agent discovered on one task…</button>
+  <button data-tab="t4"><span class="sev-dot sev-crit"></span>F-slice-all-1 The playbook&#39;s mandatory analyti…</button>
+  <button data-tab="t5"><span class="sev-dot sev-crit"></span>F-slice-all-2 When a dimension the geometry re…</button>
+  <button data-tab="t6"><span class="sev-dot sev-crit"></span>F-slice-all-5 Four of the eleven tasks scored …</button>
+  <button data-tab="t7"><span class="sev-dot sev-high"></span>F-slice-all-6 The surface-type sub-metric sits…</button>
+  <button data-tab="tdecisions">⑦ Decisions</button></nav>
+
+<main>
+<div class="internal-banner">⚙ INTERNAL — methodology + session-trajectory data included. NODE-STRIPPED for --audience client.</div>
+<section class="panel active" id="t0">
+  <div class="internal-banner">⚙ INTERNAL-ONLY — hidden in public/client release. Traces the topology of skill operations + sub-agent dispatch for this run.</div>
+  <h2>⚙ Methodology — operation topology</h2>
+  <p class="sub">How this diagnosis was produced: which orchestrator steps, scripts, and sub-agents ran, pulled from the run trajectory.</p>
+  
+  
+  <h3>Step 0 — Operator invocation</h3>
+  <p class="sub">Operator invocation (verbatim):</p>
+  <pre>Diagnose the sub-1.0 trials of the generic-01 full benchmark run of agent cadbench-crusher; focus: geometry-similarity misses and the live-verifier spec flake on freecad-0fe9d9e3ce</pre>
+  
+  
+  <h3>Decision log (graded)</h3>
+  <table>
+    <thead><tr><th>Decision</th><th>What the skill did</th><th>Grade</th></tr></thead>
+    <tbody>
+      <tr><td>4.5-library-match</td><td>proceed-fresh (0 priors)</td><td><span class="badge b-info">library returned no matches for entity cadbench-</span></td></tr>
+      <tr><td>5b-slicer-override</td><td>representative-sample over window-based</td><td><span class="badge b-info">window-based rationale + non-null focus (PRD-MP-</span></td></tr>
+      <tr><td>6-dispatch</td><td>single-shot analyzer</td><td><span class="badge b-info">criterion (c) sample&lt;=30 and criterion (a) focus</span></td></tr>
+    </tbody>
+  </table>
+  <h3>Step 1 — Primary-signal selection (PR-049: failure-validity gate → impact×prevalence → deep-read)</h3>
+  
+  <div class="warn suspected-primary-unconfirmed" data-suspected="wrong-output">
+    <strong>⚠ Suspected primary — unconfirmed:</strong>
+    <code>wrong-output</code> was the highest-impact <em>discovered</em> signal
+    (seen in 11/11 sampled) but is <strong>capped at SECONDARY</strong>
+    — discovered but UNCONFIRMED — no mechanical trajectory corroboration with a resolvable evidenceRef (R1 evidence floor); capped at SECONDARY. The primary shown below is a cheaper fallback signal, NOT a
+    confident root cause. Treat the suspected signal as a lead requiring mechanical corroboration.
+  </div>
+  <table>
+    <thead><tr><th>Signal / failure-mode</th><th>Present?</th><th>Measure</th><th>Decision</th></tr></thead>
+    <tbody>
+      <tr><td>wrong-output</td><td style="color:var(--y)">YES</td><td>seen in 11/11 sampled</td><td><span class="badge b-med">SECONDARY — discovered, unconfirmed (no mechanical evidence)</span></td></tr>
+      <tr><td>low-score</td><td style="color:var(--y)">YES</td><td>seen in 3/11 sampled</td><td><span class="badge b-med">SECONDARY — discovered, unconfirmed (no mechanical evidence)</span></td></tr>
+      <tr><td>wrong-output / hallucination</td><td style="color:var(--y)">1</td><td>1 errors</td><td>potential signal — ruled out (benign success:false / <20% rate)</td></tr>
+      <tr><td>low-score</td><td style="color:var(--g)">3</td><td>0 feedback</td><td>excluded — no signal</td></tr>
+    </tbody>
+  </table>
+  <h3>Step 1.5 — Awareness layer (measurement-gap check)</h3>
+  <p class="sub">A 5-trace LLM mini-sample fired BEFORE primary-signal selection to surface signals Tier-0 cannot MEASURE (the measurement-layer fix). Traces: <em>— trace list unavailable (malformed awareness witness)</em>. Fired at 2026-08-19T09:00:03.340038+00:00.</p>
+  <table>
+    <thead><tr><th>Signal</th><th>Measurable?</th><th>Checked by</th><th>Result</th></tr></thead>
+    <tbody>
+      <tr><td>latency-spike</td><td>Tier-0</td><td>tier-0 scan</td><td>Measured deterministically (no LLM needed).</td></tr>
+      <tr><td>low-score</td><td>Tier-0</td><td>tier-0 scan</td><td>Measured deterministically (no LLM needed).</td></tr>
+      <tr><td>user-complaint</td><td>Tier-0</td><td>tier-0 scan</td><td>Measured deterministically (no LLM needed).</td></tr>
+      <tr><td>cost-overshoot</td><td>Tier-0</td><td>tier-0 scan</td><td>Measured deterministically (no LLM needed).</td></tr>
+      <tr><td>wrong-output</td><td>No</td><td>awareness LLM sample</td><td>not observed in awareness sample</td></tr>
+      <tr><td>missing-output</td><td>No</td><td>awareness LLM sample</td><td>not observed in awareness sample</td></tr>
+      <tr><td>loop</td><td>No</td><td>awareness LLM sample</td><td>not observed in awareness sample</td></tr>
+      <tr><td>format-violation</td><td>No</td><td>awareness LLM sample</td><td>not observed in awareness sample</td></tr>
+      <tr><td>hallucination</td><td>No</td><td>awareness LLM sample</td><td>not observed in awareness sample</td></tr>
+      <tr><td>missing-context</td><td>No</td><td>awareness LLM sample</td><td>not observed in awareness sample</td></tr>
+    </tbody>
+  </table>
+  <h3>Selection rules — per-signal score + verdict (PR-049)</h3>
+  <div style="font-size:12px;color:var(--muted);background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:8px 12px;margin:4px 0;">
+  <strong>PR-049 signal detect+select process (5 steps):</strong><br>
+  1. Enumerate all Tier-0 signals (PR-001 static scan).<br>
+  2. Failure-validity gate — admit only mechanical signals that map to a user-visible failure WHAT; rule out benign observability artifacts (e.g. missing-metadata).<br>
+  3. Impact×prevalence scoring: impact = $/latency/correctness harm × trace prevalence rate.<br>
+  4. Deep-read corroboration — LLM findings[0].failureOrigin.what confirms or overrides rank.<br>
+  5. Emit ONE <code>runMeta.primarySignal</code> driving census badge · heatmap · funnel.
+</div>
+  <div class="sel-cards">
+  <div class="sel-card">
+    <div class="sel-card-head"><strong>wrong-output (discovered, deep-read)</strong> <span class="badge b-info">★ discovered (awareness)</span><span class="badge b-med floor-capped">⚠ capped at SECONDARY — unevidenced (R1 floor)</span></div>
+    <div class="sel-card-body">
+      <span class="sel-k">score</span> <code>impact 3 × prevalence 11/11 sampled</code>
+      <span class="sel-k">verdict</span> SUSPECTED PRIMARY — unconfirmed: capped at SECONDARY by the R1 evidence floor (content-level geometry mismatch has no mechanical trajectory signature)
+    </div>
+    <div class="sel-detail"><span class="sel-k">finding</span><code>F-slice-all-1</code></div>
+  </div>
+  <div class="sel-card">
+    <div class="sel-card-head"><strong>low-score (discovered, deep-read; tier-0 count 3 ≤0.4)</strong> <span class="badge b-info">★ discovered (awareness)</span></div>
+    <div class="sel-card-body">
+      <span class="sel-k">score</span> <code>impact 2 × prevalence 10/11 sampled</code>
+      <span class="sel-k">verdict</span> SECONDARY — same underlying failures as wrong-output (harmonic-mean score is the symptom, not the mechanism)
+    </div>
+    <div class="sel-detail"><span class="sel-k">finding</span><code>F-slice-all-3</code></div>
+  </div>
+  <div class="sel-card">
+    <div class="sel-card-head"><strong>prompt-underspec (mechanical: Oscillation corroboration)</strong> </div>
+    <div class="sel-card-body">
+      <span class="sel-k">score</span> <code>1 corroboration, evidenceRef trace:a913ea60#msg[89,92,96,99]</code>
+      <span class="sel-k">verdict</span> corroborates the WHY of F-1/F-2 (interpretation ambiguity) but maps to no WHAT candidate — not crowned
+    </div>
+    <div class="sel-detail"><span class="sel-k">finding</span><code>F-slice-all-2</code></div>
+  </div>
+  <div class="sel-card">
+    <div class="sel-card-head"><strong>latency-spike / error-spike / feedback-cluster (tier-0 cheap)</strong> </div>
+    <div class="sel-card-body">
+      <span class="sel-k">score</span> <code>0 admissible occurrences</code>
+      <span class="sel-k">verdict</span> ruled out — no cheap signal present in the 11-trace window
+    </div>
+    
+  </div>
+  </div>
+  <h3>Tier coverage</h3>
+  <svg width="160" height="160" viewBox="0 0 160 160" role="img" aria-label="Tier coverage pie">
+    <path d="M 80 80 L 80 150 A 70 70 0 0 0 80 10 Z" fill="#45b8cc"/>
+    <path d="M 80 80 L 80 10 A 70 70 0 0 0 80 150 Z" fill="#7E47D7"/>
+  </svg>
+  <div class="pie-legend"><span class="pie-leg"><span class="pie-sw" style="background:#45b8cc"></span>tier0-static (11)</span> <span class="pie-leg"><span class="pie-sw" style="background:#7E47D7"></span>deep-read (11)</span></div>
+  <h3>Signal-selection trace</h3>
+  <div class="mermaid">
+graph TD
+  A["Tier-0 candidates: low-score(3), error(1)"] --> B["failure-validity gate: no admissible cheap pattern"]
+  B --> C["deep-read discovery: wrong-output 11/11, low-score 10/11"]
+  C --> D["R1 evidence floor: no mechanical corroboration maps to a content-level WHAT"]
+  D --> E["R7: SUSPECTED PRIMARY — unconfirmed: wrong-output (seen 11/11 sampled)"]
+  E --> F["no signal crowned; findings ranked by recoverable points instead"]
+  </div>
+</section>
+<section class="panel" id="t1">
+  <h2>11 sub-1.0/flake trials of the 100-task generic-01 benchmark run</h2>
+  
+  <div class="entity">
+    <div class="entity-head"><div class="entity-name">⬡ unitf-agent</div><span class="badge b-info">DIAGNOSED ENTITY</span></div>
+    <div class="entity-grid">
+      <div class="k">Type</div><div class="v">agent</div>
+      <div class="k">Model</div><div class="v"><code>claude-opus-5</code></div>
+      <div class="k">System prompt</div><div class="v"><details class="expand"><summary>System prompt (0.1 KB · 15 tokens · click to expand)</summary><pre>system prompt not present in trace (lives in agent config)</pre></details></div>
+      <div class="k">Tools (3)</div><div class="v"><div class="tool-chips"><span class="b-tool">Bash</span><span class="b-tool">Edit</span><span class="b-tool">Write</span></div><details class="expand"><summary>Per-tool stats (3 tools · click to expand)</summary><ul>
+      <li><strong>Bash</strong> — 146 calls · 13.27/trace · avg 1366ms · p95 8808ms</li>
+      <li><strong>Edit</strong> — 17 calls · 1.55/trace · avg 16ms · p95 20ms</li>
+      <li><strong>Write</strong> — 12 calls · 1.09/trace · avg 32ms · p95 81ms</li>
+    </ul></details></div>
+      <div class="k">Code access</div><div class="v"><span class="access-no">NO — remote export.</span></div>
+    </div>
+    <details class="expand"><summary>Agent input / prompt sample (4.0 KB · 1,024 tokens · click to expand)</summary><pre>Write a FreeCAD Python script to `answer.py` that reproduces the
+part described below.
+
+The model must be built as a parametric feature tree inside a single PartDesign Body,
+producing exactly one solid body. Use editable PartDesign features to construct the 
+model for better parameterization.The saved FCStd must contain named document objects
+whose properties drive the geometry, not a single Part::Feature holding
+a pre-computed TopoShape.
+
+Save the generated model as an `.FCStd` file next to the script, using
+the script stem as the output basename. The output path must be derived
+from `__file__` at runtime; do not hardcode the path or rely on the
+current working directory. Only the FCStd written next to the executing
+script file is graded.
+
+**Part description:**
+
+An elbow flange consists of an elbow pipe, characterized by its curved shape, and two flanges, each equipped with bolt holes, located at both ends of the elbow pipe.
+An elbow flange is normally defined by flange_outer_diameter, elbow_flange_length, elbow_flange_height, elbow_angle, elbow_radius, elbow_pipe_diameter, elbow_pipe_thickness, bolt_circle_radius, bolt_hole_diameter, number_bolt_holes,  etc.
+
+**Key parameters:**
+
+- flange_outer_diameter=200mm, elbow_flange_length=300mm, elbow_flange_height=300mm
+- elbow_angle = 90 degree, elbow_radius = 100mm
+- elbow_pipe_diameter=100mm, elbow_pipe_thickness=5mm
+- bolt_circle_radius=72.5mm, bolt_hole_diameter=16.0mm, number_bolt_holes=8
+
+**FreeCAD version**: 0.21.2.
+
+**Output location**: write your script to `/app/answer.py` and the generated model to `/app/answer.FCStd`. The verifier reads from these exact paths; files saved anywhere else (e.g. `/tmp/`, `~/`, the agent&#39;s working directory) are not graded.
+
+
+# CAD engineering playbook (appended to the task instruction)
+
+You are an expert mechanical CAD engineer. Follow this working method exactly.
+Budget your turns: plan first, then write ONE good script, then verify and fix.
+
+## Hard output contract (re-read before finishing)
+
+- Write the build script to `/app/answer.py`. It must derive its output path from
+  `__file__` (`Path(__file__).with_suffix(&quot;.FCStd&quot;)`) — never hardcode, never rely on cwd.
+- Execute it yourself with `freecadcmd /app/answer.py` and confirm `/app/answer.FCStd`
+  exists afterwards. A script that was written but not executed scores zero.
+- The document must contain exactly ONE `PartDesign::Body` whose shape is exactly
+  ONE solid. No extra bodies, no leftover construction objects producing solids.
+- Every feature must be parametric: Sketcher sketches + PartDesign features
+  (Pad, Pocket, Revolution, Groove, Hole, PolarPattern, LinearPattern, Chamfer, Fillet).
+  NEVER create a `Part::Feature`, never assign a precomputed `TopoShape` to
+  `obj.Shape`, never use Part-workbench booleans (`Part::Cut`, `Part::Fuse`, …) or
+  `Part::Extrusion`. A single baked shape anywhere in the dependency chain zeroes
+  the whole task.
+
+## Script structure
+
+1. Put ALL spec parameters as named Python variables at the top, copied verbatim
+   from the key-parameters list (mind units: degrees stay degrees).
+2. Build sketches with explicit geometry driven by those variables. Fully close all
+   wires. Prefer one profile sketch + PartDesign feature per functional feature
+   (body, hub, bore, hole pattern, keyway, …) so every spec parameter is physically
+   measurable in the result.
+3. `doc.recompute()` then check `App.ActiveDocument` errors; save with `doc.saveAs(out_path)`.
+4. Print, at the end of the script: `Shape.Volume`, `Shape.Area`,
+   sorted `[BoundBox.XLength, YLength, ZLength]`, `len(Shape.Solids)`, and the sum
+   of face areas grouped by surface type (`type(face.Surface).__name__`).
+
+## Verification loop (mandatory before you finish)
+
+A. **Analytic cross-check.** Before running the script, compute the expected volume
+   (and where easy, bounding box) by hand from the parameters — e.g. an annular
+   flange: `π/4·(OD² − bore²)·t − n·π/4·d_hole²·t`. After running, compare with the
+   printed volume. Any relative difference above 0.1% must be explained exactly
+   (e.g. f</pre></details>
+  </div>
+  <div class="big-stat"><div class="s"><div class="v" style="color:var(--y)">203s</div><div class="l">latency p50</div></div><div class="s"><div class="v" style="color:var(--y)">873s</div><div class="l">latency p95</div></div><div class="s"><div class="v" style="color:var(--r)">873s</div><div class="l">latency max</div></div><div class="s"><div class="v" style="color:var(--muted)">—</div><div class="l">cost / window</div></div><div class="s"><div class="v" style="color:var(--muted)">11</div><div class="l">traces</div></div><div class="s"><div class="v" style="color:var(--r)">1</div><div class="l">errors</div></div></div>
+  <div class="deep-read-tile">
+  <h3>Deep-read coverage — trace-hungry escalation telemetry</h3>
+  <div class="big-stat deep-read-stat"><div class="s"><div class="v" style="color:var(--p)">50</div><div class="l">tier reached</div></div><div class="s"><div class="v" style="color:var(--muted)">11</div><div class="l">trace population</div></div><div class="s"><div class="v" style="color:var(--c)">11</div><div class="l">llm-read</div></div><div class="s"><div class="v" style="color:var(--g)">high</div><div class="l">coverage confidence</div></div><div class="s"><div class="v" style="color:var(--muted)">evidence sufficient</div><div class="l">stop reason</div></div></div>
+  
+</div>
+  
+  <div class="warn suspected-primary-unconfirmed" data-suspected="wrong-output">
+    <strong>⚠ Suspected primary — unconfirmed:</strong>
+    <code>wrong-output</code> was the highest-impact <em>discovered</em> signal
+    (seen in 11/11 sampled) but is <strong>capped at SECONDARY</strong>
+    — discovered but UNCONFIRMED — no mechanical trajectory corroboration with a resolvable evidenceRef (R1 evidence floor); capped at SECONDARY. The primary shown below is a cheaper fallback signal, NOT a
+    confident root cause. Treat the suspected signal as a lead requiring mechanical corroboration.
+  </div>
+  <h3>Signal census → primary selected by failure-validity gate + impact×prevalence + deep-read corroboration</h3>
+  
+  <table>
+    <thead><tr><th>Signal / failure-mode</th><th>Present?</th><th>Measure</th><th>Decision</th></tr></thead>
+    <tbody>
+      <tr><td>wrong-output</td><td style="color:var(--y)">YES</td><td>seen in 11/11 sampled</td><td><span class="badge b-med">SECONDARY — discovered, unconfirmed (no mechanical evidence)</span></td></tr>
+      <tr><td>low-score</td><td style="color:var(--y)">YES</td><td>seen in 3/11 sampled</td><td><span class="badge b-med">SECONDARY — discovered, unconfirmed (no mechanical evidence)</span></td></tr>
+      <tr><td>wrong-output / hallucination</td><td style="color:var(--y)">1</td><td>1 errors</td><td>potential signal — ruled out (benign success:false / <20% rate)</td></tr>
+      <tr><td>low-score</td><td style="color:var(--g)">3</td><td>0 feedback</td><td>excluded — no signal</td></tr>
+    </tbody>
+  </table>
+  <h3>Scan coverage</h3>
+  <div class="funnel">
+    <div class="seg s-total"><div class="fv">11</div><div class="fl">traces in window</div><div class="fp">4 slices · dynamic-cluster</div></div>
+    <div class="seg s-code"><div class="fv">11</div><div class="fl">code-level scan (Tier 0)</div><div class="fp">100% · no LLM</div></div>
+    <div class="seg s-sample"><div class="fv">50</div><div class="fl">representative sample</div><div class="fp">455% of window · worst/med/best/rand</div></div>
+    <div class="seg s-llm"><div class="fv">11</div><div class="fl">LLM deep-read (analyzers)</div><div class="fp">11 of 50 sampled (100% of sample) · coverage: high</div></div>
+  </div>
+  <h3>24h timeline heatmap (colour = avg latency, number = trace count)</h3>
+  <div class="heat-window-selector" style="font-size:11px;margin-bottom:4px;color:var(--muted);">
+    <span class="heat-win active" data-win="24h" style="font-weight:700;color:var(--c);">24h</span>
+    <span style="margin:0 4px;">·</span>
+    <span class="heat-win" data-win="7d" style="cursor:pointer;">7d</span>
+    <span style="margin:0 4px;">·</span>
+    <span class="heat-win" data-win="30d" style="cursor:pointer;">30d</span>
+    
+  </div><div class="heat" id="heat">
+    <div class="cell l0" title="00h avg 0s · avg 0s max 0s"><span class="ch">00</span><span class="cn">0</span></div>
+    <div class="cell l0" title="01h avg 0s · avg 0s max 0s"><span class="ch">01</span><span class="cn">0</span></div>
+    <div class="cell l0" title="02h avg 0s · avg 0s max 0s"><span class="ch">02</span><span class="cn">0</span></div>
+    <div class="cell l0" title="03h avg 0s · avg 0s max 0s"><span class="ch">03</span><span class="cn">0</span></div>
+    <div class="cell l0" title="04h avg 0s · avg 0s max 0s"><span class="ch">04</span><span class="cn">0</span></div>
+    <div class="cell l0" title="05h avg 0s · avg 0s max 0s"><span class="ch">05</span><span class="cn">0</span></div>
+    <div class="cell l4" title="06h avg 141s · avg 141s max 203s"><span class="ch">06</span><span class="cn">3</span></div>
+    <div class="cell l4" title="07h avg 399s · avg 399s max 873s"><span class="ch">07</span><span class="cn">8</span></div>
+    <div class="cell l0" title="08h avg 0s · avg 0s max 0s"><span class="ch">08</span><span class="cn">0</span></div>
+    <div class="cell l0" title="09h avg 0s · avg 0s max 0s"><span class="ch">09</span><span class="cn">0</span></div>
+    <div class="cell l0" title="10h avg 0s · avg 0s max 0s"><span class="ch">10</span><span class="cn">0</span></div>
+    <div class="cell l0" title="11h avg 0s · avg 0s max 0s"><span class="ch">11</span><span class="cn">0</span></div>
+    <div class="cell l0" title="12h avg 0s · avg 0s max 0s"><span class="ch">12</span><span class="cn">0</span></div>
+    <div class="cell l0" title="13h avg 0s · avg 0s max 0s"><span class="ch">13</span><span class="cn">0</span></div>
+    <div class="cell l0" title="14h avg 0s · avg 0s max 0s"><span class="ch">14</span><span class="cn">0</span></div>
+    <div class="cell l0" title="15h avg 0s · avg 0s max 0s"><span class="ch">15</span><span class="cn">0</span></div>
+    <div class="cell l0" title="16h avg 0s · avg 0s max 0s"><span class="ch">16</span><span class="cn">0</span></div>
+    <div class="cell l0" title="17h avg 0s · avg 0s max 0s"><span class="ch">17</span><span class="cn">0</span></div>
+    <div class="cell l0" title="18h avg 0s · avg 0s max 0s"><span class="ch">18</span><span class="cn">0</span></div>
+    <div class="cell l0" title="19h avg 0s · avg 0s max 0s"><span class="ch">19</span><span class="cn">0</span></div>
+    <div class="cell l0" title="20h avg 0s · avg 0s max 0s"><span class="ch">20</span><span class="cn">0</span></div>
+    <div class="cell l0" title="21h avg 0s · avg 0s max 0s"><span class="ch">21</span><span class="cn">0</span></div>
+    <div class="cell l0" title="22h avg 0s · avg 0s max 0s"><span class="ch">22</span><span class="cn">0</span></div>
+    <div class="cell l0" title="23h avg 0s · avg 0s max 0s"><span class="ch">23</span><span class="cn">0</span></div>
+  </div>
+  <div class="heat-legend">avg latency: <span><span class="sw l0"></span>&lt;50s</span><span><span class="sw l1"></span>50–65s</span><span><span class="sw l2"></span>65–85s</span><span><span class="sw l3"></span>85–100s</span><span><span class="sw l4"></span>&gt;100s</span> · hover a cell for detail</div>
+  <p style="font-size:12px;color:var(--muted);">Volume peaks at 07h, 06h; latency peaks at 07h, 06h.</p>
+  <h3>Diagnosed sessions <span class="r-count">(11)</span></h3>
+  <p class="sub">One row per session diagnosed in this run — what was asked, what the agent did, and the findings that cite it. Click a finding id to drill in.</p>
+  <table class="session-summary">
+    <thead><tr><th>Session</th><th>Traces</th><th>What was asked</th><th>What the agent did</th><th>Findings</th></tr></thead>
+    <tbody>
+      <tr id="session-1528f84e-aed5-4d5b-859f-91c12ce531ba"><td>1528f84e-aed5-4d5b-859f-91c12ce531ba</td><td>2</td><td>—</td><td>on every task the agent hand-derived an expected volume from its own reading of the key parameters, coded that same rea…</td><td><a class="drill" data-goto="t4">F-slice-all-1</a></td></tr>
+      <tr id="session-1625e9ae-7297-4fb5-833e-0d82c87f0e34"><td>1625e9ae-7297-4fb5-833e-0d82c87f0e34</td><td>3</td><td>—</td><td>on every task the agent hand-derived an expected volume from its own reading of the key parameters, coded that same rea…</td><td><a class="drill" data-goto="t4">F-slice-all-1</a>, <a class="drill" data-goto="t7">F-slice-all-6</a></td></tr>
+      <tr id="session-1a923e1e-f677-4d4f-9ecf-6942cf7e4701"><td>1a923e1e-f677-4d4f-9ecf-6942cf7e4701</td><td>3</td><td>—</td><td>on every task the agent hand-derived an expected volume from its own reading of the key parameters, coded that same rea…</td><td><a class="drill" data-goto="t4">F-slice-all-1</a>, <a class="drill" data-goto="t6">F-slice-all-5</a>, <a class="drill" data-goto="t7">F-slice-all-6</a></td></tr>
+      <tr id="session-327a4d5b-a00c-4dfb-8e47-8fa8a4a27310"><td>327a4d5b-a00c-4dfb-8e47-8fa8a4a27310</td><td>4</td><td>—</td><td>on every task the agent hand-derived an expected volume from its own reading of the key parameters, coded that same rea…</td><td><a class="drill" data-goto="t4">F-slice-all-1</a>, <a class="drill" data-goto="t6">F-slice-all-5</a>, <a class="drill" data-goto="t7">F-slice-all-6</a></td></tr>
+      <tr id="session-420632c1-f69e-426d-a0cc-dbc84a63b6bd"><td>420632c1-f69e-426d-a0cc-dbc84a63b6bd</td><td>4</td><td>—</td><td>on every task the agent hand-derived an expected volume from its own reading of the key parameters, coded that same rea…</td><td><a class="drill" data-goto="t4">F-slice-all-1</a>, <a class="drill" data-goto="t6">F-slice-all-5</a>, <a class="drill" data-goto="t7">F-slice-all-6</a></td></tr>
+      <tr id="session-75a0555b-00e8-445a-8ad0-7d8053fc2cff"><td>75a0555b-00e8-445a-8ad0-7d8053fc2cff</td><td>2</td><td>—</td><td>the agent built the flange, hit a Body.Tip ordering bug, fixed it, re-ran and got volume matching its analytic value to…</td><td><a class="drill" data-goto="t2">F-slice-all-3</a>, <a class="drill" data-goto="t6">F-slice-all-5</a></td></tr>
+      <tr id="session-79a5d994-b987-46a6-8036-f8a6ddd69f3f"><td>79a5d994-b987-46a6-8036-f8a6ddd69f3f</td><td>2</td><td>—</td><td>the agent followed the family convention and omitted the chamfer, which was geometrically right — the answer matched th…</td><td><a class="drill" data-goto="t3">F-slice-all-4</a>, <a class="drill" data-goto="t6">F-slice-all-5</a></td></tr>
+      <tr id="session-80caa98b-dc05-4a4b-8d72-dcfc7c9c8437"><td>80caa98b-dc05-4a4b-8d72-dcfc7c9c8437</td><td>2</td><td>—</td><td>on every task the agent hand-derived an expected volume from its own reading of the key parameters, coded that same rea…</td><td><a class="drill" data-goto="t4">F-slice-all-1</a>, <a class="drill" data-goto="t6">F-slice-all-5</a></td></tr>
+      <tr id="session-a913ea60-3fe9-4cf4-89fb-a9f65ebf1e01"><td>a913ea60-3fe9-4cf4-89fb-a9f65ebf1e01</td><td>3</td><td>—</td><td>the agent followed the family convention and omitted the chamfer, which was geometrically right — the answer matched th…</td><td><a class="drill" data-goto="t4">F-slice-all-1</a>, <a class="drill" data-goto="t5">F-slice-all-2</a>, <a class="drill" data-goto="t3">F-slice-all-4</a>, <a class="drill" data-goto="t7">F-slice-all-6</a></td></tr>
+      <tr id="session-c38c8881-a3ba-49e2-af7b-67d9f7fb2a69"><td>c38c8881-a3ba-49e2-af7b-67d9f7fb2a69</td><td>3</td><td>—</td><td>on every task the agent hand-derived an expected volume from its own reading of the key parameters, coded that same rea…</td><td><a class="drill" data-goto="t4">F-slice-all-1</a>, <a class="drill" data-goto="t6">F-slice-all-5</a></td></tr>
+      <tr id="session-fd60d772-e392-4b4e-b94b-d997373c166f"><td>fd60d772-e392-4b4e-b94b-d997373c166f</td><td>2</td><td>—</td><td>on every task the agent hand-derived an expected volume from its own reading of the key parameters, coded that same rea…</td><td><a class="drill" data-goto="t4">F-slice-all-1</a></td></tr>
+    </tbody>
+  </table>
+  <table>
+    <thead><tr><th>ID</th><th>Severity</th><th>Kind</th><th>WHAT/WHY/WHERE</th><th>Apply</th><th>One-liner</th></tr></thead>
+    <tbody>
+      <tr class="kind-group-row" data-kind="defect"><td colspan="6">Defects</td></tr>
+      <tr><td>F-slice-all-3</td><td><span class="badge b-crit">CRIT</span></td><td><span class="badge k-defect">DEFECT</span></td><td>low-score / dependency-failure / harness-side</td><td></td><td>On freecad-0fe9d9e3ce the live verifier scored spec-consistency 0.0 (0/5) on a f</td></tr>
+      <tr><td>F-slice-all-4</td><td><span class="badge b-crit">CRIT</span></td><td><span class="badge k-defect">DEFECT</span></td><td>low-score / prompt-underspec / system-prompt</td><td></td><td>The agent discovered on one task that an unmodelled parameter can be made spec-m</td></tr>
+      <tr><td>F-slice-all-1</td><td><span class="badge b-crit">CRIT</span></td><td><span class="badge k-defect">DEFECT</span></td><td>wrong-output / prompt-underspec / system-prompt</td><td></td><td>The playbook&#39;s mandatory analytic cross-check is circular — it compares the scri</td></tr>
+      <tr><td>F-slice-all-2</td><td><span class="badge b-crit">CRIT</span></td><td><span class="badge k-defect">DEFECT</span></td><td>wrong-output / prompt-underspec / system-prompt</td><td></td><td>When a dimension the geometry requires is absent from the key-parameter list, th</td></tr>
+      <tr><td>F-slice-all-5</td><td><span class="badge b-crit">CRIT</span></td><td><span class="badge k-defect">DEFECT</span></td><td>wrong-output / prompt-underspec / system-prompt</td><td></td><td>Four of the eleven tasks scored 1.0 in the baseline run and regressed here, thre</td></tr>
+      <tr><td>F-slice-all-6</td><td><span class="badge b-high">HIGH</span></td><td><span class="badge k-defect">DEFECT</span></td><td>wrong-output / prompt-underspec / system-prompt</td><td></td><td>The surface-type sub-metric sits between 0.729 and 0.827 on the spline, disc-spr</td></tr>
+    </tbody>
+  </table>
+  
+</section>
+
+
+<section class="panel finding-panel" id="t2">
+  <h2><span class="badge b-crit">CRITICAL</span> <span class="badge k-defect">DEFECT</span> F-slice-all-3 — On freecad-0fe9d9e3ce the live verifier scored spec-consistency 0.0 (0/5) on a file whose </h2>
+  
+  
+  <div class="taxonomy">
+    <span class="tax-chip"><strong>WHAT</strong>: low-score</span>
+    <span class="tax-chip"><strong>WHY</strong>: dependency-failure</span>
+    <span class="tax-chip"><strong>WHERE</strong>: harness-side</span>
+    
+    <span class="tax-chip"><strong>Confidence</strong>: high</span>
+    <a class="tax-chip drill" data-goto="t1" data-anchor="session-75a0555b-00e8-445a-8ad0-7d8053fc2cff"><strong>SESSION</strong>: 75a0555b-00e8-445a-8ad0-7d8053fc2cff</a>
+  </div>
+  <h3>Problem</h3>
+  <div class="f-desc">freecad-0fe9d9e3ce was graded 0.0 overall despite geometry_similarity=1.000 with volume_diff, surface_area_diff and bbox_diff all exactly 0.000% — the live verifier reported cad_spec_consistency=0.000 (0/5 consistent, 5 inconsistent, 0 not_found) against 1.000 (6/6) from the same scorer run in-container on the same answer.FCStd at tr 75a0555b msg 26, and the trial's verifier/test-stdout.txt is empty; the baseline run scored this task 1.0.</div>
+  
+  
+  <h3>Evidence</h3>
+  <p class="ev-narration">trace <code>75a0555b-00e8-445a-8ad0-7d8053fc2cff</code> — the agent built the flange, hit a Body.Tip ordering bug, fixed it, re-ran and got volume matching its analytic value to 0.0%, then ran the public spec checker on /app/answer.FCStd and got 1.0 with 6 of 6 parameters consistent; the live verifier subsequently graded the same file geometry-perfect but spec 0/5, and the harmonic-mean task score collapsed to zero <q class="ev-example">«agent (msg 26): «Comparison Score: 1.0 / consistency_rate=1.000 (6/6 consistent, 0 inconsistent, 0 not_found)» — verifier: «consistency_rate=0.000 (0/5 consistent, 5 inconsistent, 0 not_found)»»</q></p>
+  <h3>Why-chain</h3>
+  <ol class="whychain">
+    <li class="">A file that reproduces the reference geometry exactly was scored 0/5 on spec consistency<em>trace <code>freecad-0fe9d9e3ce__FzcgEak/verifier/reward.json</code> — the same reward file records geometry_similarity=1.000 with surface_types, volume, surface_area and bbox all 1.000 and all three diffs at 0.000% — the answer is geometrically indistinguishable from the reference — while reporting every one of the five spec parameters as inconsistent <q class="ev-example">««overall=1.000 ... volume_diff=0.000% (Matched)» alongside «consistency_rate=0.000 (0/5 consistent, 5 inconsistent, 0 not_found)»»</q></em></li>
+    <li class="">The reference model itself would have to fail its own spec check for that result to be genuine<em>trace <code>freecad-0fe9d9e3ce__FzcgEak/verifier/reward.json; gnucleus-bench/harness/final_run_scores.json (freecad-0fe9d9e3ce: score 1.0, spec 1.0)</code> — since answer and reference are geometrically identical, any measurement the spec checker takes on one it must take on the other; the baseline run graded this same task spec=1.0, so the checker is capable of scoring this geometry correctly</em></li>
+    <li class="">The agent&#39;s in-container run of the same scorer on the same file returned the opposite result, and the parameter count differs between the two runs<em>trace <code>tr 75a0555b msg 25-26 vs freecad-0fe9d9e3ce__FzcgEak/verifier/reward.json</code> — the agent invoked freecad_validator.scorers.spec_consistency on /app/answer.FCStd and got 6/6 consistent; the verifier reports a denominator of 5, so the two runs did not evaluate the same parameter set — indicating the verifier-side spec input or scorer invocation differed from the documented one</em></li>
+    <li class="origin">The verifier&#39;s own stdout capture for this trial is empty, so the failing invocation left no diagnostic record<em>trace <code>freecad-0fe9d9e3ce__FzcgEak/verifier/test-stdout.txt (0 bytes); reward.txt contains only &#39;0.000000&#39;</code> — the trial directory retains the score but not the scorer output, so a spec-consistency collapse on a geometry-perfect answer is unattributable from the artifacts alone — the harness discards the evidence needed to distinguish a real defect from a scoring failure</em></li>
+  </ol>
+  <div class="coverage-proof coverage-proof-absent">
+  <h3>Sampling coverage — representativeness proof <span class="badge b-info">NOT COMPUTED</span></h3>
+  <p class="sub">Per-finding representativeness was not computed for this finding (no per-finding sample proof attached). The run-level sampling methodology still applies; see the Methodology tab.</p>
+</div>
+  <div class="assumptions"><h4>⚠ Assumptions</h4><ul>
+    <li>The operator&#39;s report that the same answer.FCStd re-grades 1.0/1.0 offline with the task&#39;s own scorer is accurate. <span class="unverified">UNVERIFIED — Operator-stated in the dispatch context; corroborated but not independently reproduced here — the in-trace scorer run (msg 26) and the geometry_similarity=1.000 result both point the same way.</span></li>
+    <li>The mismatch in reported parameter count (6 in the agent&#39;s run, 5 in the verifier&#39;s) indicates the two runs used different spec inputs. <span class="unverified">UNVERIFIED — The agent&#39;s spec.json (msg 25) lists six key parameters copied verbatim from the task; the verifier&#39;s denominator is 5. The verifier&#39;s spec input was not observable from the retained artifacts.</span></li>
+    <li>Source code for unitf-agent was not provided; findings are evidence-only and file paths are inferred from trace metadata — verify paths before applying. <span class="hypothesis-pending">HYPOTHESIS-PENDING — No source/code access for this run (trace IDs only); inferred from trace metadata and the playbook copy embedded in the diagnosis context.</span></li>
+  </ul></div>
+  <h3>Remedies</h3>
+  <div class="remedy recommended">
+  <script type="text/plain" id="payload-r-slice-all-3-a">## R-slice-all-3-a — Capture verifier stdout and stderr so a zero score is attributable
+**Finding:** F-slice-all-3 — On freecad-0fe9d9e3ce the live verifier scored spec-consistency 0.0 (0/5) on a file whose geometry matched the reference exactly, while the agent&#39;s own run of the identical scorer on the identical file returned 1.0 (6/6) — a harness-side scoring failure that zeroed a perfect answer.
+**Severity:** high
+**Apply target:** gnucleus-bench/jobs/generic-01/\*/verifier/test-stdout.txt (harness verifier step)
+**Target class:** local-code-construct
+**Cost:** low · **Correctness:** high · **Rank:** 1
+
+### Why this remedy
+The trial retains reward.json and a one-line reward.txt but an empty test-stdout.txt, so the single most damaging result in the slice — a perfect part scored zero — cannot be traced to a cause from the artifacts. The agent&#39;s own scorer run on the same file is preserved in the trace and contradicts the verifier, which is the only reason the discrepancy is visible at all.
+
+### Why this works
+Persisting the verifier&#39;s stdout and stderr, plus the exact spec payload it scored against, makes the two invocations directly comparable: a genuine geometry defect leaves a per-parameter mismatch table, whereas a harness failure leaves an exception or an empty measurement set. That distinction is currently unavailable and is what forces manual re-grading.
+
+### Source not found — hypothesis
+The apply target&#39;s current source is not accessible, so no Before/After is cited. Apply as a hypothesis and verify.
+
+### Apply instructions
+1. Locate the harness step that writes gnucleus-bench/jobs/&lt;job&gt;/&lt;trial&gt;/verifier/test-stdout.txt and confirm whether it is being truncated or never written on the spec-consistency path.
+2. Redirect both stdout and stderr of the spec\_consistency and geometry scorer invocations into the trial&#39;s verifier directory, unconditionally, including on non-zero exit.
+3. Persist the exact spec payload passed to spec\_consistency alongside reward.json as verifier/spec-used.json.
+4. Re-run freecad-0fe9d9e3ce and diff verifier/spec-used.json against the spec.json the agent constructed at tr 75a0555b msg 25 to confirm or rule out a differing parameter set.
+</script>
+  <input type="checkbox" class="remedy-cb" data-id="R-slice-all-3-a" data-finding="F-slice-all-3" checked>
+  <div class="remedy-body">
+  <div class="remedy-header"><div class="remedy-rank-id"><span class="rank-pill">RANK 1</span> <span class="remedy-id">R-slice-all-3-a</span></div><div class="remedy-what">Capture verifier stdout and stderr so a zero score is attributable</div></div>
+  <div class="remedy-meta"><span class="b-cost-low">cost:low</span><span class="b-correctness-high">correct:high</span><span class="tclass-pill tclass-local-code-construct">local-code-construct</span><span class="apply-pill apply-config">gnucleus-bench/jobs/generic-01/*/verifier/test-stdout.txt (harness verifier step)</span></div>
+  <div class="r-rationale"><span class="r-block-label">Why this remedy</span><p>The trial retains reward.json and a one-line reward.txt but an empty test-stdout.txt, so the single most damaging result in the slice — a perfect part scored zero — cannot be traced to a cause from the artifacts. The agent&#39;s own scorer run on the same file is preserved in the trace and contradicts the verifier, which is the only reason the discrepancy is visible at all.</p></div>
+  <div class="r-why-works"><span class="r-block-label">Why this works</span><p>Persisting the verifier&#39;s stdout and stderr, plus the exact spec payload it scored against, makes the two invocations directly comparable: a genuine geometry defect leaves a per-parameter mismatch table, whereas a harness failure leaves an exception or an empty measurement set. That distinction is currently unavailable and is what forces manual re-grading.</p></div>
+  <div class="r-target"><span class="r-target-label">Apply target</span><code>gnucleus-bench/jobs/generic-01/*/verifier/test-stdout.txt (harness verifier step)</code></div>
+  
+  <div class="r-diff-caveat" data-diff-status="source-unavailable">
+  <div class="r-diff-caveat-label">Source not found — hypothesis</div>
+  <p>The apply target&#39;s current source is not accessible to the analyzer, so a Before/After cannot be cited. No diff is shown; apply this remedy as a hypothesis and verify against the live target.</p>
+</div>
+  <div class="r-apply-grid"><div class="apply-col apply-col-empty"><span class="r-block-label">Apply plan</span><p class="r-muted">No structured plan provided.</p></div><div class="apply-col">
+  <div class="apply-col-label">Apply instructions</div>
+  <ol class="r-apply-instr">
+    <li>Locate the harness step that writes gnucleus-bench/jobs/&lt;job&gt;/&lt;trial&gt;/verifier/test-stdout.txt and confirm whether it is being truncated or never written on the spec-consistency path.</li>
+    <li>Redirect both stdout and stderr of the spec_consistency and geometry scorer invocations into the trial&#39;s verifier directory, unconditionally, including on non-zero exit.</li>
+    <li>Persist the exact spec payload passed to spec_consistency alongside reward.json as verifier/spec-used.json.</li>
+    <li>Re-run freecad-0fe9d9e3ce and diff verifier/spec-used.json against the spec.json the agent constructed at tr 75a0555b msg 25 to confirm or rule out a differing parameter set.</li>
+  </ol>
+</div></div>
+  
+  <textarea class="remedy-notes" placeholder="Feedback on this remedy — overrides, conditions, why-not, modifications. Merged verbatim into the master Copy decisions bundle."></textarea>
+  </div>
+</div>
+  <div class="remedy">
+  <script type="text/plain" id="payload-r-slice-all-3-b">## R-slice-all-3-b — Flag geometry-perfect / spec-zero results as suspect before accepting the score
+**Finding:** F-slice-all-3 — On freecad-0fe9d9e3ce the live verifier scored spec-consistency 0.0 (0/5) on a file whose geometry matched the reference exactly, while the agent&#39;s own run of the identical scorer on the identical file returned 1.0 (6/6) — a harness-side scoring failure that zeroed a perfect answer.
+**Severity:** high
+**Apply target:** gnucleus-bench/harness/final\_run\_scores.json (score aggregation step)
+**Target class:** local-code-construct
+**Cost:** medium · **Correctness:** high · **Rank:** 2
+
+### Why this remedy
+Because the task score is the harmonic mean of the two sub-metrics, a spurious spec zero discards a fully correct answer outright — this single trial cost the full point on a task the baseline scored 1.0. The combination geometry\_similarity=1.000 with cad\_spec\_consistency=0.000 is self-contradictory and mechanically detectable.
+
+### Why this works
+Geometry similarity of exactly 1.000 means the answer and the reference are the same shape, so any parameter the checker can measure on one it measures identically on the other; a spec rate of 0.000 in that situation is impossible on the merits and can only come from the scoring path. Detecting the contradiction automatically routes the trial to a re-grade instead of silently banking a zero.
+
+### Source not found — hypothesis
+The apply target&#39;s current source is not accessible, so no Before/After is cited. Apply as a hypothesis and verify.
+
+### Apply instructions
+1. In the harness score aggregation, add a post-check: if geometry\_similarity &gt;= 0.999 and cad\_spec\_consistency &lt;= 0.001, mark the trial &#39;suspect-spec-zero&#39; rather than final.
+2. On that marker, re-run the spec scorer once against the retained answer.FCStd and record both results.
+3. If the re-run disagrees with the original, emit a harness warning naming the trial and keep both scores in the record.
+4. Apply the check retroactively to gnucleus-bench/jobs/generic-01 and confirm freecad-0fe9d9e3ce is the only trial it flags.
+</script>
+  <input type="checkbox" class="remedy-cb" data-id="R-slice-all-3-b" data-finding="F-slice-all-3">
+  <div class="remedy-body">
+  <div class="remedy-header"><div class="remedy-rank-id"><span class="rank-pill">RANK 2</span> <span class="remedy-id">R-slice-all-3-b</span></div><div class="remedy-what">Flag geometry-perfect / spec-zero results as suspect before accepting the score</div></div>
+  <div class="remedy-meta"><span class="b-cost-medium">cost:medium</span><span class="b-correctness-high">correct:high</span><span class="tclass-pill tclass-local-code-construct">local-code-construct</span><span class="apply-pill apply-config">gnucleus-bench/harness/final_run_scores.json (score aggregation step)</span></div>
+  <div class="r-rationale"><span class="r-block-label">Why this remedy</span><p>Because the task score is the harmonic mean of the two sub-metrics, a spurious spec zero discards a fully correct answer outright — this single trial cost the full point on a task the baseline scored 1.0. The combination geometry_similarity=1.000 with cad_spec_consistency=0.000 is self-contradictory and mechanically detectable.</p></div>
+  <div class="r-why-works"><span class="r-block-label">Why this works</span><p>Geometry similarity of exactly 1.000 means the answer and the reference are the same shape, so any parameter the checker can measure on one it measures identically on the other; a spec rate of 0.000 in that situation is impossible on the merits and can only come from the scoring path. Detecting the contradiction automatically routes the trial to a re-grade instead of silently banking a zero.</p></div>
+  <div class="r-target"><span class="r-target-label">Apply target</span><code>gnucleus-bench/harness/final_run_scores.json (score aggregation step)</code></div>
+  
+  <div class="r-diff-caveat" data-diff-status="source-unavailable">
+  <div class="r-diff-caveat-label">Source not found — hypothesis</div>
+  <p>The apply target&#39;s current source is not accessible to the analyzer, so a Before/After cannot be cited. No diff is shown; apply this remedy as a hypothesis and verify against the live target.</p>
+</div>
+  <div class="r-apply-grid"><div class="apply-col apply-col-empty"><span class="r-block-label">Apply plan</span><p class="r-muted">No structured plan provided.</p></div><div class="apply-col">
+  <div class="apply-col-label">Apply instructions</div>
+  <ol class="r-apply-instr">
+    <li>In the harness score aggregation, add a post-check: if geometry_similarity &gt;= 0.999 and cad_spec_consistency &lt;= 0.001, mark the trial &#39;suspect-spec-zero&#39; rather than final.</li>
+    <li>On that marker, re-run the spec scorer once against the retained answer.FCStd and record both results.</li>
+    <li>If the re-run disagrees with the original, emit a harness warning naming the trial and keep both scores in the record.</li>
+    <li>Apply the check retroactively to gnucleus-bench/jobs/generic-01 and confirm freecad-0fe9d9e3ce is the only trial it flags.</li>
+  </ol>
+</div></div>
+  
+  <textarea class="remedy-notes" placeholder="Feedback on this remedy — overrides, conditions, why-not, modifications. Merged verbatim into the master Copy decisions bundle."></textarea>
+  </div>
+</div>
+  <div class="finding-verdict">
+  <script type="text/plain" id="dismiss-payload-f-slice-all-3">{&quot;findingId&quot;:&quot;F-slice-all-3&quot;,&quot;verdict&quot;:&quot;dismissed&quot;,&quot;what&quot;:&quot;low-score&quot;,&quot;why&quot;:&quot;dependency-failure&quot;,&quot;where&quot;:&quot;harness-side&quot;,&quot;whatHappened&quot;:&quot;the agent built the flange, hit a Body.Tip ordering bug, fixed it, re-ran and got volume matching its analytic value to 0.0%, then ran the public spec checker on /app/answer.FCStd and got 1.0 with 6 of 6 parameters consistent; the live verifier subsequently graded the same file geometry-perfect but spec 0/5, and the harmonic-mean task score collapsed to zero&quot;,&quot;severity&quot;:&quot;info&quot;}</script>
+  <label class="fv-toggle"><input type="checkbox" class="finding-invalid" data-finding="F-slice-all-3"> <span class="fv-label">Invalid — not an issue (dismiss &amp; suppress next run)</span></label>
+  <textarea class="dismiss-reason" placeholder="Why is this not an issue? Folded verbatim into the Copy decisions bundle."></textarea>
+</div>
+</section>
+
+<section class="panel finding-panel" id="t3">
+  <h2><span class="badge b-crit">CRITICAL</span> <span class="badge k-defect">DEFECT</span> F-slice-all-4 — The agent discovered on one task that an unmodelled parameter can be made spec-measurable </h2>
+  
+  
+  <div class="taxonomy">
+    <span class="tax-chip"><strong>WHAT</strong>: low-score</span>
+    <span class="tax-chip"><strong>WHY</strong>: prompt-underspec</span>
+    <span class="tax-chip"><strong>WHERE</strong>: system-prompt</span>
+    
+    <span class="tax-chip"><strong>Confidence</strong>: high</span>
+    <a class="tax-chip drill" data-goto="t1" data-anchor="session-79a5d994-b987-46a6-8036-f8a6ddd69f3f"><strong>SESSION</strong>: 79a5d994-b987-46a6-8036-f8a6ddd69f3f</a>
+  </div>
+  <h3>Problem</h3>
+  <div class="f-desc">freecad-c4bad6c5af reproduced the reference geometry exactly (geometry_similarity=1.000, all diffs 0.000%) but scored cad_spec_consistency=0.667 because chamfer_length and chamfer_angle were reported inconsistent — the playbook's slotted-headless-pin convention directs that they not be modelled — pulling the task from 1.0 to 0.800, while in the same run on freecad-8450a6402b the agent solved the equivalent problem by binding elbow_angle to a named sketch constraint and reached spec 1.0 (tr 79a5d994 msg 16; tr a913ea60 msg 109).</div>
+  
+  
+  <h3>Evidence</h3>
+  <p class="ev-narration">trace <code>79a5d994-b987-46a6-8036-f8a6ddd69f3f</code> — the agent followed the family convention and omitted the chamfer, which was geometrically right — the answer matched the reference exactly — but left chamfer_length and chamfer_angle with nothing for the spec checker to anchor to, so 2 of 6 parameters came back inconsistent and the harmonic mean dropped the task to 0.800; on the elbow-flange task the same agent had already found that carrying such a parameter as a named driving constraint bound by expression satisfies the checker without touching the geometry <q class="ev-example">««Per the slotted-headless-pin family convention, the chamfer parameters are not modelled in the solid ... Spec consistency: **0.667** (4/6 consistent ... the 2 flagged are `chamfer_length` / `chamfer_angle`, deliberately unmodelled on this family)»»</q></p>
+  <h3>Why-chain</h3>
+  <ol class="whychain">
+    <li class="">A geometrically perfect answer lost 20% of its task score on spec consistency alone<em>trace <code>freecad-c4bad6c5af__MG4yS8i/verifier/reward.json (score 0.800, geometry_similarity 1.0, cad_spec_consistency 0.6667)</code> — volume, surface area, bounding box and surface-type mix all matched the reference to 0.000%, so nothing about the shape was wrong; the entire deficit came from two parameters the checker could not measure</em></li>
+    <li class="">The playbook instructs that those two parameters not be realised in the solid, and offers no way to satisfy the checker anyway<em>trace <code>gnucleus-bench/harness/playbook.md:208-212</code> — the convention says &#39;NO chamfers even if chamfer parameters are printed (on this family they describe finishing that is not modelled in the solid)&#39; — correct for geometry, but it leaves the spec checker with two orphan parameters and the playbook never mentions the cost</em></li>
+    <li class="">The playbook&#39;s guidance on unanchorable parameters tells the agent only to record them and move on, treating the loss as unavoidable<em>trace <code>gnucleus-bench/harness/playbook.md:120-124 (&#39;A DERIVED/standards parameter ... reported `not_found` while your analytic volume cross-check matches is EXPECTED — record it and move on&#39;)</code> — the agent applied exactly this instruction, noting the two flagged parameters as deliberate and finishing; the instruction is framed as accepting the loss rather than recovering it</em></li>
+    <li class="origin">The recovery technique the agent independently invented on another task in the same run was never captured in the playbook, so it is not available to any other task<em>trace <code>tr a913ea60 msg 109 (&#39;`SketchBendOuter` carries a named driving constraint `ElbowAngle` = 90 deg, and both `BendOuter.Angle` and `BoreBend.Angle` are bound to it by expression — so the elbow angle is genuinely a single editable driver, and the geometry is unchanged&#39;)</code> — on the elbow flange the agent hit the same class of problem — a parameter the checker read as inconsistent — and solved it by adding a named driving constraint with an expression binding, lifting spec to 1.0 with the volume identical before and after; the playbook contains no such rule, so the technique did not transfer to the slotted pin four tasks later</em></li>
+  </ol>
+  <div class="coverage-proof coverage-proof-absent">
+  <h3>Sampling coverage — representativeness proof <span class="badge b-info">NOT COMPUTED</span></h3>
+  <p class="sub">Per-finding representativeness was not computed for this finding (no per-finding sample proof attached). The run-level sampling methodology still applies; see the Methodology tab.</p>
+</div>
+  <div class="assumptions"><h4>⚠ Assumptions</h4><ul>
+    <li>The spec checker anchors a parameter when a named driving constraint or property carries its value, independent of whether the value produces distinct geometry. <span class="unverified">UNVERIFIED — Inferred from tr a913ea60 msg 109, where adding a named ElbowAngle constraint bound by expression raised spec_consistency to 1.0 with the volume unchanged. The checker&#39;s matching logic was not read directly.</span></li>
+    <li>The reference model for freecad-c4bad6c5af genuinely has no chamfer, so the playbook convention is geometrically correct. <span class="verified">VERIFIED — geometry_similarity=1.000 with volume_diff, surface_area_diff and bbox_diff all 0.000% against the reference (freecad-c4bad6c5af__MG4yS8i/verifier/reward.json).</span></li>
+    <li>Source code for unitf-agent was not provided; findings are evidence-only and file paths are inferred from trace metadata — verify paths before applying. <span class="hypothesis-pending">HYPOTHESIS-PENDING — No source/code access for this run (trace IDs only); inferred from trace metadata and the playbook copy embedded in the diagnosis context.</span></li>
+  </ul></div>
+  <h3>Remedies</h3>
+  <div class="remedy recommended">
+  <script type="text/plain" id="payload-r-slice-all-4-a">## R-slice-all-4-a — Promote the named-driving-constraint technique into the verification loop
+**Finding:** F-slice-all-4 — The agent discovered on one task that an unmodelled parameter can be made spec-measurable by binding it to a named driving constraint, then failed to apply that technique on the slotted-pin task where the identical situation cost a third of the spec score.
+**Severity:** high
+**Apply target:** gnucleus-bench/harness/playbook.md
+**Target class:** local-agent-md
+**Cost:** low · **Correctness:** high · **Rank:** 1
+
+### Why this remedy
+The run contains its own proof: the same agent recovered a flagged parameter to spec 1.0 on the elbow flange with a named constraint and expression binding, and lost 0.2 of a task point on the slotted pin by not doing so. The playbook currently frames unanchorable parameters as a loss to accept rather than one to recover, so the technique stayed local to one trajectory.
+
+### Why this works
+A named driving constraint gives the spec checker a value to anchor to without altering any face, edge or volume — the elbow-flange trace confirms the volume was identical before and after. Because the task score is a harmonic mean, converting two inconsistent parameters into consistent ones on an already-perfect geometry moves the task from 0.800 to 1.0 at zero geometric risk.
+
+### Diff
+**Before:**
+```diff
+- - **Slotted headless pins**: plain cylinder — NO chamfers even if chamfer
+  parameters are printed (on this family they describe finishing that is not
+  modeled in the solid) — with a
+  SCREWDRIVER SLOT across one end
+```
+**After:**
+```diff
++ - **Slotted headless pins**: plain cylinder — NO chamfers CUT into the solid even
+  if chamfer parameters are printed (on this family they describe finishing that
+  is not modeled in the solid). Still CARRY `chamfer_length` / `chamfer_angle` as
+  named driving constraints so the spec checker can anchor them — this changes no
+  geometry (verify volume before/after). Add a
+  SCREWDRIVER SLOT across one end
+```
+
+### Apply instructions
+1. Open gnucleus-bench/harness/playbook.md and locate step &#39;B. \*\*Spec-consistency self-check.\*\*&#39;.
+2. After the DERIVED/standards bullet, add: &#39;BEFORE accepting a not\_found or inconsistent parameter, try to anchor it WITHOUT changing geometry: put the value on a named driving Sketcher constraint (or a named feature property) and bind the dependent feature properties to it by expression. This makes the parameter a genuine editable driver, satisfies the checker, and leaves volume, area and bounding box bit-identical. Verify the volume before and after to confirm nothing moved.&#39;
+3. Amend the slotted-headless-pin family convention so it reads: chamfer is NOT cut into the solid, but chamfer\_length and chamfer\_angle MUST still be carried as named driving parameters so the checker can anchor them.
+4. Re-run freecad-c4bad6c5af and confirm cad\_spec\_consistency rises from 0.6667 while geometry\_similarity stays at 1.000.
+</script>
+  <input type="checkbox" class="remedy-cb" data-id="R-slice-all-4-a" data-finding="F-slice-all-4" checked>
+  <div class="remedy-body">
+  <div class="remedy-header"><div class="remedy-rank-id"><span class="rank-pill">RANK 1</span> <span class="remedy-id">R-slice-all-4-a</span></div><div class="remedy-what">Promote the named-driving-constraint technique into the verification loop</div></div>
+  <div class="remedy-meta"><span class="b-cost-low">cost:low</span><span class="b-correctness-high">correct:high</span><span class="tclass-pill tclass-local-agent">local-agent-md</span><span class="apply-pill apply-config">gnucleus-bench/harness/playbook.md</span></div>
+  <div class="r-rationale"><span class="r-block-label">Why this remedy</span><p>The run contains its own proof: the same agent recovered a flagged parameter to spec 1.0 on the elbow flange with a named constraint and expression binding, and lost 0.2 of a task point on the slotted pin by not doing so. The playbook currently frames unanchorable parameters as a loss to accept rather than one to recover, so the technique stayed local to one trajectory.</p></div>
+  <div class="r-why-works"><span class="r-block-label">Why this works</span><p>A named driving constraint gives the spec checker a value to anchor to without altering any face, edge or volume — the elbow-flange trace confirms the volume was identical before and after. Because the task score is a harmonic mean, converting two inconsistent parameters into consistent ones on an already-perfect geometry moves the task from 0.800 to 1.0 at zero geometric risk.</p></div>
+  <div class="r-target"><span class="r-target-label">Apply target</span><code>gnucleus-bench/harness/playbook.md</code></div>
+  
+  <div class="r-diff-grid">
+  <div class="diff-col"><div class="diff-label label-before">Before</div><pre>- **Slotted headless pins**: plain cylinder — NO chamfers even if chamfer
+  parameters are printed (on this family they describe finishing that is not
+  modeled in the solid) — with a
+  SCREWDRIVER SLOT across one end</pre></div>
+  <div class="diff-col"><div class="diff-label label-after">After</div><pre>- **Slotted headless pins**: plain cylinder — NO chamfers CUT into the solid even
+  if chamfer parameters are printed (on this family they describe finishing that
+  is not modeled in the solid). Still CARRY `chamfer_length` / `chamfer_angle` as
+  named driving constraints so the spec checker can anchor them — this changes no
+  geometry (verify volume before/after). Add a
+  SCREWDRIVER SLOT across one end</pre></div>
+</div>
+  <div class="r-apply-grid"><div class="apply-col apply-col-empty"><span class="r-block-label">Apply plan</span><p class="r-muted">No structured plan provided.</p></div><div class="apply-col">
+  <div class="apply-col-label">Apply instructions</div>
+  <ol class="r-apply-instr">
+    <li>Open gnucleus-bench/harness/playbook.md and locate step &#39;B. **Spec-consistency self-check.**&#39;.</li>
+    <li>After the DERIVED/standards bullet, add: &#39;BEFORE accepting a not_found or inconsistent parameter, try to anchor it WITHOUT changing geometry: put the value on a named driving Sketcher constraint (or a named feature property) and bind the dependent feature properties to it by expression. This makes the parameter a genuine editable driver, satisfies the checker, and leaves volume, area and bounding box bit-identical. Verify the volume before and after to confirm nothing moved.&#39;</li>
+    <li>Amend the slotted-headless-pin family convention so it reads: chamfer is NOT cut into the solid, but chamfer_length and chamfer_angle MUST still be carried as named driving parameters so the checker can anchor them.</li>
+    <li>Re-run freecad-c4bad6c5af and confirm cad_spec_consistency rises from 0.6667 while geometry_similarity stays at 1.000.</li>
+  </ol>
+</div></div>
+  
+  <textarea class="remedy-notes" placeholder="Feedback on this remedy — overrides, conditions, why-not, modifications. Merged verbatim into the master Copy decisions bundle."></textarea>
+  </div>
+</div>
+  <div class="finding-verdict">
+  <script type="text/plain" id="dismiss-payload-f-slice-all-4">{&quot;findingId&quot;:&quot;F-slice-all-4&quot;,&quot;verdict&quot;:&quot;dismissed&quot;,&quot;what&quot;:&quot;low-score&quot;,&quot;why&quot;:&quot;prompt-underspec&quot;,&quot;where&quot;:&quot;system-prompt&quot;,&quot;whatHappened&quot;:&quot;the agent followed the family convention and omitted the chamfer, which was geometrically right — the answer matched the reference exactly — but left chamfer_length and chamfer_angle with nothing for the spec checker to anchor to, so 2 of 6 parameters came back inconsistent and the harmonic mean dropped the task to 0.800; on the elbow-flange task the same agent had already found that carrying such a parameter as a named driving constraint bound by expression satisfies the checker without touching the geometry&quot;,&quot;severity&quot;:&quot;info&quot;}</script>
+  <label class="fv-toggle"><input type="checkbox" class="finding-invalid" data-finding="F-slice-all-4"> <span class="fv-label">Invalid — not an issue (dismiss &amp; suppress next run)</span></label>
+  <textarea class="dismiss-reason" placeholder="Why is this not an issue? Folded verbatim into the Copy decisions bundle."></textarea>
+</div>
+</section>
+
+<section class="panel finding-panel" id="t4">
+  <h2><span class="badge b-crit">CRITICAL</span> <span class="badge k-defect">DEFECT</span> F-slice-all-1 — The playbook&#39;s mandatory analytic cross-check is circular — it compares the script against</h2>
+  
+  
+  <div class="taxonomy">
+    <span class="tax-chip"><strong>WHAT</strong>: wrong-output</span>
+    <span class="tax-chip"><strong>WHY</strong>: prompt-underspec</span>
+    <span class="tax-chip"><strong>WHERE</strong>: system-prompt</span>
+    
+    <span class="tax-chip"><strong>Confidence</strong>: high</span>
+    <a class="tax-chip drill" data-goto="t1" data-anchor="session-a913ea60-3fe9-4cf4-89fb-a9f65ebf1e01"><strong>SESSION</strong>: a913ea60-3fe9-4cf4-89fb-a9f65ebf1e01</a>
+  </div>
+  <h3>Problem</h3>
+  <div class="f-desc">The mandatory analytic cross-check (playbook Verification loop A) converged to a self-reported relative difference of 0.000%-1e-16 in 11/11 traces, yet the graded volume sub-metric scored 0.000 in 7/11 and below 1.0 in 9/11 — reference volume_diff ranged 0.231% to 46.921% — so the agent's only pre-submission geometry signal carries zero information about correctness (tr a913ea60 msg 104 'Analytic V : 2007894.989 rel.diff: 8.1e-16' vs reward.json volume_diff=46.921%).</div>
+  
+  
+  <h3>Evidence</h3>
+  <p class="ev-narration">trace <code>a913ea60-3fe9-4cf4-89fb-a9f65ebf1e01</code> — on every task the agent hand-derived an expected volume from its own reading of the key parameters, coded that same reading into answer.py, iterated until the two agreed to machine precision, declared verification passed, and submitted — the elbow flange reported rel.diff 8.1e-16 and was then graded volume_diff 46.921% against the reference <q class="ev-example">««Analytic V  : 2007894.9893303823  rel.diff: 8.117030592922681e-16» (tr a913ea60 msg 104) → «volume_diff=46.921% (Far)» (freecad-8450a6402b__LBjpLsg/verifier/reward.json)»</q></p>
+  <h3>Why-chain</h3>
+  <ol class="whychain">
+    <li class="">The graded volume sub-metric was 0.000 on 7 of 11 tasks despite the agent reporting a passed volume check on all 11<em>trace <code>reward.json geometry_similarity_reason for 8450a6402b, b55517ee4b, e50de66084, b849a4d94e, 740b422c57, 14da78600e, 264ab71adf</code> — each of these seven reward files records &#39;volume=0.000&#39; with volume_diff between 2.231% and 46.921%, all labelled &#39;Far&#39;, while the corresponding trace ends with the agent asserting an exact analytic match</em></li>
+    <li class="">The expected volume the agent compares against is computed from the agent&#39;s own parameter interpretation, not from the task&#39;s ground truth<em>trace <code>tr c38c8881 msg 90: analytic formula &#39;pi/4*(50^2-40^2)*1000 + 2*[...]&#39; encodes the agent&#39;s choice that shaft_length is the overall axial length</code> — the agent wrote out the closed-form volume for the shaft geometry it had decided to build, then compared it to the volume of the shaft geometry it had built — the two agreed to 9e-16 because they are the same model expressed twice <q class="ev-example">««Volume 929 911.4255 mm3 vs analytic pi/4*(50^2-40^2)*1000 + 2*[pi/4*(100^2-50^2)*20 - 4*pi/4*10^2*20] = 929 911.4255 mm3 -&gt; rel. diff 9e-16»»</q></em></li>
+    <li class="">A check whose reference value is derived from the hypothesis under test cannot falsify that hypothesis, so every interpretation error passes it silently<em>trace <code>gnucleus-bench/harness/playbook.md:76-81</code> — the playbook instructs the agent to compute expected volume &#39;by hand from the parameters&#39; and hold the result to 0.1%, but supplies no independent oracle, so a misread parameter propagates identically into both sides of the comparison and the 0.1% gate always passes</em></li>
+    <li class="origin">The playbook defines no independent falsification step — no cross-interpretation enumeration, no sanity band on absolute size, no differential check between competing readings<em>trace <code>gnucleus-bench/harness/playbook.md:74-140 (Verification loop A-D)</code> — steps A-D cover analytic self-agreement, spec-consistency, the self-vs-self gate and a PyPI fallback; none of the four compares two different readings of the same spec against each other, so the agent has no mechanism to discover it picked the wrong one</em></li>
+  </ol>
+  <div class="coverage-proof coverage-proof-absent">
+  <h3>Sampling coverage — representativeness proof <span class="badge b-info">NOT COMPUTED</span></h3>
+  <p class="sub">Per-finding representativeness was not computed for this finding (no per-finding sample proof attached). The run-level sampling methodology still applies; see the Methodology tab.</p>
+</div>
+  <div class="assumptions"><h4>⚠ Assumptions</h4><ul>
+    <li>The reward.json geometry_similarity_reason strings are the authoritative record of the graded comparison against the benchmark reference model. <span class="verified">VERIFIED — Present in all 11 trial dirs under gnucleus-bench/jobs/generic-01/*/verifier/reward.json and consistent with the per-trace ext.eval.results scores in .mutagent/traces/generic01-sub1/traces.jsonl.</span></li>
+    <li>Source code for unitf-agent was not provided; findings are evidence-only and file paths are inferred from trace metadata — verify paths before applying. <span class="hypothesis-pending">HYPOTHESIS-PENDING — No source/code access for this run (trace IDs only); inferred from trace metadata and the playbook copy embedded in the diagnosis context.</span></li>
+  </ul></div>
+  <h3>Remedies</h3>
+  <div class="remedy recommended">
+  <script type="text/plain" id="payload-r-slice-all-1-a">## R-slice-all-1-a — Replace the self-referential analytic check with a two-interpretation differential check
+**Finding:** F-slice-all-1 — The playbook&#39;s mandatory analytic cross-check is circular — it compares the script against an expected volume derived from the same interpretation, so it converges to ~1e-16 on every task while the graded volume still misses the reference by up to 46.9%.
+**Severity:** high
+**Apply target:** gnucleus-bench/harness/playbook.md
+&gt; ⚠ **Conflicts on this apply target** with R-slice-all-1-b — same location; apply at most one.
+**Target class:** local-agent-md
+**Cost:** low · **Correctness:** medium · **Rank:** 1
+
+### Why this remedy
+The traces show the current check is information-free: 11/11 tasks report rel.diff &lt;= 1e-15 while 9/11 miss the graded volume, up to 46.9%. The check confirms arithmetic, which was never the failure mode; every observed miss was an interpretation choice (which axial extent shaft\_length names, whether flange\_thickness exists, where the elbow legs start) that the single-model check cannot see.
+
+### Why this works
+Forcing the agent to enumerate the admissible readings of every ambiguous parameter and compute the volume under each turns a self-confirming comparison into a discriminating one: when two readings differ by more than the ~0.6% volume tolerance the agent is made aware that a choice exists, must state it explicitly, and can select on external grounds (family convention, catalogue plausibility) instead of silently locking in the first reading it formed.
+
+### Diff
+**Before:**
+```diff
+- A. **Analytic cross-check.** Before running the script, compute the expected volume
+   (and where easy, bounding box) by hand from the parameters
+```
+**After:**
+```diff
++ A0. **Ambiguity enumeration (do this FIRST).** List every key parameter whose
+   geometric meaning admits more than one reading. Compute the total volume under
+   EACH reading. If two readings differ by more than 0.5%, you have a decision to
+   make, not a sum to check.
+
+A. **Analytic cross-check.** Before running the script, compute the expected volume
+   (and where easy, bounding box) by hand from the parameters. NOTE: this proves
+   your script implements your model; it does NOT prove your model matches the part.
+```
+
+### Apply instructions
+1. Open gnucleus-bench/harness/playbook.md and locate section &#39;A. \*\*Analytic cross-check.\*\*&#39; under &#39;## Verification loop (mandatory before you finish)&#39;.
+2. Before the existing text, insert a step A0: &#39;Ambiguity enumeration. List every key parameter whose geometric meaning admits more than one reading (which axial extent a length names; whether a stated diameter is at the root, pitch or tip; whether an overlapping feature is additive or included). For each, write out BOTH readings and the resulting total volume.&#39;
+3. Add: &#39;If two readings differ by more than 0.5% in volume, you have a real decision, not an arithmetic task. State the decision and its ground in your final message. Do NOT let the analytic match to your own chosen reading stand in for evidence that the reading is correct.&#39;
+4. Amend the existing sentence &#39;Any relative difference above 0.1% must be explained exactly&#39; with: &#39;This check proves your script implements your model. It does NOT prove your model matches the part. It cannot fail if your arithmetic is right, so a passing result is not evidence of correctness.&#39;
+5. Re-run the 11 tasks in gnucleus-bench/jobs/generic-01 and compare volume\_diff in verifier/reward.json against the values recorded in this run.
+</script>
+  <input type="checkbox" class="remedy-cb" data-id="R-slice-all-1-a" data-finding="F-slice-all-1" checked>
+  <div class="remedy-body">
+  <div class="remedy-header"><div class="remedy-rank-id"><span class="rank-pill">RANK 1</span> <span class="remedy-id">R-slice-all-1-a</span></div><div class="remedy-what">Replace the self-referential analytic check with a two-interpretation differential check</div></div>
+  <div class="remedy-meta"><span class="b-cost-low">cost:low</span><span class="b-correctness-medium">correct:medium</span><span class="tclass-pill tclass-local-agent">local-agent-md</span><span class="apply-pill apply-config">gnucleus-bench/harness/playbook.md</span></div>
+  <div class="r-rationale"><span class="r-block-label">Why this remedy</span><p>The traces show the current check is information-free: 11/11 tasks report rel.diff &lt;= 1e-15 while 9/11 miss the graded volume, up to 46.9%. The check confirms arithmetic, which was never the failure mode; every observed miss was an interpretation choice (which axial extent shaft_length names, whether flange_thickness exists, where the elbow legs start) that the single-model check cannot see.</p></div>
+  <div class="r-why-works"><span class="r-block-label">Why this works</span><p>Forcing the agent to enumerate the admissible readings of every ambiguous parameter and compute the volume under each turns a self-confirming comparison into a discriminating one: when two readings differ by more than the ~0.6% volume tolerance the agent is made aware that a choice exists, must state it explicitly, and can select on external grounds (family convention, catalogue plausibility) instead of silently locking in the first reading it formed.</p></div>
+  <div class="r-target"><span class="r-target-label">Apply target</span><code>gnucleus-bench/harness/playbook.md</code></div>
+  <div class="r-collision"><span class="r-collision-label">⚠ Conflicts on this apply target</span><p>Also targeted by R-slice-all-1-b — these edit the same location. Apply AT MOST ONE; the selections conflict.</p></div>
+  <div class="r-diff-grid">
+  <div class="diff-col"><div class="diff-label label-before">Before</div><pre>A. **Analytic cross-check.** Before running the script, compute the expected volume
+   (and where easy, bounding box) by hand from the parameters</pre></div>
+  <div class="diff-col"><div class="diff-label label-after">After</div><pre>A0. **Ambiguity enumeration (do this FIRST).** List every key parameter whose
+   geometric meaning admits more than one reading. Compute the total volume under
+   EACH reading. If two readings differ by more than 0.5%, you have a decision to
+   make, not a sum to check.
+
+A. **Analytic cross-check.** Before running the script, compute the expected volume
+   (and where easy, bounding box) by hand from the parameters. NOTE: this proves
+   your script implements your model; it does NOT prove your model matches the part.</pre></div>
+</div>
+  <div class="r-apply-grid"><div class="apply-col apply-col-empty"><span class="r-block-label">Apply plan</span><p class="r-muted">No structured plan provided.</p></div><div class="apply-col">
+  <div class="apply-col-label">Apply instructions</div>
+  <ol class="r-apply-instr">
+    <li>Open gnucleus-bench/harness/playbook.md and locate section &#39;A. **Analytic cross-check.**&#39; under &#39;## Verification loop (mandatory before you finish)&#39;.</li>
+    <li>Before the existing text, insert a step A0: &#39;Ambiguity enumeration. List every key parameter whose geometric meaning admits more than one reading (which axial extent a length names; whether a stated diameter is at the root, pitch or tip; whether an overlapping feature is additive or included). For each, write out BOTH readings and the resulting total volume.&#39;</li>
+    <li>Add: &#39;If two readings differ by more than 0.5% in volume, you have a real decision, not an arithmetic task. State the decision and its ground in your final message. Do NOT let the analytic match to your own chosen reading stand in for evidence that the reading is correct.&#39;</li>
+    <li>Amend the existing sentence &#39;Any relative difference above 0.1% must be explained exactly&#39; with: &#39;This check proves your script implements your model. It does NOT prove your model matches the part. It cannot fail if your arithmetic is right, so a passing result is not evidence of correctness.&#39;</li>
+    <li>Re-run the 11 tasks in gnucleus-bench/jobs/generic-01 and compare volume_diff in verifier/reward.json against the values recorded in this run.</li>
+  </ol>
+</div></div>
+  
+  <textarea class="remedy-notes" placeholder="Feedback on this remedy — overrides, conditions, why-not, modifications. Merged verbatim into the master Copy decisions bundle."></textarea>
+  </div>
+</div>
+  <div class="remedy">
+  <script type="text/plain" id="payload-r-slice-all-1-b">## R-slice-all-1-b — Publish the grading tolerances to the agent so it can triage effort
+**Finding:** F-slice-all-1 — The playbook&#39;s mandatory analytic cross-check is circular — it compares the script against an expected volume derived from the same interpretation, so it converges to ~1e-16 on every task while the graded volume still misses the reference by up to 46.9%.
+**Severity:** high
+**Apply target:** gnucleus-bench/harness/playbook.md
+&gt; ⚠ **Conflicts on this apply target** with R-slice-all-1-a — same location; apply at most one.
+**Target class:** local-agent-md
+**Cost:** low · **Correctness:** medium · **Rank:** 2
+
+### Why this remedy
+The reward data shows the volume sub-metric reaches zero at roughly 0.6% relative difference (0.231% scored 0.637, 0.273% scored 0.563, 2.231% scored 0.000) while surface area tolerates roughly ten times more (2.190% still scored 0.660). The playbook instead states a uniform &#39;volume to 0.1% and surface area to 1%&#39;, which understates how brittle volume is and overstates how brittle area is, so the agent cannot tell that a 2% volume miss is a total loss.
+
+### Why this works
+Stating the real shape of the scoring function converts an invisible cliff into a budget the agent can reason about: it learns that any volume discrepancy above roughly half a percent forfeits the largest single sub-metric outright, which raises the priority of resolving interpretation ambiguity above the cosmetic work the traces show it spending turns on.
+
+### Source not found — hypothesis
+The failure origin could not be pinned to a concrete source location. Apply as a hypothesis and verify.
+
+### Apply instructions
+1. Open gnucleus-bench/harness/playbook.md and add a subsection &#39;## How you are graded&#39; immediately before &#39;## Verification loop&#39;.
+2. State that the task score is the harmonic mean of geometry\_similarity and cad\_spec\_consistency, so a zero in either forfeits the whole task.
+3. State that geometry\_similarity is a weighted blend dominated by surface\_area and volume, with bounding box and surface-type mix contributing less.
+4. State the observed tolerance bands: volume sub-score falls to zero near 0.6% relative difference; surface area near 6%; treat 0.1% volume as the working target and anything above 0.5% as a failed task.
+5. Re-run the slice and confirm the agent&#39;s final messages reference the volume tolerance when resolving an ambiguity.
+</script>
+  <input type="checkbox" class="remedy-cb" data-id="R-slice-all-1-b" data-finding="F-slice-all-1">
+  <div class="remedy-body">
+  <div class="remedy-header"><div class="remedy-rank-id"><span class="rank-pill">RANK 2</span> <span class="remedy-id">R-slice-all-1-b</span></div><div class="remedy-what">Publish the grading tolerances to the agent so it can triage effort</div></div>
+  <div class="remedy-meta"><span class="b-cost-low">cost:low</span><span class="b-correctness-medium">correct:medium</span><span class="tclass-pill tclass-local-agent">local-agent-md</span><span class="apply-pill apply-config">gnucleus-bench/harness/playbook.md</span></div>
+  <div class="r-rationale"><span class="r-block-label">Why this remedy</span><p>The reward data shows the volume sub-metric reaches zero at roughly 0.6% relative difference (0.231% scored 0.637, 0.273% scored 0.563, 2.231% scored 0.000) while surface area tolerates roughly ten times more (2.190% still scored 0.660). The playbook instead states a uniform &#39;volume to 0.1% and surface area to 1%&#39;, which understates how brittle volume is and overstates how brittle area is, so the agent cannot tell that a 2% volume miss is a total loss.</p></div>
+  <div class="r-why-works"><span class="r-block-label">Why this works</span><p>Stating the real shape of the scoring function converts an invisible cliff into a budget the agent can reason about: it learns that any volume discrepancy above roughly half a percent forfeits the largest single sub-metric outright, which raises the priority of resolving interpretation ambiguity above the cosmetic work the traces show it spending turns on.</p></div>
+  <div class="r-target"><span class="r-target-label">Apply target</span><code>gnucleus-bench/harness/playbook.md</code></div>
+  <div class="r-collision"><span class="r-collision-label">⚠ Conflicts on this apply target</span><p>Also targeted by R-slice-all-1-a — these edit the same location. Apply AT MOST ONE; the selections conflict.</p></div>
+  <div class="r-diff-caveat" data-diff-status="origin-unknown">
+  <div class="r-diff-caveat-label">Source not found — hypothesis</div>
+  <p>The failure origin could not be pinned to a concrete source location. No diff is shown; apply this remedy as a hypothesis and verify against the live target.</p>
+</div>
+  <div class="r-apply-grid"><div class="apply-col apply-col-empty"><span class="r-block-label">Apply plan</span><p class="r-muted">No structured plan provided.</p></div><div class="apply-col">
+  <div class="apply-col-label">Apply instructions</div>
+  <ol class="r-apply-instr">
+    <li>Open gnucleus-bench/harness/playbook.md and add a subsection &#39;## How you are graded&#39; immediately before &#39;## Verification loop&#39;.</li>
+    <li>State that the task score is the harmonic mean of geometry_similarity and cad_spec_consistency, so a zero in either forfeits the whole task.</li>
+    <li>State that geometry_similarity is a weighted blend dominated by surface_area and volume, with bounding box and surface-type mix contributing less.</li>
+    <li>State the observed tolerance bands: volume sub-score falls to zero near 0.6% relative difference; surface area near 6%; treat 0.1% volume as the working target and anything above 0.5% as a failed task.</li>
+    <li>Re-run the slice and confirm the agent&#39;s final messages reference the volume tolerance when resolving an ambiguity.</li>
+  </ol>
+</div></div>
+  
+  <textarea class="remedy-notes" placeholder="Feedback on this remedy — overrides, conditions, why-not, modifications. Merged verbatim into the master Copy decisions bundle."></textarea>
+  </div>
+</div>
+  <div class="finding-verdict">
+  <script type="text/plain" id="dismiss-payload-f-slice-all-1">{&quot;findingId&quot;:&quot;F-slice-all-1&quot;,&quot;verdict&quot;:&quot;dismissed&quot;,&quot;what&quot;:&quot;wrong-output&quot;,&quot;why&quot;:&quot;prompt-underspec&quot;,&quot;where&quot;:&quot;system-prompt&quot;,&quot;whatHappened&quot;:&quot;on every task the agent hand-derived an expected volume from its own reading of the key parameters, coded that same reading into answer.py, iterated until the two agreed to machine precision, declared verification passed, and submitted — the elbow flange reported rel.diff 8.1e-16 and was then graded volume_diff 46.921% against the reference&quot;,&quot;severity&quot;:&quot;info&quot;}</script>
+  <label class="fv-toggle"><input type="checkbox" class="finding-invalid" data-finding="F-slice-all-1"> <span class="fv-label">Invalid — not an issue (dismiss &amp; suppress next run)</span></label>
+  <textarea class="dismiss-reason" placeholder="Why is this not an issue? Folded verbatim into the Copy decisions bundle."></textarea>
+</div>
+</section>
+
+<section class="panel finding-panel" id="t5">
+  <h2><span class="badge b-crit">CRITICAL</span> <span class="badge k-defect">DEFECT</span> F-slice-all-2 — When a dimension the geometry requires is absent from the key-parameter list, the agent in</h2>
+  
+  
+  <div class="taxonomy">
+    <span class="tax-chip"><strong>WHAT</strong>: wrong-output</span>
+    <span class="tax-chip"><strong>WHY</strong>: prompt-underspec</span>
+    <span class="tax-chip"><strong>WHERE</strong>: system-prompt</span>
+    
+    <span class="tax-chip"><strong>Confidence</strong>: high</span>
+    <a class="tax-chip drill" data-goto="t1" data-anchor="session-a913ea60-3fe9-4cf4-89fb-a9f65ebf1e01"><strong>SESSION</strong>: a913ea60-3fe9-4cf4-89fb-a9f65ebf1e01</a>
+  </div>
+  <h3>Problem</h3>
+  <div class="f-desc">The elbow-flange task omits flange_thickness from its key parameters; the agent substituted an assumed 20 mm plate and shipped, producing volume_diff=46.921%, surface_area_diff=23.611% and bbox_diff=12.667% for a task score of 0.153 — the lowest of the 11 — while its own spec and gate checks both returned 1.0 (tr a913ea60 msgs 108-109).</div>
+  
+  
+  <h3>Evidence</h3>
+  <p class="ev-narration">trace <code>a913ea60-3fe9-4cf4-89fb-a9f65ebf1e01</code> — the agent noticed mid-task that the key-parameter list gave no flange thickness for a part whose two flanges dominate its volume, picked 20 mm as a standard plate, built and verified the whole model on that basis, disclosed the assumption only in its closing summary, and was graded 46.9% off on volume <q class="ev-example">««**Flange thickness is not in the spec.** I assumed a standard **20 mm** plate; it&#39;s a top-level variable (`flange_thickness`) if you want it changed.»»</q></p>
+  <h3>Why-chain</h3>
+  <ol class="whychain">
+    <li class="">The elbow-flange answer missed reference volume by 46.9% while every self-check the agent ran returned 1.0<em>trace <code>freecad-8450a6402b__LBjpLsg/verifier/reward.json vs tr a913ea60 msg 108</code> — the trial&#39;s spec_consistency scored 1.0 (10/10 consistent) and the self-vs-self geometry gate scored 1.0, yet the graded geometry_similarity was 0.083 <q class="ev-example">««--- SPEC --- Comparison Score: 1.0 ... --- GATE --- Comparison Score: 1.0» (msg 108) vs «overall=0.083 ... volume_diff=46.921% (Far)»»</q></em></li>
+    <li class="">A load-bearing dimension was missing from the spec and the agent filled it with a guess<em>trace <code>tr a913ea60 msg 0 key-parameter list (flange_outer_diameter, elbow_flange_length/height, elbow_angle, elbow_radius, pipe diameter/thickness, bolt data — no flange thickness) and msg 109</code> — two 200 mm flange plates are a large fraction of the part volume, and their thickness was simply not stated; the agent chose 20 mm without a stated derivation from any given parameter</em></li>
+    <li class="">None of the agent&#39;s mandatory checks can detect a wrong free parameter — the analytic check uses the guess, the spec checker only tests parameters that appear in the spec, and the gate compares the file to itself<em>trace <code>gnucleus-bench/harness/playbook.md:74-140; tr a913ea60 msg 108</code> — the guessed 20 mm entered the analytic formula, so the volume matched to 8e-16; flange_thickness is not in the key-parameter text, so the spec checker never looked for it; the gate compared answer.FCStd to answer.FCStd and trivially passed</em></li>
+    <li class="origin">The playbook has no rule for the case &#39;the geometry needs a dimension the spec does not give&#39; — it prescribes conventions per family but no procedure for resolving a genuinely absent value<em>trace <code>gnucleus-bench/harness/playbook.md:142-158 (&#39;## Interpretation rules&#39;) and :171-251 (&#39;## Family conventions&#39;)</code> — the interpretation rules cover through-holes, diameters-not-radii, expression parameters and unit handling, and the family conventions cover a dozen part families, but nothing tells the agent how to derive a missing dimension from the given ones or which standard to consult, so it defaults to a round number</em></li>
+  </ol>
+  <div class="coverage-proof coverage-proof-absent">
+  <h3>Sampling coverage — representativeness proof <span class="badge b-info">NOT COMPUTED</span></h3>
+  <p class="sub">Per-finding representativeness was not computed for this finding (no per-finding sample proof attached). The run-level sampling methodology still applies; see the Methodology tab.</p>
+</div>
+  <div class="assumptions"><h4>⚠ Assumptions</h4><ul>
+    <li>Flange thickness is a first-order contributor to the elbow-flange volume, so a wrong value alone can account for a large share of the 46.9% miss. <span class="unverified">UNVERIFIED — Two 200 mm-diameter plates at the assumed 20 mm are a large fraction of the 2.008e6 mm3 total the agent reported (msg 108); the reference model&#39;s actual flange thickness was not observed.</span></li>
+    <li>Source code for unitf-agent was not provided; findings are evidence-only and file paths are inferred from trace metadata — verify paths before applying. <span class="hypothesis-pending">HYPOTHESIS-PENDING — No source/code access for this run (trace IDs only); inferred from trace metadata and the playbook copy embedded in the diagnosis context.</span></li>
+  </ul></div>
+  <h3>Remedies</h3>
+  <div class="remedy recommended">
+  <script type="text/plain" id="payload-r-slice-all-2-a">## R-slice-all-2-a — Add a missing-parameter derivation rule to the interpretation section
+**Finding:** F-slice-all-2 — When a dimension the geometry requires is absent from the key-parameter list, the agent invents a plausible value and proceeds — on the elbow flange it assumed a 20 mm flange plate and lost 46.9% of the volume, the worst score in the slice.
+**Severity:** high
+**Apply target:** gnucleus-bench/harness/playbook.md
+**Target class:** local-agent-md
+**Cost:** low · **Correctness:** medium · **Rank:** 1
+
+### Why this remedy
+The trace shows the agent correctly identified the gap and then resolved it with a round-number guess because the playbook offers no alternative; the interpretation-rules section covers ambiguous parameters but is silent on absent ones, and the resulting 46.9% miss is the largest single loss in the slice.
+
+### Why this works
+A derivation hierarchy — prefer a value forced by the other given parameters, then a standard proportion for the family, and only then a round guess — removes the free choice that the verification loop cannot audit, and makes the agent record the derivation so a wrong pick is at least traceable rather than silent.
+
+### Diff
+**Before:**
+```diff
+- - Do not add fillets, chamfers, drafts, or cosmetic features the description does
+  not mention. Do not omit ones it does mention.
+```
+**After:**
+```diff
++ - Do not add fillets, chamfers, drafts, or cosmetic features the description does
+  not mention. Do not omit ones it does mention.
+- If the geometry needs a dimension the key-parameter list does NOT give, do not
+  pick a round number. Derive it in this order: (1) a value forced by the other
+  given parameters or by the part closing geometrically; (2) the standard
+  proportion for that part family; (3) only then a nominal value — and say so in
+  the FIRST line of your final message, not the last.
+```
+
+### Apply instructions
+1. Open gnucleus-bench/harness/playbook.md and locate the &#39;## Interpretation rules (defaults unless the description says otherwise)&#39; section.
+2. Append a rule: &#39;If the geometry needs a dimension the key-parameter list does not give, do NOT pick a round number. Derive it in this order: (1) a value forced by the other given parameters or by the part closing geometrically; (2) the standard proportion for that part family; (3) only then a nominal value, and say so in the FIRST line of your final message, not the last.&#39;
+3. Add specifically for flanged parts: &#39;A flange plate thickness that is not stated is usually tied to the pipe or bore size by the flange standard; state the standard you used.&#39;
+4. Re-run freecad-8450a6402b and compare volume\_diff in verifier/reward.json to the 46.921% recorded here.
+</script>
+  <input type="checkbox" class="remedy-cb" data-id="R-slice-all-2-a" data-finding="F-slice-all-2" checked>
+  <div class="remedy-body">
+  <div class="remedy-header"><div class="remedy-rank-id"><span class="rank-pill">RANK 1</span> <span class="remedy-id">R-slice-all-2-a</span></div><div class="remedy-what">Add a missing-parameter derivation rule to the interpretation section</div></div>
+  <div class="remedy-meta"><span class="b-cost-low">cost:low</span><span class="b-correctness-medium">correct:medium</span><span class="tclass-pill tclass-local-agent">local-agent-md</span><span class="apply-pill apply-config">gnucleus-bench/harness/playbook.md</span></div>
+  <div class="r-rationale"><span class="r-block-label">Why this remedy</span><p>The trace shows the agent correctly identified the gap and then resolved it with a round-number guess because the playbook offers no alternative; the interpretation-rules section covers ambiguous parameters but is silent on absent ones, and the resulting 46.9% miss is the largest single loss in the slice.</p></div>
+  <div class="r-why-works"><span class="r-block-label">Why this works</span><p>A derivation hierarchy — prefer a value forced by the other given parameters, then a standard proportion for the family, and only then a round guess — removes the free choice that the verification loop cannot audit, and makes the agent record the derivation so a wrong pick is at least traceable rather than silent.</p></div>
+  <div class="r-target"><span class="r-target-label">Apply target</span><code>gnucleus-bench/harness/playbook.md</code></div>
+  
+  <div class="r-diff-grid">
+  <div class="diff-col"><div class="diff-label label-before">Before</div><pre>- Do not add fillets, chamfers, drafts, or cosmetic features the description does
+  not mention. Do not omit ones it does mention.</pre></div>
+  <div class="diff-col"><div class="diff-label label-after">After</div><pre>- Do not add fillets, chamfers, drafts, or cosmetic features the description does
+  not mention. Do not omit ones it does mention.
+- If the geometry needs a dimension the key-parameter list does NOT give, do not
+  pick a round number. Derive it in this order: (1) a value forced by the other
+  given parameters or by the part closing geometrically; (2) the standard
+  proportion for that part family; (3) only then a nominal value — and say so in
+  the FIRST line of your final message, not the last.</pre></div>
+</div>
+  <div class="r-apply-grid"><div class="apply-col apply-col-empty"><span class="r-block-label">Apply plan</span><p class="r-muted">No structured plan provided.</p></div><div class="apply-col">
+  <div class="apply-col-label">Apply instructions</div>
+  <ol class="r-apply-instr">
+    <li>Open gnucleus-bench/harness/playbook.md and locate the &#39;## Interpretation rules (defaults unless the description says otherwise)&#39; section.</li>
+    <li>Append a rule: &#39;If the geometry needs a dimension the key-parameter list does not give, do NOT pick a round number. Derive it in this order: (1) a value forced by the other given parameters or by the part closing geometrically; (2) the standard proportion for that part family; (3) only then a nominal value, and say so in the FIRST line of your final message, not the last.&#39;</li>
+    <li>Add specifically for flanged parts: &#39;A flange plate thickness that is not stated is usually tied to the pipe or bore size by the flange standard; state the standard you used.&#39;</li>
+    <li>Re-run freecad-8450a6402b and compare volume_diff in verifier/reward.json to the 46.921% recorded here.</li>
+  </ol>
+</div></div>
+  
+  <textarea class="remedy-notes" placeholder="Feedback on this remedy — overrides, conditions, why-not, modifications. Merged verbatim into the master Copy decisions bundle."></textarea>
+  </div>
+</div>
+  <div class="finding-verdict">
+  <script type="text/plain" id="dismiss-payload-f-slice-all-2">{&quot;findingId&quot;:&quot;F-slice-all-2&quot;,&quot;verdict&quot;:&quot;dismissed&quot;,&quot;what&quot;:&quot;wrong-output&quot;,&quot;why&quot;:&quot;prompt-underspec&quot;,&quot;where&quot;:&quot;system-prompt&quot;,&quot;whatHappened&quot;:&quot;the agent noticed mid-task that the key-parameter list gave no flange thickness for a part whose two flanges dominate its volume, picked 20 mm as a standard plate, built and verified the whole model on that basis, disclosed the assumption only in its closing summary, and was graded 46.9% off on volume&quot;,&quot;severity&quot;:&quot;info&quot;}</script>
+  <label class="fv-toggle"><input type="checkbox" class="finding-invalid" data-finding="F-slice-all-2"> <span class="fv-label">Invalid — not an issue (dismiss &amp; suppress next run)</span></label>
+  <textarea class="dismiss-reason" placeholder="Why is this not an issue? Folded verbatim into the Copy decisions bundle."></textarea>
+</div>
+</section>
+
+<section class="panel finding-panel" id="t6">
+  <h2><span class="badge b-crit">CRITICAL</span> <span class="badge k-defect">DEFECT</span> F-slice-all-5 — Four of the eleven tasks scored 1.0 in the baseline run and regressed here, three others i</h2>
+  
+  
+  <div class="taxonomy">
+    <span class="tax-chip"><strong>WHAT</strong>: wrong-output</span>
+    <span class="tax-chip"><strong>WHY</strong>: prompt-underspec</span>
+    <span class="tax-chip"><strong>WHERE</strong>: system-prompt</span>
+    
+    <span class="tax-chip"><strong>Confidence</strong>: high</span>
+    <a class="tax-chip drill" data-goto="t1" data-anchor="session-80caa98b-dc05-4a4b-8d72-dcfc7c9c8437"><strong>SESSION</strong>: 80caa98b-dc05-4a4b-8d72-dcfc7c9c8437</a>
+  </div>
+  <h3>Problem</h3>
+  <div class="f-desc">Seven of eleven tasks changed score materially between the baseline run and this one in both directions — freecad-b55517ee4b fell 1.0 to 0.167, freecad-b849a4d94e 1.0 to 0.589, freecad-14da78600e 1.0 to 0.626 and freecad-0fe9d9e3ce 1.0 to 0.000, while freecad-c4bad6c5af rose 0.378 to 0.800, freecad-264ab71adf 0.605 to 0.773 and freecad-58a1b82005 0.662 to 0.901 — so roughly two-thirds of the slice's score is run-to-run variance rather than stable capability (gnucleus-bench/harness/final_run_scores.json vs jobs/generic-01/*/verifier/reward.json).</div>
+  
+  
+  <h3>Evidence</h3>
+  <p class="ev-narration">trace <code>80caa98b-dc05-4a4b-8d72-dcfc7c9c8437</code> — on the disk brake, the drive shaft and the disc spring the agent produced a fully self-consistent model, declared verification passed, and landed 6.46%, 2.95% and 2.23% off the reference volume — the same three tasks the baseline run had scored 1.0; each trajectory shows the agent freshly reasoning out which reading of the spec to build, with no record of what a previous attempt chose or scored <q class="ev-example">«tr 327a4d5b msg 44: «The three height parameters are mutually over-determined ... so I solved `rise + t/cos(atan(rise/b)) = 0.6` for the rise» — an interpretation decided from scratch, scoring 0.626 where the baseline scored 1.0»</q></p>
+  <h3>Why-chain</h3>
+  <ol class="whychain">
+    <li class="">Tasks the agent has already solved perfectly come back wrong on a later attempt<em>trace <code>gnucleus-bench/harness/final_run_scores.json (b55517ee4b 1.0, b849a4d94e 1.0, 14da78600e 1.0, 0fe9d9e3ce 1.0) vs jobs/generic-01/*/verifier/reward.json (0.167, 0.589, 0.626, 0.000)</code> — four tasks that had previously produced a reference-matching model produced a materially different model this time, with volume_diff of 6.461%, 2.951%, 2.231% and 0.000% respectively</em></li>
+    <li class="">Each attempt re-decides the ambiguous interpretation from first principles<em>trace <code>tr 327a4d5b msg 44; tr c38c8881 msg 90</code> — the disc-spring trajectory reasons out which two of three over-determined height parameters to treat as exact and solves for the third; the drive-shaft trajectory decides that the flanges sit inside the 1000 mm extent so shaft_length is the overall length — both are defensible readings reached in-trajectory, and both differ from whatever the 1.0-scoring run built <q class="ev-example">««flanges sit inside the 1000 mm extent, so `shaft_length` is the overall axial length» (tr c38c8881 msg 90)»</q></em></li>
+    <li class="">The self-checks cannot break the tie, so whichever reading the model forms first is the one that ships<em>trace <code>tr c38c8881 msg 89 (&#39;rel.diff: 8.76e-16&#39;); tr 327a4d5b msg 8 (&#39;rel.diff 7.279e-16&#39;)</code> — both trajectories drove their analytic cross-check to machine precision and passed the spec and gate checks, so there was no signal at any point that a different reading would have scored better</em></li>
+    <li class="origin">Nothing in the harness or playbook feeds a task&#39;s previous outcome back into the next attempt — there is no per-task record of which interpretation scored what<em>trace <code>gnucleus-bench/harness/final_run_scores.json (scores only, no interpretation record); gnucleus-bench/harness/playbook.md (no reference to prior attempts)</code> — final_run_scores.json stores per-task scores but nothing about the modelling decisions that produced them, and the playbook never tells the agent that a task has been attempted before, so every run is an independent draw over the admissible readings</em></li>
+  </ol>
+  <div class="coverage-proof coverage-proof-absent">
+  <h3>Sampling coverage — representativeness proof <span class="badge b-info">NOT COMPUTED</span></h3>
+  <p class="sub">Per-finding representativeness was not computed for this finding (no per-finding sample proof attached). The run-level sampling methodology still applies; see the Methodology tab.</p>
+</div>
+  <div class="assumptions"><h4>⚠ Assumptions</h4><ul>
+    <li>The baseline scores in final_run_scores.json were produced by the same agent and playbook configuration, making the two runs comparable. <span class="unverified">UNVERIFIED — Operator-stated in the dispatch context that these are baseline first-run scores for the same tasks; the baseline trials&#39; agent configuration was not inspected.</span></li>
+    <li>The regressions are driven by differing modelling interpretations rather than by nondeterminism in FreeCAD or the scorer, except for freecad-0fe9d9e3ce which is attributed separately to the verifier. <span class="unverified">UNVERIFIED — Each regressing trajectory states an explicit interpretation choice (tr c38c8881 msg 90, tr 327a4d5b msg 44) and reports an exact analytic self-match, but the baseline answers&#39; geometry was not available for direct comparison.</span></li>
+    <li>Source code for unitf-agent was not provided; findings are evidence-only and file paths are inferred from trace metadata — verify paths before applying. <span class="hypothesis-pending">HYPOTHESIS-PENDING — No source/code access for this run (trace IDs only); inferred from trace metadata and the playbook copy embedded in the diagnosis context.</span></li>
+  </ul></div>
+  <h3>Remedies</h3>
+  <div class="remedy recommended">
+  <script type="text/plain" id="payload-r-slice-all-5-b">## R-slice-all-5-b — Gate submission on a regression check against the recorded best score
+**Finding:** F-slice-all-5 — Four of the eleven tasks scored 1.0 in the baseline run and regressed here, three others improved — the agent re-derives an unpinned interpretation on every attempt and nothing carries the winning reading forward.
+**Severity:** high
+**Apply target:** gnucleus-bench/harness/final\_run\_scores.json (score aggregation step)
+**Target class:** local-code-construct
+**Cost:** low · **Correctness:** high · **Rank:** 1
+
+### Why this remedy
+The run silently accepted four regressions from a recorded 1.0, including one to 0.000, with no signal that a better answer for those tasks already existed. The baseline scores are already stored in final\_run\_scores.json, so the comparison costs nothing.
+
+### Why this works
+Comparing each new trial against the recorded best for that task surfaces regressions at the moment they happen instead of at post-hoc analysis time, letting the run retry or retain the better answer rather than banking the worse one. It also isolates genuine capability gaps — tasks that have never scored well — from variance on tasks already solved.
+
+### Source not found — hypothesis
+The apply target&#39;s current source is not accessible, so no Before/After is cited. Apply as a hypothesis and verify.
+
+### Apply instructions
+1. In the harness score aggregation, load the prior best score per task from final\_run\_scores.json before writing the new result.
+2. If the new score is more than 0.1 below the recorded best, mark the trial &#39;regression&#39; and emit a warning naming the task and both scores.
+3. Retain the higher-scoring answer.FCStd for the task rather than overwriting with the newer one.
+4. Apply retroactively to gnucleus-bench/jobs/generic-01 and confirm it flags exactly b55517ee4b, b849a4d94e, 14da78600e and 0fe9d9e3ce.
+</script>
+  <input type="checkbox" class="remedy-cb" data-id="R-slice-all-5-b" data-finding="F-slice-all-5" checked>
+  <div class="remedy-body">
+  <div class="remedy-header"><div class="remedy-rank-id"><span class="rank-pill">RANK 1</span> <span class="remedy-id">R-slice-all-5-b</span></div><div class="remedy-what">Gate submission on a regression check against the recorded best score</div></div>
+  <div class="remedy-meta"><span class="b-cost-low">cost:low</span><span class="b-correctness-high">correct:high</span><span class="tclass-pill tclass-local-code-construct">local-code-construct</span><span class="apply-pill apply-config">gnucleus-bench/harness/final_run_scores.json (score aggregation step)</span></div>
+  <div class="r-rationale"><span class="r-block-label">Why this remedy</span><p>The run silently accepted four regressions from a recorded 1.0, including one to 0.000, with no signal that a better answer for those tasks already existed. The baseline scores are already stored in final_run_scores.json, so the comparison costs nothing.</p></div>
+  <div class="r-why-works"><span class="r-block-label">Why this works</span><p>Comparing each new trial against the recorded best for that task surfaces regressions at the moment they happen instead of at post-hoc analysis time, letting the run retry or retain the better answer rather than banking the worse one. It also isolates genuine capability gaps — tasks that have never scored well — from variance on tasks already solved.</p></div>
+  <div class="r-target"><span class="r-target-label">Apply target</span><code>gnucleus-bench/harness/final_run_scores.json (score aggregation step)</code></div>
+  
+  <div class="r-diff-caveat" data-diff-status="source-unavailable">
+  <div class="r-diff-caveat-label">Source not found — hypothesis</div>
+  <p>The apply target&#39;s current source is not accessible to the analyzer, so a Before/After cannot be cited. No diff is shown; apply this remedy as a hypothesis and verify against the live target.</p>
+</div>
+  <div class="r-apply-grid"><div class="apply-col apply-col-empty"><span class="r-block-label">Apply plan</span><p class="r-muted">No structured plan provided.</p></div><div class="apply-col">
+  <div class="apply-col-label">Apply instructions</div>
+  <ol class="r-apply-instr">
+    <li>In the harness score aggregation, load the prior best score per task from final_run_scores.json before writing the new result.</li>
+    <li>If the new score is more than 0.1 below the recorded best, mark the trial &#39;regression&#39; and emit a warning naming the task and both scores.</li>
+    <li>Retain the higher-scoring answer.FCStd for the task rather than overwriting with the newer one.</li>
+    <li>Apply retroactively to gnucleus-bench/jobs/generic-01 and confirm it flags exactly b55517ee4b, b849a4d94e, 14da78600e and 0fe9d9e3ce.</li>
+  </ol>
+</div></div>
+  
+  <textarea class="remedy-notes" placeholder="Feedback on this remedy — overrides, conditions, why-not, modifications. Merged verbatim into the master Copy decisions bundle."></textarea>
+  </div>
+</div>
+  <div class="remedy">
+  <script type="text/plain" id="payload-r-slice-all-5-a">## R-slice-all-5-a — Keep a per-task interpretation ledger and feed the winning reading back into the prompt
+**Finding:** F-slice-all-5 — Four of the eleven tasks scored 1.0 in the baseline run and regressed here, three others improved — the agent re-derives an unpinned interpretation on every attempt and nothing carries the winning reading forward.
+**Severity:** high
+**Apply target:** gnucleus-bench/harness/playbook.md
+**Target class:** local-agent-md
+**Cost:** medium · **Correctness:** medium · **Rank:** 2
+
+### Why this remedy
+Four tasks previously scored 1.0 came back at 0.167, 0.589, 0.626 and 0.000 while three others improved, so the dominant term in the slice score is which reading the agent happens to form, not whether it can build the part. The traces show the decision is made explicitly and in prose every time, which means it is capturable.
+
+### Why this works
+Recording the interpretation alongside the score turns an independent draw into a ratchet: a task that has scored 1.0 gets its winning reading pinned into the next prompt so the agent reproduces rather than re-derives it, and a task that scored poorly gets its losing reading recorded as one to avoid. This directly removes the variance without needing to solve the underlying ambiguity.
+
+### Source not found — hypothesis
+The apply target&#39;s current source is not accessible, so no Before/After is cited. Apply as a hypothesis and verify.
+
+### Apply instructions
+1. Add a required section to the playbook&#39;s output contract: the final message must end with an &#39;INTERPRETATION&#39; block listing each ambiguous parameter and the reading chosen, in one line each.
+2. Extend the harness to parse that block into gnucleus-bench/harness/interpretation-ledger.json keyed by task id, storing the reading and the resulting score.
+3. When a task has a prior entry with score &gt;= 0.99, inject its INTERPRETATION block into the task prompt as &#39;a previous attempt scoring 1.0 read the spec as follows — reproduce these readings unless you have specific evidence they are wrong&#39;.
+4. Re-run the four regressed tasks (b55517ee4b, b849a4d94e, 14da78600e, 0fe9d9e3ce) and confirm they return to their baseline scores.
+</script>
+  <input type="checkbox" class="remedy-cb" data-id="R-slice-all-5-a" data-finding="F-slice-all-5">
+  <div class="remedy-body">
+  <div class="remedy-header"><div class="remedy-rank-id"><span class="rank-pill">RANK 2</span> <span class="remedy-id">R-slice-all-5-a</span></div><div class="remedy-what">Keep a per-task interpretation ledger and feed the winning reading back into the prompt</div></div>
+  <div class="remedy-meta"><span class="b-cost-medium">cost:medium</span><span class="b-correctness-medium">correct:medium</span><span class="tclass-pill tclass-local-agent">local-agent-md</span><span class="apply-pill apply-config">gnucleus-bench/harness/playbook.md</span></div>
+  <div class="r-rationale"><span class="r-block-label">Why this remedy</span><p>Four tasks previously scored 1.0 came back at 0.167, 0.589, 0.626 and 0.000 while three others improved, so the dominant term in the slice score is which reading the agent happens to form, not whether it can build the part. The traces show the decision is made explicitly and in prose every time, which means it is capturable.</p></div>
+  <div class="r-why-works"><span class="r-block-label">Why this works</span><p>Recording the interpretation alongside the score turns an independent draw into a ratchet: a task that has scored 1.0 gets its winning reading pinned into the next prompt so the agent reproduces rather than re-derives it, and a task that scored poorly gets its losing reading recorded as one to avoid. This directly removes the variance without needing to solve the underlying ambiguity.</p></div>
+  <div class="r-target"><span class="r-target-label">Apply target</span><code>gnucleus-bench/harness/playbook.md</code></div>
+  
+  <div class="r-diff-caveat" data-diff-status="source-unavailable">
+  <div class="r-diff-caveat-label">Source not found — hypothesis</div>
+  <p>The apply target&#39;s current source is not accessible to the analyzer, so a Before/After cannot be cited. No diff is shown; apply this remedy as a hypothesis and verify against the live target.</p>
+</div>
+  <div class="r-apply-grid"><div class="apply-col apply-col-empty"><span class="r-block-label">Apply plan</span><p class="r-muted">No structured plan provided.</p></div><div class="apply-col">
+  <div class="apply-col-label">Apply instructions</div>
+  <ol class="r-apply-instr">
+    <li>Add a required section to the playbook&#39;s output contract: the final message must end with an &#39;INTERPRETATION&#39; block listing each ambiguous parameter and the reading chosen, in one line each.</li>
+    <li>Extend the harness to parse that block into gnucleus-bench/harness/interpretation-ledger.json keyed by task id, storing the reading and the resulting score.</li>
+    <li>When a task has a prior entry with score &gt;= 0.99, inject its INTERPRETATION block into the task prompt as &#39;a previous attempt scoring 1.0 read the spec as follows — reproduce these readings unless you have specific evidence they are wrong&#39;.</li>
+    <li>Re-run the four regressed tasks (b55517ee4b, b849a4d94e, 14da78600e, 0fe9d9e3ce) and confirm they return to their baseline scores.</li>
+  </ol>
+</div></div>
+  
+  <textarea class="remedy-notes" placeholder="Feedback on this remedy — overrides, conditions, why-not, modifications. Merged verbatim into the master Copy decisions bundle."></textarea>
+  </div>
+</div>
+  <div class="finding-verdict">
+  <script type="text/plain" id="dismiss-payload-f-slice-all-5">{&quot;findingId&quot;:&quot;F-slice-all-5&quot;,&quot;verdict&quot;:&quot;dismissed&quot;,&quot;what&quot;:&quot;wrong-output&quot;,&quot;why&quot;:&quot;prompt-underspec&quot;,&quot;where&quot;:&quot;system-prompt&quot;,&quot;whatHappened&quot;:&quot;on the disk brake, the drive shaft and the disc spring the agent produced a fully self-consistent model, declared verification passed, and landed 6.46%, 2.95% and 2.23% off the reference volume — the same three tasks the baseline run had scored 1.0; each trajectory shows the agent freshly reasoning out which reading of the spec to build, with no record of what a previous attempt chose or scored&quot;,&quot;severity&quot;:&quot;info&quot;}</script>
+  <label class="fv-toggle"><input type="checkbox" class="finding-invalid" data-finding="F-slice-all-5"> <span class="fv-label">Invalid — not an issue (dismiss &amp; suppress next run)</span></label>
+  <textarea class="dismiss-reason" placeholder="Why is this not an issue? Folded verbatim into the Copy decisions bundle."></textarea>
+</div>
+</section>
+
+<section class="panel finding-panel" id="t7">
+  <h2><span class="badge b-high">HIGH</span> <span class="badge k-defect">DEFECT</span> F-slice-all-6 — The surface-type sub-metric sits between 0.729 and 0.827 on the spline, disc-spring, elbow</h2>
+  
+  
+  <div class="taxonomy">
+    <span class="tax-chip"><strong>WHAT</strong>: wrong-output</span>
+    <span class="tax-chip"><strong>WHY</strong>: prompt-underspec</span>
+    <span class="tax-chip"><strong>WHERE</strong>: system-prompt</span>
+    
+    <span class="tax-chip"><strong>Confidence</strong>: medium</span>
+    <a class="tax-chip drill" data-goto="t1" data-anchor="session-1a923e1e-f677-4d4f-9ecf-6942cf7e4701"><strong>SESSION</strong>: 1a923e1e-f677-4d4f-9ecf-6942cf7e4701</a>
+  </div>
+  <h3>Problem</h3>
+  <div class="f-desc">The surface_types sub-metric scored below 0.83 on six of eleven tasks — 0.729 (freecad-58a1b82005 spline shaft), 0.784 (freecad-14da78600e disc spring), 0.788 (freecad-d733bfa285 filleted spline), 0.802 (freecad-264ab71adf disc spring with flats), 0.827 (freecad-8450a6402b elbow flange), 0.911 (freecad-b55517ee4b disk brake) — indicating the reference models are built from a different mix of surface primitives than the answers, on tasks where volume and area were otherwise close (jobs/generic-01/*/verifier/reward.json).</div>
+  
+  
+  <h3>Evidence</h3>
+  <p class="ev-narration">trace <code>1a923e1e-f677-4d4f-9ecf-6942cf7e4701</code> — the agent printed its face areas grouped by surface type on every task as the playbook requires — the spline shaft reported only Cylinder and Plane faces, the filleted spline only Cylinder and Plane — but never had a reference distribution to compare against, so a mix that differs from the reference passed unremarked while volume and area were tuned to exactness <q class="ev-example">««face area Cylinder     = 1998.2605 / face area Plane        = 2271.5640» (tr 1a923e1e msg 54) → «surface_types=0.729» (reward.json)»</q></p>
+  <h3>Why-chain</h3>
+  <ol class="whychain">
+    <li class="">Six tasks lost measurable score on the surface-type mix, concentrated in the spline and disc-spring families<em>trace <code>jobs/generic-01/*/verifier/reward.json geometry_similarity_reason surface_types values</code> — the two spline tasks scored 0.729 and 0.788 and the two disc-spring tasks 0.784 and 0.802, while simpler families such as the drive shaft and the slotted spring pin scored 0.983 and 0.981 — the deficit tracks the families whose flank and profile construction the playbook prescribes most specifically</em></li>
+    <li class="">The playbook prescribes an exact face-type outcome for these families, and the agent followed it<em>trace <code>gnucleus-bench/harness/playbook.md:201-206 (&#39;**External splines** ... STRAIGHT-SIDED teeth, not involute ... so flank faces are PLANES&#39;); :240-244 (&#39;faces are ONLY cone surfaces and HORIZONTAL annular flats ... NO vertical cylindrical rim faces anywhere&#39;)</code> — the spline convention mandates planar flanks and the disc-spring-with-flats convention forbids cylindrical rims; the agent complied and reported exactly those face types, yet the reference distribution still differs enough to cost 0.20-0.27 on the sub-metric</em></li>
+    <li class="">The agent has no way to observe the reference face-type distribution and no check that targets this sub-metric<em>trace <code>gnucleus-bench/harness/playbook.md:69-72 (print &#39;the sum of face areas grouped by surface type&#39;); :74-140 (Verification loop A-D)</code> — the playbook requires the agent to print the distribution but the verification loop only exercises volume, spec parameters and the single-solid gate — the printed face-type table is produced and then never compared against anything</em></li>
+    <li class="origin">The playbook&#39;s family conventions encode a face-type target that was never validated against the reference models for these families<em>trace <code>gnucleus-bench/harness/playbook.md:171-251 (&#39;## Family conventions (follow them exactly)&#39;)</code> — the conventions are stated as exact prescriptions (&#39;follow them exactly&#39;) covering flank type, fillet presence and rim geometry, but the consistent 0.73-0.80 surface-type scores across all four spline and disc-spring tasks indicate the prescribed construction does not reproduce the reference&#39;s surface composition for those families</em></li>
+  </ol>
+  <div class="coverage-proof coverage-proof-absent">
+  <h3>Sampling coverage — representativeness proof <span class="badge b-info">NOT COMPUTED</span></h3>
+  <p class="sub">Per-finding representativeness was not computed for this finding (no per-finding sample proof attached). The run-level sampling methodology still applies; see the Methodology tab.</p>
+</div>
+  <div class="assumptions"><h4>⚠ Assumptions</h4><ul>
+    <li>The surface_types sub-metric compares the distribution of face area or face count across surface primitive types between answer and reference. <span class="unverified">UNVERIFIED — Inferred from the metric name and from its co-reporting with volume, surface_area and bbox in geometry_similarity_reason; the scorer implementation was not read.</span></li>
+    <li>The surface-type sub-metric carries roughly a tenth of the geometry_similarity weight, making this the lowest-leverage of the geometry deficits. <span class="unverified">UNVERIFIED — Fitted from freecad-8450a6402b, where volume, surface_area and bbox are all 0.000 and surface_types=0.827 yields overall=0.083, implying a weight near 0.10. The scorer&#39;s actual weights were not read.</span></li>
+    <li>Source code for unitf-agent was not provided; findings are evidence-only and file paths are inferred from trace metadata — verify paths before applying. <span class="hypothesis-pending">HYPOTHESIS-PENDING — No source/code access for this run (trace IDs only); inferred from trace metadata and the playbook copy embedded in the diagnosis context.</span></li>
+  </ul></div>
+  <h3>Remedies</h3>
+  <div class="remedy recommended">
+  <script type="text/plain" id="payload-r-slice-all-6-a">## R-slice-all-6-a — Validate the spline and disc-spring family conventions against reference face-type data
+**Finding:** F-slice-all-6 — The surface-type sub-metric sits between 0.729 and 0.827 on the spline, disc-spring, elbow and ball-bearing families — the answers use a different face-type mix than the reference, and no check the agent runs looks at it.
+**Severity:** medium
+**Apply target:** gnucleus-bench/harness/playbook.md
+**Target class:** local-agent-md
+**Cost:** medium · **Correctness:** medium · **Rank:** 1
+
+### Why this remedy
+All four spline and disc-spring tasks land in a narrow 0.729-0.802 surface-type band while simpler families reach 0.98, and in each case the agent followed the playbook&#39;s explicit face-type prescription. A deficit that is this consistent and this family-specific points at the prescription rather than at execution.
+
+### Why this works
+Reading the reference models&#39; actual surface composition for these families replaces a prescription asserted in the playbook with one measured from ground truth, so the agent&#39;s construction converges on the reference&#39;s primitive mix instead of on an assumed convention. Because the agent already prints its own distribution every run, the corrected target is directly checkable.
+
+### Source not found — hypothesis
+The failure origin could not be pinned to a concrete source location. Apply as a hypothesis and verify.
+
+### Apply instructions
+1. For freecad-58a1b82005, freecad-d733bfa285, freecad-14da78600e and freecad-264ab71adf, open the reference FCStd used by the verifier and dump face area grouped by type(face.Surface).\_\_name\_\_.
+2. Compare each against the answer distribution recorded in the traces (tr 1a923e1e msg 54, tr 1625e9ae msg 92, tr 327a4d5b msg 8, tr 420632c1 msg 9).
+3. Where they differ, correct the corresponding family convention in gnucleus-bench/harness/playbook.md to match the reference construction, and note the expected face-type mix inline.
+4. Add to Verification loop step A: compare the printed face-type distribution against the expected mix stated in the family convention.
+5. Re-run the four tasks and confirm surface\_types rises above 0.9 in verifier/reward.json.
+</script>
+  <input type="checkbox" class="remedy-cb" data-id="R-slice-all-6-a" data-finding="F-slice-all-6" checked>
+  <div class="remedy-body">
+  <div class="remedy-header"><div class="remedy-rank-id"><span class="rank-pill">RANK 1</span> <span class="remedy-id">R-slice-all-6-a</span></div><div class="remedy-what">Validate the spline and disc-spring family conventions against reference face-type data</div></div>
+  <div class="remedy-meta"><span class="b-cost-medium">cost:medium</span><span class="b-correctness-medium">correct:medium</span><span class="tclass-pill tclass-local-agent">local-agent-md</span><span class="apply-pill apply-config">gnucleus-bench/harness/playbook.md</span></div>
+  <div class="r-rationale"><span class="r-block-label">Why this remedy</span><p>All four spline and disc-spring tasks land in a narrow 0.729-0.802 surface-type band while simpler families reach 0.98, and in each case the agent followed the playbook&#39;s explicit face-type prescription. A deficit that is this consistent and this family-specific points at the prescription rather than at execution.</p></div>
+  <div class="r-why-works"><span class="r-block-label">Why this works</span><p>Reading the reference models&#39; actual surface composition for these families replaces a prescription asserted in the playbook with one measured from ground truth, so the agent&#39;s construction converges on the reference&#39;s primitive mix instead of on an assumed convention. Because the agent already prints its own distribution every run, the corrected target is directly checkable.</p></div>
+  <div class="r-target"><span class="r-target-label">Apply target</span><code>gnucleus-bench/harness/playbook.md</code></div>
+  
+  <div class="r-diff-caveat" data-diff-status="origin-unknown">
+  <div class="r-diff-caveat-label">Source not found — hypothesis</div>
+  <p>The failure origin could not be pinned to a concrete source location. No diff is shown; apply this remedy as a hypothesis and verify against the live target.</p>
+</div>
+  <div class="r-apply-grid"><div class="apply-col apply-col-empty"><span class="r-block-label">Apply plan</span><p class="r-muted">No structured plan provided.</p></div><div class="apply-col">
+  <div class="apply-col-label">Apply instructions</div>
+  <ol class="r-apply-instr">
+    <li>For freecad-58a1b82005, freecad-d733bfa285, freecad-14da78600e and freecad-264ab71adf, open the reference FCStd used by the verifier and dump face area grouped by type(face.Surface).__name__.</li>
+    <li>Compare each against the answer distribution recorded in the traces (tr 1a923e1e msg 54, tr 1625e9ae msg 92, tr 327a4d5b msg 8, tr 420632c1 msg 9).</li>
+    <li>Where they differ, correct the corresponding family convention in gnucleus-bench/harness/playbook.md to match the reference construction, and note the expected face-type mix inline.</li>
+    <li>Add to Verification loop step A: compare the printed face-type distribution against the expected mix stated in the family convention.</li>
+    <li>Re-run the four tasks and confirm surface_types rises above 0.9 in verifier/reward.json.</li>
+  </ol>
+</div></div>
+  
+  <textarea class="remedy-notes" placeholder="Feedback on this remedy — overrides, conditions, why-not, modifications. Merged verbatim into the master Copy decisions bundle."></textarea>
+  </div>
+</div>
+  <div class="finding-verdict">
+  <script type="text/plain" id="dismiss-payload-f-slice-all-6">{&quot;findingId&quot;:&quot;F-slice-all-6&quot;,&quot;verdict&quot;:&quot;dismissed&quot;,&quot;what&quot;:&quot;wrong-output&quot;,&quot;why&quot;:&quot;prompt-underspec&quot;,&quot;where&quot;:&quot;system-prompt&quot;,&quot;whatHappened&quot;:&quot;the agent printed its face areas grouped by surface type on every task as the playbook requires — the spline shaft reported only Cylinder and Plane faces, the filleted spline only Cylinder and Plane — but never had a reference distribution to compare against, so a mix that differs from the reference passed unremarked while volume and area were tuned to exactness&quot;,&quot;severity&quot;:&quot;info&quot;}</script>
+  <label class="fv-toggle"><input type="checkbox" class="finding-invalid" data-finding="F-slice-all-6"> <span class="fv-label">Invalid — not an issue (dismiss &amp; suppress next run)</span></label>
+  <textarea class="dismiss-reason" placeholder="Why is this not an issue? Folded verbatim into the Copy decisions bundle."></textarea>
+</div>
+</section>
+<section class="panel" id="tdecisions">
+  <div class="decisions-cta-bar"><button id="copy-decisions" title="Copy the approved-remedies bundle as markdown for handoff">Copy decisions as markdown</button></div>
+  <h2>⑦ Decisions — copy approvals</h2>
+  <p class="sub">★ green = recommended (pre-checked). Apply-target tags show change-type per remedy.</p>
+  
+  
+  <div class="gfeedback">
+    <h4>General feedback (speech-to-text friendly)</h4>
+    <textarea id="general-feedback" id="general-feedback-dr" placeholder="Voice-dump anything here — approve a remedy AND add conditions, reject with rationale, request a remedy not listed, scope overrides, questions, priorities… Folded into the Copy-decisions export verbatim."></textarea>
+  </div>
+  <div class="live-preview" id="live-preview">
+    <div class="lp-head"><span class="lp-label">Live Preview — Master Plan markdown</span><span class="lp-meta" id="lp-meta">0 remedies · 0 chars</span></div>
+    <textarea class="lp-body" id="lp-body" readonly placeholder="Check remedies above and type feedback — bundle assembles here live. Click the sticky Copy to Clipboard button at the bottom of the page to copy."></textarea>
+  </div>
+  <p>Each remedy also has its own notes box. The live preview above updates as you select remedies and type feedback.</p>
+</section>
+</main>
+
+<div class="approved-count">Selected: <strong id="approved-count">0</strong> of 9</div>
+<div class="action-bar"><button id="reset-all">Reset all</button></div>
+
+<!-- generated: 2026-08-19T09:04:42Z -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "Diagnostic Findings",
+  "description": "Session run-generic01-diag-01 diagnosed at 2026-08-19T09:00:03.340038+00:00",
+  "numberOfItems": 6,
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "item": {
+        "@type": "CreativeWork",
+        "identifier": "F-slice-all-3",
+        "name": "On freecad-0fe9d9e3ce the live verifier scored spec-consistency 0.0 (0/5) on a file whose geometry matched the reference exactly, while the agent's own run of the identical scorer on the identical file returned 1.0 (6/6) — a harness-side scoring failure that zeroed a perfect answer.",
+        "description": "freecad-0fe9d9e3ce__FzcgEak/verifier/reward.json (cad_spec_consistency=0.0, 'consistency_rate=0.000 (0/5 consistent, 5 inconsistent, 0 not_found)'); tr 75a0555b msg 26; freecad-0fe9d9e3ce__FzcgEak/verifier/test-stdout.txt (0 bytes)",
+        "keywords": "low-score dependency-failure harness-side",
+        "additionalProperty": [
+          {
+            "@type": "PropertyValue",
+            "name": "what",
+            "value": "low-score"
+          },
+          {
+            "@type": "PropertyValue",
+            "name": "why",
+            "value": "dependency-failure"
+          },
+          {
+            "@type": "PropertyValue",
+            "name": "where",
+            "value": "harness-side"
+          },
+          {
+            "@type": "PropertyValue",
+            "name": "confidence",
+            "value": "high"
+          }
+        ],
+        "hasPart": [
+          {
+            "@type": "CreativeWork",
+            "identifier": "R-slice-all-3-a",
+            "name": "Capture verifier stdout and stderr so a zero score is attributable",
+            "additionalProperty": [
+              {
+                "@type": "PropertyValue",
+                "name": "cost",
+                "value": "low"
+              },
+              {
+                "@type": "PropertyValue",
+                "name": "correctness",
+                "value": "high"
+              },
+              {
+                "@type": "PropertyValue",
+                "name": "rank",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "@type": "CreativeWork",
+            "identifier": "R-slice-all-3-b",
+            "name": "Flag geometry-perfect / spec-zero results as suspect before accepting the score",
+            "additionalProperty": [
+              {
+                "@type": "PropertyValue",
+                "name": "cost",
+                "value": "medium"
+              },
+              {
+                "@type": "PropertyValue",
+                "name": "correctness",
+                "value": "high"
+              },
+              {
+                "@type": "PropertyValue",
+                "name": "rank",
+                "value": 2
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "item": {
+        "@type": "CreativeWork",
+        "identifier": "F-slice-all-4",
+        "name": "The agent discovered on one task that an unmodelled parameter can be made spec-measurable by binding it to a named driving constraint, then failed to apply that technique on the slotted-pin task where the identical situation cost a third of the spec score.",
+        "description": "gnucleus-bench/harness/playbook.md:208-212 ('**Slotted headless pins**: plain cylinder — NO chamfers even if chamfer parameters are printed'); tr 79a5d994 msg 14; tr a913ea60 msg 109; freecad-c4bad6c5af__MG4yS8i/verifier/reward.json",
+        "keywords": "low-score prompt-underspec system-prompt",
+        "additionalProperty": [
+          {
+            "@type": "PropertyValue",
+            "name": "what",
+            "value": "low-score"
+          },
+          {
+            "@type": "PropertyValue",
+            "name": "why",
+            "value": "prompt-underspec"
+          },
+          {
+            "@type": "PropertyValue",
+            "name": "where",
+            "value": "system-prompt"
+          },
+          {
+            "@type": "PropertyValue",
+            "name": "confidence",
+            "value": "high"
+          }
+        ],
+        "hasPart": [
+          {
+            "@type": "CreativeWork",
+            "identifier": "R-slice-all-4-a",
+            "name": "Promote the named-driving-constraint technique into the verification loop",
+            "additionalProperty": [
+              {
+                "@type": "PropertyValue",
+                "name": "cost",
+                "value": "low"
+              },
+              {
+                "@type": "PropertyValue",
+                "name": "correctness",
+                "value": "high"
+              },
+              {
+                "@type": "PropertyValue",
+                "name": "rank",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "item": {
+        "@type": "CreativeWork",
+        "identifier": "F-slice-all-1",
+        "name": "The playbook's mandatory analytic cross-check is circular — it compares the script against an expected volume derived from the same interpretation, so it converges to ~1e-16 on every task while the graded volume still misses the reference by up to 46.9%.",
+        "description": "gnucleus-bench/harness/playbook.md:76-81 ('A. Analytic cross-check ... compute the expected volume ... by hand from the parameters'); tr a913ea60 msg 104; tr c38c8881 msg 89; tr 327a4d5b msg 8; jobs/generic-01/freecad-*/verifier/reward.json geometry_similarity_reason",
+        "keywords": "wrong-output prompt-underspec system-prompt",
+        "additionalProperty": [
+          {
+            "@type": "PropertyValue",
+            "name": "what",
+            "value": "wrong-output"
+          },
+          {
+            "@type": "PropertyValue",
+            "name": "why",
+            "value": "prompt-underspec"
+          },
+          {
+            "@type": "PropertyValue",
+            "name": "where",
+            "value": "system-prompt"
+          },
+          {
+            "@type": "PropertyValue",
+            "name": "confidence",
+            "value": "high"
+          }
+        ],
+        "hasPart": [
+          {
+            "@type": "CreativeWork",
+            "identifier": "R-slice-all-1-a",
+            "name": "Replace the self-referential analytic check with a two-interpretation differential check",
+            "additionalProperty": [
+              {
+                "@type": "PropertyValue",
+                "name": "cost",
+                "value": "low"
+              },
+              {
+                "@type": "PropertyValue",
+                "name": "correctness",
+                "value": "medium"
+              },
+              {
+                "@type": "PropertyValue",
+                "name": "rank",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "@type": "CreativeWork",
+            "identifier": "R-slice-all-1-b",
+            "name": "Publish the grading tolerances to the agent so it can triage effort",
+            "additionalProperty": [
+              {
+                "@type": "PropertyValue",
+                "name": "cost",
+                "value": "low"
+              },
+              {
+                "@type": "PropertyValue",
+                "name": "correctness",
+                "value": "medium"
+              },
+              {
+                "@type": "PropertyValue",
+                "name": "rank",
+                "value": 2
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "item": {
+        "@type": "CreativeWork",
+        "identifier": "F-slice-all-2",
+        "name": "When a dimension the geometry requires is absent from the key-parameter list, the agent invents a plausible value and proceeds — on the elbow flange it assumed a 20 mm flange plate and lost 46.9% of the volume, the worst score in the slice.",
+        "description": "tr a913ea60 msg 109 ('**Flange thickness is not in the spec.** I assumed a standard **20 mm** plate'); freecad-8450a6402b__LBjpLsg/verifier/reward.json",
+        "keywords": "wrong-output prompt-underspec system-prompt",
+        "additionalProperty": [
+          {
+            "@type": "PropertyValue",
+            "name": "what",
+            "value": "wrong-output"
+          },
+          {
+            "@type": "PropertyValue",
+            "name": "why",
+            "value": "prompt-underspec"
+          },
+          {
+            "@type": "PropertyValue",
+            "name": "where",
+            "value": "system-prompt"
+          },
+          {
+            "@type": "PropertyValue",
+            "name": "confidence",
+            "value": "high"
+          }
+        ],
+        "hasPart": [
+          {
+            "@type": "CreativeWork",
+            "identifier": "R-slice-all-2-a",
+            "name": "Add a missing-parameter derivation rule to the interpretation section",
+            "additionalProperty": [
+              {
+                "@type": "PropertyValue",
+                "name": "cost",
+                "value": "low"
+              },
+              {
+                "@type": "PropertyValue",
+                "name": "correctness",
+                "value": "medium"
+              },
+              {
+                "@type": "PropertyValue",
+                "name": "rank",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 5,
+      "item": {
+        "@type": "CreativeWork",
+        "identifier": "F-slice-all-5",
+        "name": "Four of the eleven tasks scored 1.0 in the baseline run and regressed here, three others improved — the agent re-derives an unpinned interpretation on every attempt and nothing carries the winning reading forward.",
+        "description": "gnucleus-bench/harness/final_run_scores.json vs gnucleus-bench/jobs/generic-01/*/verifier/reward.json; tr 80caa98b msg 40; tr c38c8881 msg 90; tr 327a4d5b msg 44",
+        "keywords": "wrong-output prompt-underspec system-prompt",
+        "additionalProperty": [
+          {
+            "@type": "PropertyValue",
+            "name": "what",
+            "value": "wrong-output"
+          },
+          {
+            "@type": "PropertyValue",
+            "name": "why",
+            "value": "prompt-underspec"
+          },
+          {
+            "@type": "PropertyValue",
+            "name": "where",
+            "value": "system-prompt"
+          },
+          {
+            "@type": "PropertyValue",
+            "name": "confidence",
+            "value": "high"
+          }
+        ],
+        "hasPart": [
+          {
+            "@type": "CreativeWork",
+            "identifier": "R-slice-all-5-b",
+            "name": "Gate submission on a regression check against the recorded best score",
+            "additionalProperty": [
+              {
+                "@type": "PropertyValue",
+                "name": "cost",
+                "value": "low"
+              },
+              {
+                "@type": "PropertyValue",
+                "name": "correctness",
+                "value": "high"
+              },
+              {
+                "@type": "PropertyValue",
+                "name": "rank",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "@type": "CreativeWork",
+            "identifier": "R-slice-all-5-a",
+            "name": "Keep a per-task interpretation ledger and feed the winning reading back into the prompt",
+            "additionalProperty": [
+              {
+                "@type": "PropertyValue",
+                "name": "cost",
+                "value": "medium"
+              },
+              {
+                "@type": "PropertyValue",
+                "name": "correctness",
+                "value": "medium"
+              },
+              {
+                "@type": "PropertyValue",
+                "name": "rank",
+                "value": 2
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 6,
+      "item": {
+        "@type": "CreativeWork",
+        "identifier": "F-slice-all-6",
+        "name": "The surface-type sub-metric sits between 0.729 and 0.827 on the spline, disc-spring, elbow and ball-bearing families — the answers use a different face-type mix than the reference, and no check the agent runs looks at it.",
+        "description": "freecad-58a1b82005__CgKMpaj/verifier/reward.json ('surface_types=0.729'); freecad-d733bfa285__cXQRy27/verifier/reward.json ('surface_types=0.788'); tr 1a923e1e msg 54; tr 1625e9ae msg 92",
+        "keywords": "wrong-output prompt-underspec system-prompt",
+        "additionalProperty": [
+          {
+            "@type": "PropertyValue",
+            "name": "what",
+            "value": "wrong-output"
+          },
+          {
+            "@type": "PropertyValue",
+            "name": "why",
+            "value": "prompt-underspec"
+          },
+          {
+            "@type": "PropertyValue",
+            "name": "where",
+            "value": "system-prompt"
+          },
+          {
+            "@type": "PropertyValue",
+            "name": "confidence",
+            "value": "medium"
+          }
+        ],
+        "hasPart": [
+          {
+            "@type": "CreativeWork",
+            "identifier": "R-slice-all-6-a",
+            "name": "Validate the spline and disc-spring family conventions against reference face-type data",
+            "additionalProperty": [
+              {
+                "@type": "PropertyValue",
+                "name": "cost",
+                "value": "medium"
+              },
+              {
+                "@type": "PropertyValue",
+                "name": "correctness",
+                "value": "medium"
+              },
+              {
+                "@type": "PropertyValue",
+                "name": "rank",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
+</script>
+<script>
+(function(){
+  function renderLivePreview(){
+    var checked = Array.from(document.querySelectorAll('.remedy-cb:checked'));
+    var invalids = Array.from(document.querySelectorAll('.finding-invalid:checked'));
+    var lines = [];
+    if (checked.length === 0 && invalids.length === 0) {
+      document.getElementById('lp-body').value = '';
+      document.getElementById('lp-meta').textContent = '0 remedies · 0 chars';
+      return;
+    }
+    if (checked.length > 0) {
+    lines.push('# Approved Remedies (handoff)');
+    lines.push('');
+    lines.push('Generated: ' + new Date().toISOString());
+    lines.push('');
+    lines.push('---');
+    lines.push('');
+    checked.forEach(function(cb){
+      var rid = (cb.dataset.id || 'unknown').toLowerCase().replace(/[^a-z0-9-]/g,'-');
+      var payloadEl = document.getElementById('payload-' + rid);
+      if (payloadEl) {
+        lines.push(payloadEl.textContent || '');
+      } else {
+        // DOM fallback
+        var card = cb.closest('.remedy');
+        if (!card) return;
+        var fid = cb.dataset.finding || '?';
+        var remedyId = cb.dataset.id || '?';
+        var what = (card.querySelector('.remedy-what') || {textContent:''}).textContent.trim();
+        lines.push('## ' + remedyId + ' (' + fid + ')');
+        lines.push('**Remedy:** ' + what);
+        lines.push('');
+      }
+      var note = card ? card.querySelector('.remedy-notes') : null;
+      if (note && note.value.trim()) {
+        note.value.trim().split(/\r?\n/).forEach(function(ln){ lines.push('> ' + ln); });
+        lines.push('');
+      }
+      lines.push('---');
+      lines.push('');
+    });
+    } // end if (checked.length > 0)
+    // DISMISSAL capture — the SAME copy-back channel (no new egress). Each finding marked
+    // "Invalid" folds its hidden dismiss-payload (findingId + failure-mode triple + severity)
+    // + optional reason into the bundle; the orchestrator persists these to the unified
+    // verdict ledger. This walk also lets a dismissal-only paste (0 remedies) still export.
+    if (invalids.length > 0) {
+      lines.push('## Invalid findings (dismissed — "not an issue")');
+      lines.push('');
+      invalids.forEach(function(cb){
+        var fid = cb.dataset.finding || '?';
+        var fidNorm = fid.toLowerCase().replace(/[^a-z0-9-]/g,'-');
+        lines.push('- finding: ' + fid);
+        var card = cb.closest('.panel');
+        var reasonEl = card ? card.querySelector('.dismiss-reason') : null;
+        if (reasonEl && reasonEl.value.trim()) {
+          reasonEl.value.trim().split(/\r?\n/).forEach(function(ln){ lines.push('  reason: ' + ln); });
+        }
+        var payloadEl = document.getElementById('dismiss-payload-' + fidNorm);
+        if (payloadEl) { lines.push('  ' + (payloadEl.textContent || '').trim()); }
+        lines.push('');
+      });
+      lines.push('---');
+      lines.push('');
+    }
+    var gf1 = document.getElementById('general-feedback');
+    var gf2 = document.getElementById('general-feedback-dr');
+    var gfVal = (gf1 && gf1.value.trim()) || (gf2 && gf2.value.trim()) || '';
+    if (gfVal) {
+      lines.push('## General feedback');
+      lines.push('');
+      lines.push(gfVal);
+      lines.push('');
+    }
+    var text = lines.join('\n');
+    var lp = document.getElementById('lp-body');
+    lp.value = text;
+    document.getElementById('lp-meta').textContent = checked.length + ' remedies · ' + invalids.length + ' invalid · ' + text.length + ' chars';
+  }
+
+  // Wire events
+  function wireEvents(){
+    document.querySelectorAll('.remedy-cb').forEach(function(cb){
+      cb.addEventListener('change', renderLivePreview);
+    });
+    document.querySelectorAll('.remedy-notes').forEach(function(ta){
+      ta.addEventListener('input', renderLivePreview);
+    });
+    document.querySelectorAll('.finding-invalid').forEach(function(cb){
+      cb.addEventListener('change', renderLivePreview);
+    });
+    document.querySelectorAll('.dismiss-reason').forEach(function(ta){
+      ta.addEventListener('input', renderLivePreview);
+    });
+    var gf1 = document.getElementById('general-feedback');
+    var gf2 = document.getElementById('general-feedback-dr');
+    if (gf1) gf1.addEventListener('input', renderLivePreview);
+    if (gf2) gf2.addEventListener('input', renderLivePreview);
+    renderLivePreview();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', wireEvents);
+  } else {
+    wireEvents();
+  }
+
+  // Override #copy-decisions to read from #lp-body (D11)
+  function overrideCopyBtn(){
+    var btn = document.getElementById('copy-decisions');
+    if (!btn) return;
+    // Remove old listeners by cloning
+    var newBtn = btn.cloneNode(true);
+    btn.parentNode.replaceChild(newBtn, btn);
+    newBtn.addEventListener('click', function(){
+      var lp = document.getElementById('lp-body');
+      var text = lp ? lp.value : '';
+      if (!text) { text = '# No remedies selected'; }
+      var originalText = newBtn.textContent;
+      navigator.clipboard.writeText(text).then(function(){
+        newBtn.textContent = '✓ Copied';
+        // Log to changelog if present
+        var cl = document.getElementById('changelog-log');
+        if (cl) {
+          var row = document.createElement('tr');
+          row.innerHTML = '<td>' + new Date().toLocaleTimeString() + '</td><td>Copied ' + text.length + ' chars to clipboard</td>';
+          cl.prepend(row);
+        }
+        setTimeout(function(){ newBtn.textContent = originalText; }, 2200);
+      }).catch(function(){
+        window.prompt('Copy:', text);
+      });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', overrideCopyBtn);
+  } else {
+    overrideCopyBtn();
+  }
+})();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+try { mermaid.initialize({ startOnLoad: true, theme: 'dark', themeVariables: { primaryColor:'#1a1a25', primaryTextColor:'#eef1f6', primaryBorderColor:'#7E47D7', lineColor:'#b794f4', actorBkg:'#1a1a25', actorBorder:'#7E47D7', actorTextColor:'#eef1f6', noteBkgColor:'#22222f', noteTextColor:'#a6a2b4', noteBorderColor:'#45b8cc' }, securityLevel:'loose' }); } catch(e) {}
+document.querySelectorAll('nav.tabs button').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var t = btn.dataset.tab;
+    document.querySelectorAll('nav.tabs button').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+    document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
+    var panel = document.getElementById(t);
+    if (panel) panel.classList.add('active');
+    window.scrollTo({top:0,behavior:'instant'});
+  });
+});
+// DX-2: drill-in — any element with data-goto activates that tab (via its nav button so
+// the nav highlight stays in sync); an optional data-anchor scrolls to + flashes a row
+// (e.g. a finding drills to its session row on the Overview tab).
+document.querySelectorAll('[data-goto]').forEach(function(el){
+  el.addEventListener('click', function(ev){
+    ev.preventDefault();
+    var target = el.dataset.goto;
+    var btn = document.querySelector('nav.tabs button[data-tab="' + target + '"]');
+    if (btn) { btn.click(); }
+    else {
+      document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
+      var panel = document.getElementById(target);
+      if (panel) panel.classList.add('active');
+    }
+    var anchor = el.dataset.anchor;
+    if (anchor) {
+      var node = document.getElementById(anchor);
+      if (node) {
+        node.scrollIntoView({ behavior: 'instant', block: 'center' });
+        node.classList.add('drill-flash');
+        setTimeout(function(){ node.classList.remove('drill-flash'); }, 1400);
+      }
+    }
+  });
+});
+// inject per-remedy notes textareas (idempotent — W12-04 restored the
+// `.remedy-body` wrapper, and renderRemedyCard now emits its own `.remedy-notes`
+// inside it; skip injection when one already exists to avoid double textareas)
+document.querySelectorAll('.remedy').forEach(function(r){
+  var body = r.querySelector('.remedy-body'); if (!body) return;
+  if (body.querySelector('.remedy-notes')) return;
+  var ta = document.createElement('textarea');
+  ta.className = 'remedy-notes';
+  ta.placeholder = 'Notes / conditions on this remedy — voice-dump welcome (overrides, caveats, why-not)…';
+  body.appendChild(ta);
+});
+function updateApprovedCount(){ document.getElementById('approved-count').textContent = document.querySelectorAll('.remedy-cb:checked').length; }
+document.querySelectorAll('.remedy-cb').forEach(function(cb){ cb.addEventListener('change', updateApprovedCount); });
+updateApprovedCount();
+var _copyBtn0 = document.getElementById('copy-decisions');
+if (_copyBtn0) _copyBtn0.addEventListener('click', function(){
+  var txt=function(e){return e?e.textContent.trim().replace(/\s+/g,' '):'';};
+  var lines = ['# Approved Remedies (handoff)','','Generated: ' + new Date().toISOString(),'','---',''];
+  var checked = Array.from(document.querySelectorAll('.remedy-cb:checked'));
+  if (checked.length === 0) { lines.push('_No remedies selected._'); }
+  else { checked.forEach(function(cb){
+    var card = cb.closest('.remedy'); var panel = cb.closest('.panel');
+    var rid = cb.dataset.id || '?'; var fid = cb.dataset.finding || '?';
+    var rec = card.classList.contains('recommended') ? ' ★RECOMMENDED' : '';
+    var apply = card.querySelector('.apply-pill') ? card.querySelector('.apply-pill').textContent.trim() : '';
+    var cost=''; card.querySelectorAll('.remedy-meta span').forEach(function(s){ if(/cost:/.test(s.textContent)) cost=s.textContent.trim(); });
+    var what = txt(card.querySelector('.remedy-what'));
+    var fhead = panel ? txt(panel.querySelector('h2')) : '';
+    var tax = panel ? Array.from(panel.querySelectorAll('.taxonomy .tax-chip')).map(function(c){return txt(c);}).join(' · ') : '';
+    var evid = panel ? txt(panel.querySelector('h3 + p')) : '';
+    var origin = panel ? txt(panel.querySelector('.whychain li.origin')) : '';
+    var assume = panel ? Array.from(panel.querySelectorAll('.assumptions li')).map(function(l){return txt(l);}) : [];
+    lines.push('## ' + rid + ' (' + fid + ')' + rec + '  [' + apply + (cost?' · '+cost:'') + ']');
+    lines.push('**Remedy:** ' + what);
+    if (fhead) lines.push('**Finding:** ' + fhead);
+    if (tax) lines.push('**Taxonomy:** ' + tax);
+    if (origin) lines.push('**Root cause (origin):** ' + origin);
+    if (evid) lines.push('**Evidence:** ' + evid);
+    if (assume.length){ lines.push('**Assumptions:**'); assume.forEach(function(a){ lines.push('- ' + a); }); }
+    var note = card.querySelector('.remedy-notes');
+    if (note && note.value.trim()) { lines.push('**Operator notes:**'); note.value.trim().split(/\r?\n/).forEach(function(ln){ lines.push('> ' + ln); }); }
+    lines.push('');
+  }); }
+  var rejected = Array.from(document.querySelectorAll('.remedy-cb:not(:checked)')).filter(function(cb){ var t=cb.closest('.remedy').querySelector('.remedy-notes'); return t && t.value.trim(); });
+  if (rejected.length){ lines.push('---'); lines.push(''); lines.push('## Not selected (with rationale)'); lines.push(''); rejected.forEach(function(cb){
+    var card=cb.closest('.remedy'); var rid=cb.dataset.id||'?'; var fid=cb.dataset.finding||'?';
+    lines.push('- [ ] `'+rid+'` ('+fid+') — '+txt(card.querySelector('.remedy-what'))); card.querySelector('.remedy-notes').value.trim().split(/\r?\n/).forEach(function(ln){ lines.push('  > '+ln); });
+  }); lines.push(''); }
+  var gf = document.getElementById('general-feedback');
+  if (gf && gf.value.trim()){ lines.push('---'); lines.push(''); lines.push('## General feedback'); lines.push(''); lines.push(gf.value.trim()); lines.push(''); }
+  var text = lines.join('\n');
+  navigator.clipboard.writeText(text).then(function(){ var b=document.getElementById('copy-decisions'),o=b.textContent; b.textContent='Copied ✓ — paste in chat'; setTimeout(function(){b.textContent=o;},2200); }).catch(function(){ window.prompt('Copy:', text); });
+});
+document.getElementById('reset-all').addEventListener('click', function(){ if(!confirm('Reset all selections + notes?'))return; document.querySelectorAll('.remedy-cb').forEach(function(cb){cb.checked=false;}); document.querySelectorAll('.remedy-notes').forEach(function(t){t.value='';}); var gf=document.getElementById('general-feedback'); if(gf)gf.value=''; updateApprovedCount(); });
+</script>
+</body></html>

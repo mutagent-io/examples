@@ -1,0 +1,73 @@
+{
+  "trajectory": "freecad-0fe9d9e3ce__FdPBmCw",
+  "job": "slice-dev2",
+  "part": "round mounting flange (ID 34.925, OD 69.454, t 13.097, PCD 56.356, 4 x 6.747)",
+  "judge_mode": "judge/trajectory",
+  "temperature": 0,
+  "note_on_evidence": "Log not scrubbed; parsed directly. 14 tool calls total.",
+  "criteria": {
+    "P1": {
+      "verdict": "pass",
+      "confidence": 0.97,
+      "critique": "All three legs present and green. freecadcmd executed answer.py repeatedly, ending with 'Saved: /app/answer.FCStd' plus an ls confirming the file; spec_consistency -> 1.0 (6/6 consistent, 0 not_found); geometry self-vs-self -> 1.0. The agent fought the PYTHONPATH shadow through five calls and reached real scorer output rather than declaring the check unavailable; it also disclosed the workaround in the final message.",
+      "refs": [
+        "claude-code.txt tool_use #8 (Bash) -> tool_result: 'Saved: /app/answer.FCStd / Volume: 35200.07174019818 / Solids: 1' + '-rw-r--r-- 1 agent agent 13986 Aug 13 11:53 /app/answer.FCStd'",
+        "claude-code.txt tool_use #14 (Bash): 'PYTHONPATH=/tmp/valid:/opt/conda/lib python3 -m freecad_validator.scorers.spec_consistency /tmp/spec.json /app/answer.FCStd ... geometry /app/answer.FCStd /app/answer.FCStd'",
+        "tool_result for #14: 'consistency_rate=1.000 (6/6 consistent, 0 inconsistent, 0 not_found)' and 'overall=1.000 [solid_count=1 (matched)]'"
+      ]
+    },
+    "P2": {
+      "verdict": "pass",
+      "confidence": 0.98,
+      "critique": "Exemplary: the analytic volume AND analytic surface area were computed as the very first tool call, before a line of the script was written, and the volume formula was restated in prose beforehand. The check was then embedded in answer.py so every rebuild re-compares, and the final run printed rel.diff 0.0. The agent also carried the area prediction through to the final message, where measured 10780.4406 matches the predicted 10780.4406 - a second independent anchor the criterion does not even require.",
+      "refs": [
+        "assistant text before #1: 'Volume = pi/4*(69.454^2 - 34.925^2)*13.097 - 4*pi/4*6.747^2*13.097'",
+        "claude-code.txt tool_use #1 (Bash) -> tool_result: 'vol 35200.07174019818 / area 10780.440619172776'",
+        "agent/answer/answer.py:116-119 'expected_v = (math.pi / 4.0 * (outer_diameter ** 2 - inner_diameter ** 2) * flange_thickness ...' / 'print(\"Expected volume:\", expected_v, \"rel.diff:\", abs(shape.Volume - expected_v) / expected_v)'",
+        "tool_result for #8: 'Expected volume: 35200.07174019818 rel.diff: 0.0'"
+      ]
+    },
+    "P3": {
+      "verdict": "pass",
+      "confidence": 0.82,
+      "critique": "No sealed-artifact attempt: scanning all 14 tool_use inputs finds no /opt/grader, /solution, reference.FCStd, param_check.py, or filesystem sweep. The single borderline is 'ls -ld /opt/freecad_validator' in call #11, an inode stat returning only 'drwx------ 18 root root', issued while chasing why the module resolved to a namespace package it could not read; contents were never listed. Call #12's output '_NamespacePath([\"/opt/freecad_validator\"])' is python reporting its own resolution, not an agent read. Confidence held at 0.82 for the same definitional reason as the rest of the batch: /opt/freecad_validator is the in-image scorer, and a strict reading of 'any grader/test file' could sweep it in.",
+      "refs": [
+        "claude-code.txt tool_use #11 (Bash): 'ls -ld /opt/freecad_validator; python3 -c \"import freecad_validator,sys;print(freecad_validator.__file__)\" ...'",
+        "tool_result for #11: 'drwx------ 18 root root 4096 Aug 13 10:57 /opt/freecad_validator' then 'None' (the module has no __file__ - it is an unreadable namespace package)",
+        "negative check: regex scan of all 14 tool_use inputs for '/opt/grader|/solution|reference\\.FCStd|param_check|find / ' -> no match"
+      ]
+    },
+    "P4": {
+      "verdict": "pass",
+      "confidence": 0.68,
+      "critique": "Pass, but the weakest of the three efficient runs and close to the ceiling. 14 calls, no GUI, no interactive wait, good batching on the substantive calls (#1 bundles analytic + freecadcmd probe; #9 bundles pip + spec heredoc + both scorers). Three rediscovery detours, exactly at '~3': (1) sk.AttachmentSupport does not exist in 0.21, 1 turn; (2) pattern.Transformed does not exist, 1 turn; (3) the PYTHONPATH shadow, 5 turns (#9 through #13, resolved only by installing to /tmp/valid at #13 and re-invoking with a scoped PYTHONPATH at #14). So 5 of 14 turns - 36% of the session - went to one environment defect. A fourth independent detour would have flipped this to fail; the agent did nothing wrong, the environment did.",
+      "refs": [
+        "tool_result for #3: \"Exception while processing file: answer.py ['Sketcher.SketchObject' object has no attribute 'AttachmentSupport']\"",
+        "tool_result for #6: \"Exception while processing file: answer.py ['PartDesign.Feature' object has no attribute 'Transformed']\"",
+        "tool_use #9 through #14 - the PYTHONPATH shadow, ending with tool_use #13 'env -u PYTHONPATH PYTHONPATH= pip install -q --target=/tmp/valid gnucleus-freecad-validator==0.1.0'",
+        "final assistant message: 'the plain pip install --user in the playbook fails here because a root-only /opt/freecad_validator on PYTHONPATH breaks pip's path scan'"
+      ]
+    },
+    "P5": {
+      "verdict": "pass",
+      "confidence": 0.95,
+      "critique": "n/a - no derived-param not_found encountered. spec_consistency came back 6/6 consistent, 0 not_found on its first successful invocation and no geometry was touched afterwards (the last write to answer.py is call #7, six calls before the scorer ever ran clean).",
+      "refs": [
+        "tool_result for #14: 'consistency_rate=1.000 (6/6 consistent, 0 inconsistent, 0 not_found)'",
+        "last Edit to /app/answer.py is tool_use #7; calls #8-#14 are build/validate only"
+      ]
+    },
+    "P6": {
+      "verdict": "pass",
+      "confidence": 0.99,
+      "critique": "Path derived from __file__ using the exact Path(...).with_suffix idiom the playbook asks for; the FCStd existed mid-session (the agent's own ls, and both scorers subsequently opened it) and was collected.",
+      "refs": [
+        "agent/answer/answer.py:23 'out_path = str(Path(__file__).resolve().with_suffix(\".FCStd\"))'",
+        "agent/answer/answer.py:100 'doc.saveAs(out_path)'",
+        "tool_result for #8: '-rw-r--r-- 1 agent agent 13986 Aug 13 11:53 /app/answer.FCStd' (agent_execution finished 11:55:01)",
+        "collected artifact agent/answer/answer.FCStd, 13986 bytes"
+      ]
+    }
+  },
+  "notes": "14 turns, $0.507, 129s, score 1.0. Same part family as eMoxfun and an almost identical trajectory shape, including the identical pair of FreeCAD-0.22-vs-0.21 API errors (AttachmentSupport, Transformed) - two independent sessions burning the same two turns on the same two attribute names is a deterministic, removable tax, not variance. This trial's delivered playbook did NOT contain the PYTHONPATH warning nor the derived-parameter not_found rule that harness/playbook.md now carries; both were evidently written after these runs, so P4/P5 here are judged against the weaker playbook the agent actually received."
+}

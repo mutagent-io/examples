@@ -19,30 +19,55 @@ Each folder has its own `README.md` with the layout convention and how to add an
 
 ## Getting MutagenT
 
-The ADL skill bundle installs into your own project, not into this repo:
+### Standalone binary — no Node, no npm
+
+The fastest path. Ships the Helix conductor, the lifecycle skills, and a bundled harness as
+one self-contained binary.
 
 ```bash
-pnpx @mutagent/helix init      # installs the lifecycle skills into <your project>/.claude
+curl -fsSL https://install.mutagent.io/helix | bash
+mutagent-helix                       # launch
 ```
 
-Then boot the conductor in your coding agent:
+Verify the install:
+
+```bash
+mutagent-helix --version
+mutagent-helix doctor --strict
+```
+
+An Oh My Pi flavour is published alongside it:
+
+```bash
+curl -fsSL https://install.mutagent.io/helix-omp | bash
+```
+
+### Into an existing coding agent
+
+If you already work in Claude Code and want the lifecycle skills in your project:
+
+```bash
+pnpx @mutagent/helix init            # into <your project>/.claude
+pnpx @mutagent/helix init --global   # ... or into ~/.claude
+pnpx @mutagent/helix doctor          # report what is installed
+```
+
+Then boot the conductor:
 
 ```
 claude   →   *mutagent
 ```
 
-> `@mutagent/helix` is not on the public npm registry yet. Until it publishes, the individual
-> lifecycle stages are available on their own — `@mutagent/evaluator` for EVALUATE and
-> `@mutagent/diagnostics` for DIAGNOSE — alongside the `@mutagent/cli`.
+> **Availability.** The binary above is live now. `@mutagent/helix` is not on the public npm
+> registry yet — until it lands, use the binary, or install the stages that are already
+> published: `@mutagent/evaluator`, `@mutagent/diagnostics`, and `@mutagent/cli`.
 
 ## Status
 
-**Both folders are empty scaffolds today.** The layout conventions are settled and documented —
-what is missing is the entries, and those are landing now.
-
-Earlier versions of this repo carried examples for product surfaces that have since been retired.
-Rather than leave them as code that no longer runs against anything, they were removed. What you see
-here is the structure the new entries are being written into.
+`showcase/` has its first entry — [`freecad-engineer`](showcase/freecad-engineer/), a
+self-verifying FreeCAD CAD agent, published with the spec it was built from, its build report,
+its evaluation runs and scorecard, and its diagnostics reports. `cookbooks/` is still a
+scaffold; recipes land there next.
 
 ## Requirements
 

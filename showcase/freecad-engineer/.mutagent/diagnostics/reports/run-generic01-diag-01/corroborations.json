@@ -1,0 +1,22 @@
+[
+  {
+    "signal": "prompt-underspec",
+    "evidenceRef": "trace:a913ea60-3fe9-4cf4-89fb-a9f65ebf1e01#msg[89,92,96,99]"
+  },
+  {
+    "signal": "handoff-loss",
+    "evidenceRef": "trace:1a923e1e-f677-4d4f-9ecf-6942cf7e4701#msg[7]"
+  },
+  {
+    "signal": "loop/latency",
+    "evidenceRef": "trace:1625e9ae-7297-4fb5-833e-0d82c87f0e34#msg[52,57]"
+  },
+  {
+    "signal": "tool-misuse",
+    "evidenceRef": "trace:1625e9ae-7297-4fb5-833e-0d82c87f0e34#msg[52,53]"
+  },
+  {
+    "signal": "prompt-underspec",
+    "evidenceRef": "trace:1625e9ae-7297-4fb5-833e-0d82c87f0e34#msg[16,19,23,26]"
+  }
+]
