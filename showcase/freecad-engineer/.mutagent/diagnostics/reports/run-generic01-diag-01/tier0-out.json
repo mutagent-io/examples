@@ -1,0 +1,15 @@
+{
+  "totalTraces": 11,
+  "withError": 1,
+  "withFeedback": 0,
+  "withLowScore": 3,
+  "withHighLatency": 0,
+  "hasApiExhaustion": false,
+  "hasPrimarySignal": true,
+  "recommendedSlicing": "dynamic-cluster",
+  "estimatedSlots": 1,
+  "patterns": [],
+  "config": {
+    "thresholdMode": "relative"
+  }
+}

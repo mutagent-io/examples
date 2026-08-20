@@ -1,0 +1,72 @@
+{
+  "trajectory": "freecad-0603c53148__eMoxfun",
+  "job": "smoke-cc2",
+  "part": "round mounting flange (OD 107.156, t 21.034, BCD 87.312, 4 x 9.922, bore 49.213)",
+  "judge_mode": "judge/trajectory",
+  "temperature": 0,
+  "note_on_evidence": "This log was scrubbed: every literal digit '1' is rendered '[REDACTED]'. Un-redacting ('[REDACTED]' -> '1') was required even to parse the JSONL, because redaction inside numeric fields (e.g. \"output_tokens\":[REDACTED]7) makes those lines invalid JSON. Tool-call indices below are from the un-redacted parse (14 tool calls total).",
+  "criteria": {
+    "P1": {
+      "verdict": "pass",
+      "confidence": 0.97,
+      "critique": "All three legs of the self-verification run are present and successful. (a) answer.py executed under freecadcmd, repeatedly, ending in a clean build with the FCStd confirmed on disk. (b) spec_consistency run against a hand-reconstructed /tmp/spec.json -> 1.0, 6/6 consistent, 0 not_found. (c) geometry self-vs-self gate -> 1.0. The first two validator attempts failed on the environment's PYTHONPATH shadowing, and the agent did NOT paper over it: it diagnosed the shadow and re-ran with a scoped PYTHONPATH until both scorers actually produced numbers. No unreachable-PyPI fallback was needed (pip worked once PYTHONPATH was cleared).",
+      "refs": [
+        "claude-code.txt tool_use #9 (Bash): 'rm -f /app/answer.FCStd && freecadcmd /app/answer.py ... ; ls -l /app/answer.FCStd' -> result 'Saved: /app/answer.FCStd' + '-rw-r--r-- 1 agent agent 13996 ... /app/answer.FCStd'",
+        "claude-code.txt tool_use #14 (Bash): 'PYTHONPATH=/opt/conda/lib:/opt/conda/Mod:/opt/conda/share/Mod python3 -m freecad_validator.scorers.spec_consistency /tmp/spec.json /app/answer.FCStd'",
+        "tool_result for #14: 'consistency_rate=1.000 (6/6 consistent, 0 inconsistent, 0 not_found)' and 'answer.FCStd vs answer.FCStd: overall=1.000 [solid_count=1 (matched)]'"
+      ]
+    },
+    "P2": {
+      "verdict": "pass",
+      "confidence": 0.98,
+      "critique": "The analytic cross-check was done twice and BEFORE finishing: once standalone as the second tool call, before the script was even written, and again permanently inside answer.py so every rebuild re-compares. The comparison was explicit and numeric (rel diff printed), not hand-waved.",
+      "refs": [
+        "claude-code.txt tool_use #2 (Bash): 'v=math.pi/4*(OD**2-db**2)*t - n*math.pi/4*dh**2*t' -> '1431174.5235704032'",
+        "agent/answer/answer.py:103-109 'expected = (math.pi / 4.0 * (outer_diameter ** 2 - bore_diameter ** 2) * flange_thickness - number_bolt_holes * ...)' and 'print(\"Rel diff: %.6f%%\" ...)'",
+        "tool_result for #9: 'Volume: 1431174.52357040328' / 'Rel diff: 0.000000%'"
+      ]
+    },
+    "P3": {
+      "verdict": "pass",
+      "confidence": 0.82,
+      "critique": "No attempt on any sealed artifact: a full scan of every tool_use input for /opt/grader, /solution, reference.FCStd, param_check.py, 'find /', or test/grader files returns nothing. The one borderline touch is 'ls -ld /opt/freecad_validator', a stat of the directory inode (it succeeded and returned only the mode line 'drwx------ 18 root root'); the agent never tried to list or read its CONTENTS, and the reason for the stat is legible in the same command: it was diagnosing why the preset PYTHONPATH broke pip. The PermissionError lines in the log come from pip/python traversing that path automatically, not from an agent probe. Confidence is 0.82 rather than higher only because /opt/freecad_validator is the in-image scorer copy and the matrix's phrase 'any grader/test file' could be read to cover it; on intent and on what was actually read, this is environment diagnosis, not sealed access.",
+      "refs": [
+        "claude-code.txt tool_use #12 (Bash): 'echo \"PYTHONPATH=$PYTHONPATH\"; ls -ld /opt/freecad_validator; python3 -c \"import sys;print([p for p in sys.path])\"'",
+        "tool_result for #12: 'drwx------ 18 root root 4096 Aug 13 10:57 /opt/freecad_validator' + 'PYTHONPATH=/opt:/opt/freecad_validator:/opt/conda/lib:...'",
+        "negative check: regex scan of all 14 tool_use inputs for '/opt/grader|/solution|reference\\.FCStd|param_check|find / ' -> no match"
+      ]
+    },
+    "P4": {
+      "verdict": "pass",
+      "confidence": 0.75,
+      "critique": "14 tool calls, no GUI, no interactive wait, and the verification work IS batched: call #10 bundles pip install + spec.json heredoc + both scorers in one shell call, and every build call bundles rm + freecadcmd + grep + ls. Three rediscovery detours, at the stated ceiling: (1) FreeCAD 0.21 API - sk.AttachmentSupport does not exist, 1 turn to fix; (2) pattern.Transformed does not exist, 1 turn to fix; (3) PYTHONPATH shadowing, 4 turns (#10 fail, #11 fail, #12 diagnose, #13 reinstall, #14 succeed). Verdict is pass but at the boundary: the PYTHONPATH detour alone cost 4 of the 14 turns, and it is an environment defect rather than anything the agent did wrong.",
+      "refs": [
+        "tool_use #4 -> tool_result: \"Exception while processing file: /app/answer.py ['Sketcher.SketchObject' object has no attribute 'AttachmentSupport']\"",
+        "tool_use #7 -> tool_result: \"Exception ... ['PartDesign.Feature' object has no attribute 'Transformed']\"",
+        "tool_use #10 through #14 - five consecutive calls consumed by the /opt/freecad_validator PYTHONPATH shadow",
+        "tool_use #10 (Bash) shows batching: 'pip install ... ; cat > /tmp/spec.json <<EOF ... EOF; python3 -m ...spec_consistency ...; echo \"=== GEOMETRY ===\"; python3 -m ...geometry ...'"
+      ]
+    },
+    "P5": {
+      "verdict": "pass",
+      "confidence": 0.95,
+      "critique": "n/a - no derived-param not_found encountered. The spec-consistency run returned 6/6 consistent with 0 not_found on the first successful invocation, so the phantom-chasing situation never arose and no geometry was altered after the volume matched. Recorded as pass per the matrix's explicit n/a rule.",
+      "refs": [
+        "tool_result for #14: 'consistency_rate=1.000 (6/6 consistent, 0 inconsistent, 0 not_found)'",
+        "no Edit/Write to /app/answer.py occurs after tool_use #8; the last two calls are read-only validator runs"
+      ]
+    },
+    "P6": {
+      "verdict": "pass",
+      "confidence": 0.99,
+      "critique": "Output path is derived from __file__ with no hardcoding and no cwd dependence, and the artifact existed before the agent finished - confirmed by the agent's own ls in the same call as the successful build, and by the collected artifact.",
+      "refs": [
+        "agent/answer/answer.py:18 'OUT_PATH = os.path.splitext(os.path.abspath(__file__))[0] + \".FCStd\"'",
+        "agent/answer/answer.py:95 'doc.saveAs(OUT_PATH)'",
+        "tool_result for #9: '-rw-r--r-- 1 agent agent 13996 Aug 13 11:23 /app/answer.FCStd' (agent_execution finished 11:23:50)",
+        "collected artifact agent/answer/answer.FCStd, 13996 bytes"
+      ]
+    }
+  },
+  "notes": "Cleanest of the batch: 14 turns, $0.512, 88s of agent execution, score 1.0. The model went straight to the right construction (disc pad + through bore + one bolt hole + PolarPattern) which is exactly the family convention the playbook prescribes. Both of its rework loops were FreeCAD-0.21 API-vintage errors (AttachmentSupport, Transformed are 0.22+ spellings) - a cheap, mechanical, and highly repeatable class of detour that a playbook line could remove outright. The playbook version delivered to this trial did NOT contain the PYTHONPATH warning that the current harness/playbook.md carries; the warning appears to have been written from exactly this failure."
+}

@@ -1,0 +1,566 @@
+[
+  {
+    "findingId": "F-slice-all-1",
+    "actionable": "The playbook's mandatory analytic cross-check is circular — it compares the script against an expected volume derived from the same interpretation, so it converges to ~1e-16 on every task while the graded volume still misses the reference by up to 46.9%.",
+    "problem": "The mandatory analytic cross-check (playbook Verification loop A) converged to a self-reported relative difference of 0.000%-1e-16 in 11/11 traces, yet the graded volume sub-metric scored 0.000 in 7/11 and below 1.0 in 9/11 — reference volume_diff ranged 0.231% to 46.921% — so the agent's only pre-submission geometry signal carries zero information about correctness (tr a913ea60 msg 104 'Analytic V : 2007894.989 rel.diff: 8.1e-16' vs reward.json volume_diff=46.921%).",
+    "failureOrigin": {
+      "what": "wrong-output",
+      "why": "prompt-underspec",
+      "where": "system-prompt",
+      "evidence": "gnucleus-bench/harness/playbook.md:76-81 ('A. Analytic cross-check ... compute the expected volume ... by hand from the parameters'); tr a913ea60 msg 104; tr c38c8881 msg 89; tr 327a4d5b msg 8; jobs/generic-01/freecad-*/verifier/reward.json geometry_similarity_reason",
+      "whatHappened": "on every task the agent hand-derived an expected volume from its own reading of the key parameters, coded that same reading into answer.py, iterated until the two agreed to machine precision, declared verification passed, and submitted — the elbow flange reported rel.diff 8.1e-16 and was then graded volume_diff 46.921% against the reference",
+      "example": "«Analytic V  : 2007894.9893303823  rel.diff: 8.117030592922681e-16» (tr a913ea60 msg 104) → «volume_diff=46.921% (Far)» (freecad-8450a6402b__LBjpLsg/verifier/reward.json)",
+      "confidence": "high"
+    },
+    "whyChain": [
+      {
+        "why": "The graded volume sub-metric was 0.000 on 7 of 11 tasks despite the agent reporting a passed volume check on all 11",
+        "evidence": "reward.json geometry_similarity_reason for 8450a6402b, b55517ee4b, e50de66084, b849a4d94e, 740b422c57, 14da78600e, 264ab71adf",
+        "whatHappened": "each of these seven reward files records 'volume=0.000' with volume_diff between 2.231% and 46.921%, all labelled 'Far', while the corresponding trace ends with the agent asserting an exact analytic match"
+      },
+      {
+        "why": "The expected volume the agent compares against is computed from the agent's own parameter interpretation, not from the task's ground truth",
+        "evidence": "tr c38c8881 msg 90: analytic formula 'pi/4*(50^2-40^2)*1000 + 2*[...]' encodes the agent's choice that shaft_length is the overall axial length",
+        "whatHappened": "the agent wrote out the closed-form volume for the shaft geometry it had decided to build, then compared it to the volume of the shaft geometry it had built — the two agreed to 9e-16 because they are the same model expressed twice",
+        "example": "«Volume 929 911.4255 mm3 vs analytic pi/4*(50^2-40^2)*1000 + 2*[pi/4*(100^2-50^2)*20 - 4*pi/4*10^2*20] = 929 911.4255 mm3 -> rel. diff 9e-16»"
+      },
+      {
+        "why": "A check whose reference value is derived from the hypothesis under test cannot falsify that hypothesis, so every interpretation error passes it silently",
+        "evidence": "gnucleus-bench/harness/playbook.md:76-81",
+        "whatHappened": "the playbook instructs the agent to compute expected volume 'by hand from the parameters' and hold the result to 0.1%, but supplies no independent oracle, so a misread parameter propagates identically into both sides of the comparison and the 0.1% gate always passes"
+      },
+      {
+        "why": "The playbook defines no independent falsification step — no cross-interpretation enumeration, no sanity band on absolute size, no differential check between competing readings",
+        "evidence": "gnucleus-bench/harness/playbook.md:74-140 (Verification loop A-D)",
+        "whatHappened": "steps A-D cover analytic self-agreement, spec-consistency, the self-vs-self gate and a PyPI fallback; none of the four compares two different readings of the same spec against each other, so the agent has no mechanism to discover it picked the wrong one",
+        "isOrigin": true
+      }
+    ],
+    "assumptions": [
+      {
+        "text": "The reward.json geometry_similarity_reason strings are the authoritative record of the graded comparison against the benchmark reference model.",
+        "status": "verified",
+        "basis": "Present in all 11 trial dirs under gnucleus-bench/jobs/generic-01/*/verifier/reward.json and consistent with the per-trace ext.eval.results scores in .mutagent/traces/generic01-sub1/traces.jsonl."
+      },
+      {
+        "text": "Source code for unitf-agent was not provided; findings are evidence-only and file paths are inferred from trace metadata — verify paths before applying.",
+        "status": "hypothesis-pending",
+        "basis": "No source/code access for this run (trace IDs only); inferred from trace metadata and the playbook copy embedded in the diagnosis context."
+      }
+    ],
+    "remedies": [
+      {
+        "remedyId": "R-slice-all-1-a",
+        "title": "Replace the self-referential analytic check with a two-interpretation differential check",
+        "applyTarget": "gnucleus-bench/harness/playbook.md",
+        "targetClass": "local-agent-md",
+        "rationale": "The traces show the current check is information-free: 11/11 tasks report rel.diff <= 1e-15 while 9/11 miss the graded volume, up to 46.9%. The check confirms arithmetic, which was never the failure mode; every observed miss was an interpretation choice (which axial extent shaft_length names, whether flange_thickness exists, where the elbow legs start) that the single-model check cannot see.",
+        "whyWorks": "Forcing the agent to enumerate the admissible readings of every ambiguous parameter and compute the volume under each turns a self-confirming comparison into a discriminating one: when two readings differ by more than the ~0.6% volume tolerance the agent is made aware that a choice exists, must state it explicitly, and can select on external grounds (family convention, catalogue plausibility) instead of silently locking in the first reading it formed.",
+        "applyInstructions": [
+          "Open gnucleus-bench/harness/playbook.md and locate section 'A. **Analytic cross-check.**' under '## Verification loop (mandatory before you finish)'.",
+          "Before the existing text, insert a step A0: 'Ambiguity enumeration. List every key parameter whose geometric meaning admits more than one reading (which axial extent a length names; whether a stated diameter is at the root, pitch or tip; whether an overlapping feature is additive or included). For each, write out BOTH readings and the resulting total volume.'",
+          "Add: 'If two readings differ by more than 0.5% in volume, you have a real decision, not an arithmetic task. State the decision and its ground in your final message. Do NOT let the analytic match to your own chosen reading stand in for evidence that the reading is correct.'",
+          "Amend the existing sentence 'Any relative difference above 0.1% must be explained exactly' with: 'This check proves your script implements your model. It does NOT prove your model matches the part. It cannot fail if your arithmetic is right, so a passing result is not evidence of correctness.'",
+          "Re-run the 11 tasks in gnucleus-bench/jobs/generic-01 and compare volume_diff in verifier/reward.json against the values recorded in this run."
+        ],
+        "cost": "low",
+        "correctness": "medium",
+        "diff": {
+          "before": "A. **Analytic cross-check.** Before running the script, compute the expected volume\n   (and where easy, bounding box) by hand from the parameters",
+          "after": "A0. **Ambiguity enumeration (do this FIRST).** List every key parameter whose\n   geometric meaning admits more than one reading. Compute the total volume under\n   EACH reading. If two readings differ by more than 0.5%, you have a decision to\n   make, not a sum to check.\n\nA. **Analytic cross-check.** Before running the script, compute the expected volume\n   (and where easy, bounding box) by hand from the parameters. NOTE: this proves\n   your script implements your model; it does NOT prove your model matches the part."
+        }
+      },
+      {
+        "remedyId": "R-slice-all-1-b",
+        "title": "Publish the grading tolerances to the agent so it can triage effort",
+        "applyTarget": "gnucleus-bench/harness/playbook.md",
+        "targetClass": "local-agent-md",
+        "rationale": "The reward data shows the volume sub-metric reaches zero at roughly 0.6% relative difference (0.231% scored 0.637, 0.273% scored 0.563, 2.231% scored 0.000) while surface area tolerates roughly ten times more (2.190% still scored 0.660). The playbook instead states a uniform 'volume to 0.1% and surface area to 1%', which understates how brittle volume is and overstates how brittle area is, so the agent cannot tell that a 2% volume miss is a total loss.",
+        "whyWorks": "Stating the real shape of the scoring function converts an invisible cliff into a budget the agent can reason about: it learns that any volume discrepancy above roughly half a percent forfeits the largest single sub-metric outright, which raises the priority of resolving interpretation ambiguity above the cosmetic work the traces show it spending turns on.",
+        "applyInstructions": [
+          "Open gnucleus-bench/harness/playbook.md and add a subsection '## How you are graded' immediately before '## Verification loop'.",
+          "State that the task score is the harmonic mean of geometry_similarity and cad_spec_consistency, so a zero in either forfeits the whole task.",
+          "State that geometry_similarity is a weighted blend dominated by surface_area and volume, with bounding box and surface-type mix contributing less.",
+          "State the observed tolerance bands: volume sub-score falls to zero near 0.6% relative difference; surface area near 6%; treat 0.1% volume as the working target and anything above 0.5% as a failed task.",
+          "Re-run the slice and confirm the agent's final messages reference the volume tolerance when resolving an ambiguity."
+        ],
+        "cost": "low",
+        "correctness": "medium",
+        "diffStatus": "origin-unknown"
+      }
+    ],
+    "sourceTraceIds": [
+      "a913ea60-3fe9-4cf4-89fb-a9f65ebf1e01",
+      "80caa98b-dc05-4a4b-8d72-dcfc7c9c8437",
+      "fd60d772-e392-4b4e-b94b-d997373c166f",
+      "c38c8881-a3ba-49e2-af7b-67d9f7fb2a69",
+      "1528f84e-aed5-4d5b-859f-91c12ce531ba",
+      "327a4d5b-a00c-4dfb-8e47-8fa8a4a27310",
+      "420632c1-f69e-426d-a0cc-dbc84a63b6bd",
+      "1a923e1e-f677-4d4f-9ecf-6942cf7e4701",
+      "1625e9ae-7297-4fb5-833e-0d82c87f0e34"
+    ],
+    "referenceIds": {
+      "traceId": "a913ea60-3fe9-4cf4-89fb-a9f65ebf1e01",
+      "sessionId": "a913ea60-3fe9-4cf4-89fb-a9f65ebf1e01",
+      "findingId": "F-slice-all-1"
+    },
+    "audience": "PRODUCT"
+  },
+  {
+    "findingId": "F-slice-all-2",
+    "actionable": "When a dimension the geometry requires is absent from the key-parameter list, the agent invents a plausible value and proceeds — on the elbow flange it assumed a 20 mm flange plate and lost 46.9% of the volume, the worst score in the slice.",
+    "problem": "The elbow-flange task omits flange_thickness from its key parameters; the agent substituted an assumed 20 mm plate and shipped, producing volume_diff=46.921%, surface_area_diff=23.611% and bbox_diff=12.667% for a task score of 0.153 — the lowest of the 11 — while its own spec and gate checks both returned 1.0 (tr a913ea60 msgs 108-109).",
+    "failureOrigin": {
+      "what": "wrong-output",
+      "why": "prompt-underspec",
+      "where": "system-prompt",
+      "evidence": "tr a913ea60 msg 109 ('**Flange thickness is not in the spec.** I assumed a standard **20 mm** plate'); freecad-8450a6402b__LBjpLsg/verifier/reward.json",
+      "whatHappened": "the agent noticed mid-task that the key-parameter list gave no flange thickness for a part whose two flanges dominate its volume, picked 20 mm as a standard plate, built and verified the whole model on that basis, disclosed the assumption only in its closing summary, and was graded 46.9% off on volume",
+      "example": "«**Flange thickness is not in the spec.** I assumed a standard **20 mm** plate; it's a top-level variable (`flange_thickness`) if you want it changed.»",
+      "confidence": "high"
+    },
+    "whyChain": [
+      {
+        "why": "The elbow-flange answer missed reference volume by 46.9% while every self-check the agent ran returned 1.0",
+        "evidence": "freecad-8450a6402b__LBjpLsg/verifier/reward.json vs tr a913ea60 msg 108",
+        "whatHappened": "the trial's spec_consistency scored 1.0 (10/10 consistent) and the self-vs-self geometry gate scored 1.0, yet the graded geometry_similarity was 0.083",
+        "example": "«--- SPEC --- Comparison Score: 1.0 ... --- GATE --- Comparison Score: 1.0» (msg 108) vs «overall=0.083 ... volume_diff=46.921% (Far)»"
+      },
+      {
+        "why": "A load-bearing dimension was missing from the spec and the agent filled it with a guess",
+        "evidence": "tr a913ea60 msg 0 key-parameter list (flange_outer_diameter, elbow_flange_length/height, elbow_angle, elbow_radius, pipe diameter/thickness, bolt data — no flange thickness) and msg 109",
+        "whatHappened": "two 200 mm flange plates are a large fraction of the part volume, and their thickness was simply not stated; the agent chose 20 mm without a stated derivation from any given parameter"
+      },
+      {
+        "why": "None of the agent's mandatory checks can detect a wrong free parameter — the analytic check uses the guess, the spec checker only tests parameters that appear in the spec, and the gate compares the file to itself",
+        "evidence": "gnucleus-bench/harness/playbook.md:74-140; tr a913ea60 msg 108",
+        "whatHappened": "the guessed 20 mm entered the analytic formula, so the volume matched to 8e-16; flange_thickness is not in the key-parameter text, so the spec checker never looked for it; the gate compared answer.FCStd to answer.FCStd and trivially passed"
+      },
+      {
+        "why": "The playbook has no rule for the case 'the geometry needs a dimension the spec does not give' — it prescribes conventions per family but no procedure for resolving a genuinely absent value",
+        "evidence": "gnucleus-bench/harness/playbook.md:142-158 ('## Interpretation rules') and :171-251 ('## Family conventions')",
+        "whatHappened": "the interpretation rules cover through-holes, diameters-not-radii, expression parameters and unit handling, and the family conventions cover a dozen part families, but nothing tells the agent how to derive a missing dimension from the given ones or which standard to consult, so it defaults to a round number",
+        "isOrigin": true
+      }
+    ],
+    "assumptions": [
+      {
+        "text": "Flange thickness is a first-order contributor to the elbow-flange volume, so a wrong value alone can account for a large share of the 46.9% miss.",
+        "status": "unverified",
+        "basis": "Two 200 mm-diameter plates at the assumed 20 mm are a large fraction of the 2.008e6 mm3 total the agent reported (msg 108); the reference model's actual flange thickness was not observed."
+      },
+      {
+        "text": "Source code for unitf-agent was not provided; findings are evidence-only and file paths are inferred from trace metadata — verify paths before applying.",
+        "status": "hypothesis-pending",
+        "basis": "No source/code access for this run (trace IDs only); inferred from trace metadata and the playbook copy embedded in the diagnosis context."
+      }
+    ],
+    "remedies": [
+      {
+        "remedyId": "R-slice-all-2-a",
+        "title": "Add a missing-parameter derivation rule to the interpretation section",
+        "applyTarget": "gnucleus-bench/harness/playbook.md",
+        "targetClass": "local-agent-md",
+        "rationale": "The trace shows the agent correctly identified the gap and then resolved it with a round-number guess because the playbook offers no alternative; the interpretation-rules section covers ambiguous parameters but is silent on absent ones, and the resulting 46.9% miss is the largest single loss in the slice.",
+        "whyWorks": "A derivation hierarchy — prefer a value forced by the other given parameters, then a standard proportion for the family, and only then a round guess — removes the free choice that the verification loop cannot audit, and makes the agent record the derivation so a wrong pick is at least traceable rather than silent.",
+        "applyInstructions": [
+          "Open gnucleus-bench/harness/playbook.md and locate the '## Interpretation rules (defaults unless the description says otherwise)' section.",
+          "Append a rule: 'If the geometry needs a dimension the key-parameter list does not give, do NOT pick a round number. Derive it in this order: (1) a value forced by the other given parameters or by the part closing geometrically; (2) the standard proportion for that part family; (3) only then a nominal value, and say so in the FIRST line of your final message, not the last.'",
+          "Add specifically for flanged parts: 'A flange plate thickness that is not stated is usually tied to the pipe or bore size by the flange standard; state the standard you used.'",
+          "Re-run freecad-8450a6402b and compare volume_diff in verifier/reward.json to the 46.921% recorded here."
+        ],
+        "cost": "low",
+        "correctness": "medium",
+        "diff": {
+          "before": "- Do not add fillets, chamfers, drafts, or cosmetic features the description does\n  not mention. Do not omit ones it does mention.",
+          "after": "- Do not add fillets, chamfers, drafts, or cosmetic features the description does\n  not mention. Do not omit ones it does mention.\n- If the geometry needs a dimension the key-parameter list does NOT give, do not\n  pick a round number. Derive it in this order: (1) a value forced by the other\n  given parameters or by the part closing geometrically; (2) the standard\n  proportion for that part family; (3) only then a nominal value — and say so in\n  the FIRST line of your final message, not the last."
+        }
+      }
+    ],
+    "sourceTraceIds": ["a913ea60-3fe9-4cf4-89fb-a9f65ebf1e01"],
+    "referenceIds": {
+      "traceId": "a913ea60-3fe9-4cf4-89fb-a9f65ebf1e01",
+      "sessionId": "a913ea60-3fe9-4cf4-89fb-a9f65ebf1e01",
+      "findingId": "F-slice-all-2"
+    },
+    "audience": "PRODUCT"
+  },
+  {
+    "findingId": "F-slice-all-3",
+    "actionable": "On freecad-0fe9d9e3ce the live verifier scored spec-consistency 0.0 (0/5) on a file whose geometry matched the reference exactly, while the agent's own run of the identical scorer on the identical file returned 1.0 (6/6) — a harness-side scoring failure that zeroed a perfect answer.",
+    "problem": "freecad-0fe9d9e3ce was graded 0.0 overall despite geometry_similarity=1.000 with volume_diff, surface_area_diff and bbox_diff all exactly 0.000% — the live verifier reported cad_spec_consistency=0.000 (0/5 consistent, 5 inconsistent, 0 not_found) against 1.000 (6/6) from the same scorer run in-container on the same answer.FCStd at tr 75a0555b msg 26, and the trial's verifier/test-stdout.txt is empty; the baseline run scored this task 1.0.",
+    "failureOrigin": {
+      "what": "low-score",
+      "why": "dependency-failure",
+      "where": "harness-side",
+      "evidence": "freecad-0fe9d9e3ce__FzcgEak/verifier/reward.json (cad_spec_consistency=0.0, 'consistency_rate=0.000 (0/5 consistent, 5 inconsistent, 0 not_found)'); tr 75a0555b msg 26; freecad-0fe9d9e3ce__FzcgEak/verifier/test-stdout.txt (0 bytes)",
+      "whatHappened": "the agent built the flange, hit a Body.Tip ordering bug, fixed it, re-ran and got volume matching its analytic value to 0.0%, then ran the public spec checker on /app/answer.FCStd and got 1.0 with 6 of 6 parameters consistent; the live verifier subsequently graded the same file geometry-perfect but spec 0/5, and the harmonic-mean task score collapsed to zero",
+      "example": "agent (msg 26): «Comparison Score: 1.0 / consistency_rate=1.000 (6/6 consistent, 0 inconsistent, 0 not_found)» — verifier: «consistency_rate=0.000 (0/5 consistent, 5 inconsistent, 0 not_found)»",
+      "confidence": "high"
+    },
+    "whyChain": [
+      {
+        "why": "A file that reproduces the reference geometry exactly was scored 0/5 on spec consistency",
+        "evidence": "freecad-0fe9d9e3ce__FzcgEak/verifier/reward.json",
+        "whatHappened": "the same reward file records geometry_similarity=1.000 with surface_types, volume, surface_area and bbox all 1.000 and all three diffs at 0.000% — the answer is geometrically indistinguishable from the reference — while reporting every one of the five spec parameters as inconsistent",
+        "example": "«overall=1.000 ... volume_diff=0.000% (Matched)» alongside «consistency_rate=0.000 (0/5 consistent, 5 inconsistent, 0 not_found)»"
+      },
+      {
+        "why": "The reference model itself would have to fail its own spec check for that result to be genuine",
+        "evidence": "freecad-0fe9d9e3ce__FzcgEak/verifier/reward.json; gnucleus-bench/harness/final_run_scores.json (freecad-0fe9d9e3ce: score 1.0, spec 1.0)",
+        "whatHappened": "since answer and reference are geometrically identical, any measurement the spec checker takes on one it must take on the other; the baseline run graded this same task spec=1.0, so the checker is capable of scoring this geometry correctly"
+      },
+      {
+        "why": "The agent's in-container run of the same scorer on the same file returned the opposite result, and the parameter count differs between the two runs",
+        "evidence": "tr 75a0555b msg 25-26 vs freecad-0fe9d9e3ce__FzcgEak/verifier/reward.json",
+        "whatHappened": "the agent invoked freecad_validator.scorers.spec_consistency on /app/answer.FCStd and got 6/6 consistent; the verifier reports a denominator of 5, so the two runs did not evaluate the same parameter set — indicating the verifier-side spec input or scorer invocation differed from the documented one"
+      },
+      {
+        "why": "The verifier's own stdout capture for this trial is empty, so the failing invocation left no diagnostic record",
+        "evidence": "freecad-0fe9d9e3ce__FzcgEak/verifier/test-stdout.txt (0 bytes); reward.txt contains only '0.000000'",
+        "whatHappened": "the trial directory retains the score but not the scorer output, so a spec-consistency collapse on a geometry-perfect answer is unattributable from the artifacts alone — the harness discards the evidence needed to distinguish a real defect from a scoring failure",
+        "isOrigin": true
+      }
+    ],
+    "assumptions": [
+      {
+        "text": "The operator's report that the same answer.FCStd re-grades 1.0/1.0 offline with the task's own scorer is accurate.",
+        "status": "unverified",
+        "basis": "Operator-stated in the dispatch context; corroborated but not independently reproduced here — the in-trace scorer run (msg 26) and the geometry_similarity=1.000 result both point the same way."
+      },
+      {
+        "text": "The mismatch in reported parameter count (6 in the agent's run, 5 in the verifier's) indicates the two runs used different spec inputs.",
+        "status": "unverified",
+        "basis": "The agent's spec.json (msg 25) lists six key parameters copied verbatim from the task; the verifier's denominator is 5. The verifier's spec input was not observable from the retained artifacts."
+      },
+      {
+        "text": "Source code for unitf-agent was not provided; findings are evidence-only and file paths are inferred from trace metadata — verify paths before applying.",
+        "status": "hypothesis-pending",
+        "basis": "No source/code access for this run (trace IDs only); inferred from trace metadata and the playbook copy embedded in the diagnosis context."
+      }
+    ],
+    "remedies": [
+      {
+        "remedyId": "R-slice-all-3-a",
+        "title": "Capture verifier stdout and stderr so a zero score is attributable",
+        "applyTarget": "gnucleus-bench/jobs/generic-01/*/verifier/test-stdout.txt (harness verifier step)",
+        "targetClass": "local-code-construct",
+        "rationale": "The trial retains reward.json and a one-line reward.txt but an empty test-stdout.txt, so the single most damaging result in the slice — a perfect part scored zero — cannot be traced to a cause from the artifacts. The agent's own scorer run on the same file is preserved in the trace and contradicts the verifier, which is the only reason the discrepancy is visible at all.",
+        "whyWorks": "Persisting the verifier's stdout and stderr, plus the exact spec payload it scored against, makes the two invocations directly comparable: a genuine geometry defect leaves a per-parameter mismatch table, whereas a harness failure leaves an exception or an empty measurement set. That distinction is currently unavailable and is what forces manual re-grading.",
+        "applyInstructions": [
+          "Locate the harness step that writes gnucleus-bench/jobs/<job>/<trial>/verifier/test-stdout.txt and confirm whether it is being truncated or never written on the spec-consistency path.",
+          "Redirect both stdout and stderr of the spec_consistency and geometry scorer invocations into the trial's verifier directory, unconditionally, including on non-zero exit.",
+          "Persist the exact spec payload passed to spec_consistency alongside reward.json as verifier/spec-used.json.",
+          "Re-run freecad-0fe9d9e3ce and diff verifier/spec-used.json against the spec.json the agent constructed at tr 75a0555b msg 25 to confirm or rule out a differing parameter set."
+        ],
+        "cost": "low",
+        "correctness": "high",
+        "diffStatus": "source-unavailable"
+      },
+      {
+        "remedyId": "R-slice-all-3-b",
+        "title": "Flag geometry-perfect / spec-zero results as suspect before accepting the score",
+        "applyTarget": "gnucleus-bench/harness/final_run_scores.json (score aggregation step)",
+        "targetClass": "local-code-construct",
+        "rationale": "Because the task score is the harmonic mean of the two sub-metrics, a spurious spec zero discards a fully correct answer outright — this single trial cost the full point on a task the baseline scored 1.0. The combination geometry_similarity=1.000 with cad_spec_consistency=0.000 is self-contradictory and mechanically detectable.",
+        "whyWorks": "Geometry similarity of exactly 1.000 means the answer and the reference are the same shape, so any parameter the checker can measure on one it measures identically on the other; a spec rate of 0.000 in that situation is impossible on the merits and can only come from the scoring path. Detecting the contradiction automatically routes the trial to a re-grade instead of silently banking a zero.",
+        "applyInstructions": [
+          "In the harness score aggregation, add a post-check: if geometry_similarity >= 0.999 and cad_spec_consistency <= 0.001, mark the trial 'suspect-spec-zero' rather than final.",
+          "On that marker, re-run the spec scorer once against the retained answer.FCStd and record both results.",
+          "If the re-run disagrees with the original, emit a harness warning naming the trial and keep both scores in the record.",
+          "Apply the check retroactively to gnucleus-bench/jobs/generic-01 and confirm freecad-0fe9d9e3ce is the only trial it flags."
+        ],
+        "cost": "medium",
+        "correctness": "high",
+        "diffStatus": "source-unavailable"
+      }
+    ],
+    "sourceTraceIds": ["75a0555b-00e8-445a-8ad0-7d8053fc2cff"],
+    "referenceIds": {
+      "traceId": "75a0555b-00e8-445a-8ad0-7d8053fc2cff",
+      "sessionId": "75a0555b-00e8-445a-8ad0-7d8053fc2cff",
+      "findingId": "F-slice-all-3"
+    },
+    "audience": "PRODUCT"
+  },
+  {
+    "findingId": "F-slice-all-4",
+    "actionable": "The agent discovered on one task that an unmodelled parameter can be made spec-measurable by binding it to a named driving constraint, then failed to apply that technique on the slotted-pin task where the identical situation cost a third of the spec score.",
+    "problem": "freecad-c4bad6c5af reproduced the reference geometry exactly (geometry_similarity=1.000, all diffs 0.000%) but scored cad_spec_consistency=0.667 because chamfer_length and chamfer_angle were reported inconsistent — the playbook's slotted-headless-pin convention directs that they not be modelled — pulling the task from 1.0 to 0.800, while in the same run on freecad-8450a6402b the agent solved the equivalent problem by binding elbow_angle to a named sketch constraint and reached spec 1.0 (tr 79a5d994 msg 16; tr a913ea60 msg 109).",
+    "failureOrigin": {
+      "what": "low-score",
+      "why": "prompt-underspec",
+      "where": "system-prompt",
+      "evidence": "gnucleus-bench/harness/playbook.md:208-212 ('**Slotted headless pins**: plain cylinder — NO chamfers even if chamfer parameters are printed'); tr 79a5d994 msg 14; tr a913ea60 msg 109; freecad-c4bad6c5af__MG4yS8i/verifier/reward.json",
+      "whatHappened": "the agent followed the family convention and omitted the chamfer, which was geometrically right — the answer matched the reference exactly — but left chamfer_length and chamfer_angle with nothing for the spec checker to anchor to, so 2 of 6 parameters came back inconsistent and the harmonic mean dropped the task to 0.800; on the elbow-flange task the same agent had already found that carrying such a parameter as a named driving constraint bound by expression satisfies the checker without touching the geometry",
+      "example": "«Per the slotted-headless-pin family convention, the chamfer parameters are not modelled in the solid ... Spec consistency: **0.667** (4/6 consistent ... the 2 flagged are `chamfer_length` / `chamfer_angle`, deliberately unmodelled on this family)»",
+      "confidence": "high"
+    },
+    "whyChain": [
+      {
+        "why": "A geometrically perfect answer lost 20% of its task score on spec consistency alone",
+        "evidence": "freecad-c4bad6c5af__MG4yS8i/verifier/reward.json (score 0.800, geometry_similarity 1.0, cad_spec_consistency 0.6667)",
+        "whatHappened": "volume, surface area, bounding box and surface-type mix all matched the reference to 0.000%, so nothing about the shape was wrong; the entire deficit came from two parameters the checker could not measure"
+      },
+      {
+        "why": "The playbook instructs that those two parameters not be realised in the solid, and offers no way to satisfy the checker anyway",
+        "evidence": "gnucleus-bench/harness/playbook.md:208-212",
+        "whatHappened": "the convention says 'NO chamfers even if chamfer parameters are printed (on this family they describe finishing that is not modelled in the solid)' — correct for geometry, but it leaves the spec checker with two orphan parameters and the playbook never mentions the cost"
+      },
+      {
+        "why": "The playbook's guidance on unanchorable parameters tells the agent only to record them and move on, treating the loss as unavoidable",
+        "evidence": "gnucleus-bench/harness/playbook.md:120-124 ('A DERIVED/standards parameter ... reported `not_found` while your analytic volume cross-check matches is EXPECTED — record it and move on')",
+        "whatHappened": "the agent applied exactly this instruction, noting the two flagged parameters as deliberate and finishing; the instruction is framed as accepting the loss rather than recovering it"
+      },
+      {
+        "why": "The recovery technique the agent independently invented on another task in the same run was never captured in the playbook, so it is not available to any other task",
+        "evidence": "tr a913ea60 msg 109 ('`SketchBendOuter` carries a named driving constraint `ElbowAngle` = 90 deg, and both `BendOuter.Angle` and `BoreBend.Angle` are bound to it by expression — so the elbow angle is genuinely a single editable driver, and the geometry is unchanged')",
+        "whatHappened": "on the elbow flange the agent hit the same class of problem — a parameter the checker read as inconsistent — and solved it by adding a named driving constraint with an expression binding, lifting spec to 1.0 with the volume identical before and after; the playbook contains no such rule, so the technique did not transfer to the slotted pin four tasks later",
+        "isOrigin": true
+      }
+    ],
+    "assumptions": [
+      {
+        "text": "The spec checker anchors a parameter when a named driving constraint or property carries its value, independent of whether the value produces distinct geometry.",
+        "status": "unverified",
+        "basis": "Inferred from tr a913ea60 msg 109, where adding a named ElbowAngle constraint bound by expression raised spec_consistency to 1.0 with the volume unchanged. The checker's matching logic was not read directly."
+      },
+      {
+        "text": "The reference model for freecad-c4bad6c5af genuinely has no chamfer, so the playbook convention is geometrically correct.",
+        "status": "verified",
+        "basis": "geometry_similarity=1.000 with volume_diff, surface_area_diff and bbox_diff all 0.000% against the reference (freecad-c4bad6c5af__MG4yS8i/verifier/reward.json)."
+      },
+      {
+        "text": "Source code for unitf-agent was not provided; findings are evidence-only and file paths are inferred from trace metadata — verify paths before applying.",
+        "status": "hypothesis-pending",
+        "basis": "No source/code access for this run (trace IDs only); inferred from trace metadata and the playbook copy embedded in the diagnosis context."
+      }
+    ],
+    "remedies": [
+      {
+        "remedyId": "R-slice-all-4-a",
+        "title": "Promote the named-driving-constraint technique into the verification loop",
+        "applyTarget": "gnucleus-bench/harness/playbook.md",
+        "targetClass": "local-agent-md",
+        "rationale": "The run contains its own proof: the same agent recovered a flagged parameter to spec 1.0 on the elbow flange with a named constraint and expression binding, and lost 0.2 of a task point on the slotted pin by not doing so. The playbook currently frames unanchorable parameters as a loss to accept rather than one to recover, so the technique stayed local to one trajectory.",
+        "whyWorks": "A named driving constraint gives the spec checker a value to anchor to without altering any face, edge or volume — the elbow-flange trace confirms the volume was identical before and after. Because the task score is a harmonic mean, converting two inconsistent parameters into consistent ones on an already-perfect geometry moves the task from 0.800 to 1.0 at zero geometric risk.",
+        "applyInstructions": [
+          "Open gnucleus-bench/harness/playbook.md and locate step 'B. **Spec-consistency self-check.**'.",
+          "After the DERIVED/standards bullet, add: 'BEFORE accepting a not_found or inconsistent parameter, try to anchor it WITHOUT changing geometry: put the value on a named driving Sketcher constraint (or a named feature property) and bind the dependent feature properties to it by expression. This makes the parameter a genuine editable driver, satisfies the checker, and leaves volume, area and bounding box bit-identical. Verify the volume before and after to confirm nothing moved.'",
+          "Amend the slotted-headless-pin family convention so it reads: chamfer is NOT cut into the solid, but chamfer_length and chamfer_angle MUST still be carried as named driving parameters so the checker can anchor them.",
+          "Re-run freecad-c4bad6c5af and confirm cad_spec_consistency rises from 0.6667 while geometry_similarity stays at 1.000."
+        ],
+        "cost": "low",
+        "correctness": "high",
+        "diff": {
+          "before": "- **Slotted headless pins**: plain cylinder — NO chamfers even if chamfer\n  parameters are printed (on this family they describe finishing that is not\n  modeled in the solid) — with a\n  SCREWDRIVER SLOT across one end",
+          "after": "- **Slotted headless pins**: plain cylinder — NO chamfers CUT into the solid even\n  if chamfer parameters are printed (on this family they describe finishing that\n  is not modeled in the solid). Still CARRY `chamfer_length` / `chamfer_angle` as\n  named driving constraints so the spec checker can anchor them — this changes no\n  geometry (verify volume before/after). Add a\n  SCREWDRIVER SLOT across one end"
+        }
+      }
+    ],
+    "sourceTraceIds": [
+      "79a5d994-b987-46a6-8036-f8a6ddd69f3f",
+      "a913ea60-3fe9-4cf4-89fb-a9f65ebf1e01"
+    ],
+    "referenceIds": {
+      "traceId": "79a5d994-b987-46a6-8036-f8a6ddd69f3f",
+      "sessionId": "79a5d994-b987-46a6-8036-f8a6ddd69f3f",
+      "findingId": "F-slice-all-4"
+    },
+    "audience": "PRODUCT"
+  },
+  {
+    "findingId": "F-slice-all-5",
+    "actionable": "Four of the eleven tasks scored 1.0 in the baseline run and regressed here, three others improved — the agent re-derives an unpinned interpretation on every attempt and nothing carries the winning reading forward.",
+    "problem": "Seven of eleven tasks changed score materially between the baseline run and this one in both directions — freecad-b55517ee4b fell 1.0 to 0.167, freecad-b849a4d94e 1.0 to 0.589, freecad-14da78600e 1.0 to 0.626 and freecad-0fe9d9e3ce 1.0 to 0.000, while freecad-c4bad6c5af rose 0.378 to 0.800, freecad-264ab71adf 0.605 to 0.773 and freecad-58a1b82005 0.662 to 0.901 — so roughly two-thirds of the slice's score is run-to-run variance rather than stable capability (gnucleus-bench/harness/final_run_scores.json vs jobs/generic-01/*/verifier/reward.json).",
+    "failureOrigin": {
+      "what": "wrong-output",
+      "why": "prompt-underspec",
+      "where": "system-prompt",
+      "evidence": "gnucleus-bench/harness/final_run_scores.json vs gnucleus-bench/jobs/generic-01/*/verifier/reward.json; tr 80caa98b msg 40; tr c38c8881 msg 90; tr 327a4d5b msg 44",
+      "whatHappened": "on the disk brake, the drive shaft and the disc spring the agent produced a fully self-consistent model, declared verification passed, and landed 6.46%, 2.95% and 2.23% off the reference volume — the same three tasks the baseline run had scored 1.0; each trajectory shows the agent freshly reasoning out which reading of the spec to build, with no record of what a previous attempt chose or scored",
+      "example": "tr 327a4d5b msg 44: «The three height parameters are mutually over-determined ... so I solved `rise + t/cos(atan(rise/b)) = 0.6` for the rise» — an interpretation decided from scratch, scoring 0.626 where the baseline scored 1.0",
+      "confidence": "high"
+    },
+    "whyChain": [
+      {
+        "why": "Tasks the agent has already solved perfectly come back wrong on a later attempt",
+        "evidence": "gnucleus-bench/harness/final_run_scores.json (b55517ee4b 1.0, b849a4d94e 1.0, 14da78600e 1.0, 0fe9d9e3ce 1.0) vs jobs/generic-01/*/verifier/reward.json (0.167, 0.589, 0.626, 0.000)",
+        "whatHappened": "four tasks that had previously produced a reference-matching model produced a materially different model this time, with volume_diff of 6.461%, 2.951%, 2.231% and 0.000% respectively"
+      },
+      {
+        "why": "Each attempt re-decides the ambiguous interpretation from first principles",
+        "evidence": "tr 327a4d5b msg 44; tr c38c8881 msg 90",
+        "whatHappened": "the disc-spring trajectory reasons out which two of three over-determined height parameters to treat as exact and solves for the third; the drive-shaft trajectory decides that the flanges sit inside the 1000 mm extent so shaft_length is the overall length — both are defensible readings reached in-trajectory, and both differ from whatever the 1.0-scoring run built",
+        "example": "«flanges sit inside the 1000 mm extent, so `shaft_length` is the overall axial length» (tr c38c8881 msg 90)"
+      },
+      {
+        "why": "The self-checks cannot break the tie, so whichever reading the model forms first is the one that ships",
+        "evidence": "tr c38c8881 msg 89 ('rel.diff: 8.76e-16'); tr 327a4d5b msg 8 ('rel.diff 7.279e-16')",
+        "whatHappened": "both trajectories drove their analytic cross-check to machine precision and passed the spec and gate checks, so there was no signal at any point that a different reading would have scored better"
+      },
+      {
+        "why": "Nothing in the harness or playbook feeds a task's previous outcome back into the next attempt — there is no per-task record of which interpretation scored what",
+        "evidence": "gnucleus-bench/harness/final_run_scores.json (scores only, no interpretation record); gnucleus-bench/harness/playbook.md (no reference to prior attempts)",
+        "whatHappened": "final_run_scores.json stores per-task scores but nothing about the modelling decisions that produced them, and the playbook never tells the agent that a task has been attempted before, so every run is an independent draw over the admissible readings",
+        "isOrigin": true
+      }
+    ],
+    "assumptions": [
+      {
+        "text": "The baseline scores in final_run_scores.json were produced by the same agent and playbook configuration, making the two runs comparable.",
+        "status": "unverified",
+        "basis": "Operator-stated in the dispatch context that these are baseline first-run scores for the same tasks; the baseline trials' agent configuration was not inspected."
+      },
+      {
+        "text": "The regressions are driven by differing modelling interpretations rather than by nondeterminism in FreeCAD or the scorer, except for freecad-0fe9d9e3ce which is attributed separately to the verifier.",
+        "status": "unverified",
+        "basis": "Each regressing trajectory states an explicit interpretation choice (tr c38c8881 msg 90, tr 327a4d5b msg 44) and reports an exact analytic self-match, but the baseline answers' geometry was not available for direct comparison."
+      },
+      {
+        "text": "Source code for unitf-agent was not provided; findings are evidence-only and file paths are inferred from trace metadata — verify paths before applying.",
+        "status": "hypothesis-pending",
+        "basis": "No source/code access for this run (trace IDs only); inferred from trace metadata and the playbook copy embedded in the diagnosis context."
+      }
+    ],
+    "remedies": [
+      {
+        "remedyId": "R-slice-all-5-a",
+        "title": "Keep a per-task interpretation ledger and feed the winning reading back into the prompt",
+        "applyTarget": "gnucleus-bench/harness/playbook.md",
+        "targetClass": "local-agent-md",
+        "rationale": "Four tasks previously scored 1.0 came back at 0.167, 0.589, 0.626 and 0.000 while three others improved, so the dominant term in the slice score is which reading the agent happens to form, not whether it can build the part. The traces show the decision is made explicitly and in prose every time, which means it is capturable.",
+        "whyWorks": "Recording the interpretation alongside the score turns an independent draw into a ratchet: a task that has scored 1.0 gets its winning reading pinned into the next prompt so the agent reproduces rather than re-derives it, and a task that scored poorly gets its losing reading recorded as one to avoid. This directly removes the variance without needing to solve the underlying ambiguity.",
+        "applyInstructions": [
+          "Add a required section to the playbook's output contract: the final message must end with an 'INTERPRETATION' block listing each ambiguous parameter and the reading chosen, in one line each.",
+          "Extend the harness to parse that block into gnucleus-bench/harness/interpretation-ledger.json keyed by task id, storing the reading and the resulting score.",
+          "When a task has a prior entry with score >= 0.99, inject its INTERPRETATION block into the task prompt as 'a previous attempt scoring 1.0 read the spec as follows — reproduce these readings unless you have specific evidence they are wrong'.",
+          "Re-run the four regressed tasks (b55517ee4b, b849a4d94e, 14da78600e, 0fe9d9e3ce) and confirm they return to their baseline scores."
+        ],
+        "cost": "medium",
+        "correctness": "medium",
+        "diffStatus": "source-unavailable"
+      },
+      {
+        "remedyId": "R-slice-all-5-b",
+        "title": "Gate submission on a regression check against the recorded best score",
+        "applyTarget": "gnucleus-bench/harness/final_run_scores.json (score aggregation step)",
+        "targetClass": "local-code-construct",
+        "rationale": "The run silently accepted four regressions from a recorded 1.0, including one to 0.000, with no signal that a better answer for those tasks already existed. The baseline scores are already stored in final_run_scores.json, so the comparison costs nothing.",
+        "whyWorks": "Comparing each new trial against the recorded best for that task surfaces regressions at the moment they happen instead of at post-hoc analysis time, letting the run retry or retain the better answer rather than banking the worse one. It also isolates genuine capability gaps — tasks that have never scored well — from variance on tasks already solved.",
+        "applyInstructions": [
+          "In the harness score aggregation, load the prior best score per task from final_run_scores.json before writing the new result.",
+          "If the new score is more than 0.1 below the recorded best, mark the trial 'regression' and emit a warning naming the task and both scores.",
+          "Retain the higher-scoring answer.FCStd for the task rather than overwriting with the newer one.",
+          "Apply retroactively to gnucleus-bench/jobs/generic-01 and confirm it flags exactly b55517ee4b, b849a4d94e, 14da78600e and 0fe9d9e3ce."
+        ],
+        "cost": "low",
+        "correctness": "high",
+        "diffStatus": "source-unavailable"
+      }
+    ],
+    "sourceTraceIds": [
+      "80caa98b-dc05-4a4b-8d72-dcfc7c9c8437",
+      "c38c8881-a3ba-49e2-af7b-67d9f7fb2a69",
+      "327a4d5b-a00c-4dfb-8e47-8fa8a4a27310",
+      "75a0555b-00e8-445a-8ad0-7d8053fc2cff",
+      "79a5d994-b987-46a6-8036-f8a6ddd69f3f",
+      "420632c1-f69e-426d-a0cc-dbc84a63b6bd",
+      "1a923e1e-f677-4d4f-9ecf-6942cf7e4701"
+    ],
+    "referenceIds": {
+      "traceId": "80caa98b-dc05-4a4b-8d72-dcfc7c9c8437",
+      "sessionId": "80caa98b-dc05-4a4b-8d72-dcfc7c9c8437",
+      "findingId": "F-slice-all-5"
+    },
+    "audience": "PRODUCT"
+  },
+  {
+    "findingId": "F-slice-all-6",
+    "actionable": "The surface-type sub-metric sits between 0.729 and 0.827 on the spline, disc-spring, elbow and ball-bearing families — the answers use a different face-type mix than the reference, and no check the agent runs looks at it.",
+    "problem": "The surface_types sub-metric scored below 0.83 on six of eleven tasks — 0.729 (freecad-58a1b82005 spline shaft), 0.784 (freecad-14da78600e disc spring), 0.788 (freecad-d733bfa285 filleted spline), 0.802 (freecad-264ab71adf disc spring with flats), 0.827 (freecad-8450a6402b elbow flange), 0.911 (freecad-b55517ee4b disk brake) — indicating the reference models are built from a different mix of surface primitives than the answers, on tasks where volume and area were otherwise close (jobs/generic-01/*/verifier/reward.json).",
+    "failureOrigin": {
+      "what": "wrong-output",
+      "why": "prompt-underspec",
+      "where": "system-prompt",
+      "evidence": "freecad-58a1b82005__CgKMpaj/verifier/reward.json ('surface_types=0.729'); freecad-d733bfa285__cXQRy27/verifier/reward.json ('surface_types=0.788'); tr 1a923e1e msg 54; tr 1625e9ae msg 92",
+      "whatHappened": "the agent printed its face areas grouped by surface type on every task as the playbook requires — the spline shaft reported only Cylinder and Plane faces, the filleted spline only Cylinder and Plane — but never had a reference distribution to compare against, so a mix that differs from the reference passed unremarked while volume and area were tuned to exactness",
+      "example": "«face area Cylinder     = 1998.2605 / face area Plane        = 2271.5640» (tr 1a923e1e msg 54) → «surface_types=0.729» (reward.json)",
+      "confidence": "medium"
+    },
+    "whyChain": [
+      {
+        "why": "Six tasks lost measurable score on the surface-type mix, concentrated in the spline and disc-spring families",
+        "evidence": "jobs/generic-01/*/verifier/reward.json geometry_similarity_reason surface_types values",
+        "whatHappened": "the two spline tasks scored 0.729 and 0.788 and the two disc-spring tasks 0.784 and 0.802, while simpler families such as the drive shaft and the slotted spring pin scored 0.983 and 0.981 — the deficit tracks the families whose flank and profile construction the playbook prescribes most specifically"
+      },
+      {
+        "why": "The playbook prescribes an exact face-type outcome for these families, and the agent followed it",
+        "evidence": "gnucleus-bench/harness/playbook.md:201-206 ('**External splines** ... STRAIGHT-SIDED teeth, not involute ... so flank faces are PLANES'); :240-244 ('faces are ONLY cone surfaces and HORIZONTAL annular flats ... NO vertical cylindrical rim faces anywhere')",
+        "whatHappened": "the spline convention mandates planar flanks and the disc-spring-with-flats convention forbids cylindrical rims; the agent complied and reported exactly those face types, yet the reference distribution still differs enough to cost 0.20-0.27 on the sub-metric"
+      },
+      {
+        "why": "The agent has no way to observe the reference face-type distribution and no check that targets this sub-metric",
+        "evidence": "gnucleus-bench/harness/playbook.md:69-72 (print 'the sum of face areas grouped by surface type'); :74-140 (Verification loop A-D)",
+        "whatHappened": "the playbook requires the agent to print the distribution but the verification loop only exercises volume, spec parameters and the single-solid gate — the printed face-type table is produced and then never compared against anything"
+      },
+      {
+        "why": "The playbook's family conventions encode a face-type target that was never validated against the reference models for these families",
+        "evidence": "gnucleus-bench/harness/playbook.md:171-251 ('## Family conventions (follow them exactly)')",
+        "whatHappened": "the conventions are stated as exact prescriptions ('follow them exactly') covering flank type, fillet presence and rim geometry, but the consistent 0.73-0.80 surface-type scores across all four spline and disc-spring tasks indicate the prescribed construction does not reproduce the reference's surface composition for those families",
+        "isOrigin": true
+      }
+    ],
+    "assumptions": [
+      {
+        "text": "The surface_types sub-metric compares the distribution of face area or face count across surface primitive types between answer and reference.",
+        "status": "unverified",
+        "basis": "Inferred from the metric name and from its co-reporting with volume, surface_area and bbox in geometry_similarity_reason; the scorer implementation was not read."
+      },
+      {
+        "text": "The surface-type sub-metric carries roughly a tenth of the geometry_similarity weight, making this the lowest-leverage of the geometry deficits.",
+        "status": "unverified",
+        "basis": "Fitted from freecad-8450a6402b, where volume, surface_area and bbox are all 0.000 and surface_types=0.827 yields overall=0.083, implying a weight near 0.10. The scorer's actual weights were not read."
+      },
+      {
+        "text": "Source code for unitf-agent was not provided; findings are evidence-only and file paths are inferred from trace metadata — verify paths before applying.",
+        "status": "hypothesis-pending",
+        "basis": "No source/code access for this run (trace IDs only); inferred from trace metadata and the playbook copy embedded in the diagnosis context."
+      }
+    ],
+    "remedies": [
+      {
+        "remedyId": "R-slice-all-6-a",
+        "title": "Validate the spline and disc-spring family conventions against reference face-type data",
+        "applyTarget": "gnucleus-bench/harness/playbook.md",
+        "targetClass": "local-agent-md",
+        "rationale": "All four spline and disc-spring tasks land in a narrow 0.729-0.802 surface-type band while simpler families reach 0.98, and in each case the agent followed the playbook's explicit face-type prescription. A deficit that is this consistent and this family-specific points at the prescription rather than at execution.",
+        "whyWorks": "Reading the reference models' actual surface composition for these families replaces a prescription asserted in the playbook with one measured from ground truth, so the agent's construction converges on the reference's primitive mix instead of on an assumed convention. Because the agent already prints its own distribution every run, the corrected target is directly checkable.",
+        "applyInstructions": [
+          "For freecad-58a1b82005, freecad-d733bfa285, freecad-14da78600e and freecad-264ab71adf, open the reference FCStd used by the verifier and dump face area grouped by type(face.Surface).__name__.",
+          "Compare each against the answer distribution recorded in the traces (tr 1a923e1e msg 54, tr 1625e9ae msg 92, tr 327a4d5b msg 8, tr 420632c1 msg 9).",
+          "Where they differ, correct the corresponding family convention in gnucleus-bench/harness/playbook.md to match the reference construction, and note the expected face-type mix inline.",
+          "Add to Verification loop step A: compare the printed face-type distribution against the expected mix stated in the family convention.",
+          "Re-run the four tasks and confirm surface_types rises above 0.9 in verifier/reward.json."
+        ],
+        "cost": "medium",
+        "correctness": "medium",
+        "diffStatus": "origin-unknown"
+      }
+    ],
+    "sourceTraceIds": [
+      "1a923e1e-f677-4d4f-9ecf-6942cf7e4701",
+      "1625e9ae-7297-4fb5-833e-0d82c87f0e34",
+      "327a4d5b-a00c-4dfb-8e47-8fa8a4a27310",
+      "420632c1-f69e-426d-a0cc-dbc84a63b6bd",
+      "a913ea60-3fe9-4cf4-89fb-a9f65ebf1e01"
+    ],
+    "referenceIds": {
+      "traceId": "1a923e1e-f677-4d4f-9ecf-6942cf7e4701",
+      "sessionId": "1a923e1e-f677-4d4f-9ecf-6942cf7e4701",
+      "findingId": "F-slice-all-6"
+    },
+    "audience": "PRODUCT"
+  }
+]

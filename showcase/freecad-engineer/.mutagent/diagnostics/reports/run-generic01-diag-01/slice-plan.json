@@ -1,0 +1,65 @@
+{
+  "totalSlices": 4,
+  "slices": [
+    {
+      "sliceId": "slice-1",
+      "strategy": "window-based",
+      "traceIds": [
+        "a913ea60-3fe9-4cf4-89fb-a9f65ebf1e01",
+        "80caa98b-dc05-4a4b-8d72-dcfc7c9c8437",
+        "fd60d772-e392-4b4e-b94b-d997373c166f"
+      ],
+      "scope": {
+        "hasError": false,
+        "hasFeedback": false,
+        "isPrimarySignal": false,
+        "estimatedComplexity": "low"
+      }
+    },
+    {
+      "sliceId": "slice-2",
+      "strategy": "window-based",
+      "traceIds": [
+        "c38c8881-a3ba-49e2-af7b-67d9f7fb2a69",
+        "1528f84e-aed5-4d5b-859f-91c12ce531ba",
+        "327a4d5b-a00c-4dfb-8e47-8fa8a4a27310"
+      ],
+      "scope": {
+        "hasError": false,
+        "hasFeedback": false,
+        "isPrimarySignal": false,
+        "estimatedComplexity": "low"
+      }
+    },
+    {
+      "sliceId": "slice-3",
+      "strategy": "window-based",
+      "traceIds": [
+        "420632c1-f69e-426d-a0cc-dbc84a63b6bd",
+        "79a5d994-b987-46a6-8036-f8a6ddd69f3f",
+        "1a923e1e-f677-4d4f-9ecf-6942cf7e4701"
+      ],
+      "scope": {
+        "hasError": false,
+        "hasFeedback": false,
+        "isPrimarySignal": false,
+        "estimatedComplexity": "low"
+      }
+    },
+    {
+      "sliceId": "slice-4",
+      "strategy": "window-based",
+      "traceIds": [
+        "1625e9ae-7297-4fb5-833e-0d82c87f0e34",
+        "75a0555b-00e8-445a-8ad0-7d8053fc2cff"
+      ],
+      "scope": {
+        "hasError": true,
+        "hasFeedback": false,
+        "isPrimarySignal": false,
+        "estimatedComplexity": "low"
+      }
+    }
+  ],
+  "rationale": "Window-based slicing (no a-priori signal): 4 window(s) of ~3 traces each."
+}

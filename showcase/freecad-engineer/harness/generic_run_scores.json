@@ -1,0 +1,603 @@
+{
+ "freecad-0603c53148": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-0603c53148__xiSKfkB",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-067a9a8726": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-067a9a8726__Gaax8t8",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-08d2da3057": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-08d2da3057__jDiWNXi",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-0e9bcbd4f4": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-0e9bcbd4f4__YuwpzhD",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-0f27beedee": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-0f27beedee__FfPGPyg",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-0fe9d9e3ce": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-0fe9d9e3ce__FzcgEak",
+  "note": "live verifier spec flake (0.0); offline re-grade with task scorer = 1.0/1.0",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-14da78600e": {
+  "geometry": 0.5136098443829178,
+  "job": "generic-01/freecad-14da78600e__Ed7ppeu",
+  "score": 0.6255858651841227,
+  "spec": 0.8
+ },
+ "freecad-163672a65f": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-163672a65f__t2rkrYa",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-1b9f95801c": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-1b9f95801c__gSbkL3Q",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-1db55e40f2": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-1db55e40f2__iP43w2P",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-21d1517841": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-21d1517841__sukFGi7",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-264ab71adf": {
+  "geometry": 0.6302030533942469,
+  "job": "generic-01/freecad-264ab71adf__GRGhwFT",
+  "score": 0.7731589657890785,
+  "spec": 1.0
+ },
+ "freecad-28177ca409": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-28177ca409__MNjMv3u",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-2c186f799d": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-2c186f799d__dTeed9J",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-2fcd25f3ac": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-2fcd25f3ac__fKwswnG",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-333ba9d41c": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-333ba9d41c__Nu4WKp9",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-33e0cf86f9": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-33e0cf86f9__iYYQqur",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-3582a53285": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-3582a53285__hLwjzy2",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-3ba87acac3": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-3ba87acac3__ytdrLee",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-3cebd4c4f6": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-3cebd4c4f6__9pcfbTe",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-41b24257f7": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-41b24257f7__RkkLva7",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-4ca1b8519a": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-4ca1b8519a__YJGDrPE",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-52e0552e1d": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-52e0552e1d__uAQ4xUH",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-539c2a6856": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-539c2a6856__4v93PDf",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-53b5d25579": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-53b5d25579__U2jnYtv",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-553fe598d9": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-553fe598d9__ewVWjAT",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-5709ae4446": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-5709ae4446__ii9vgmC",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-58a1b82005": {
+  "geometry": 0.8200602542571694,
+  "job": "generic-01/freecad-58a1b82005__CgKMpaj",
+  "score": 0.9011352809216362,
+  "spec": 1.0
+ },
+ "freecad-58fd45a90e": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-58fd45a90e__m5jkKFn",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-5c47cdbfc1": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-5c47cdbfc1__WV45JGb",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-5c60c7a001": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-5c60c7a001__BM2ume3",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-5c60c7a002": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-5c60c7a002__M6B4HHi",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-5c60c7a003": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-5c60c7a003__LtxuX4n",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-5c60c7a004": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-5c60c7a004__ZkNT77r",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-5c60c7a005": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-5c60c7a005__o3jWZcs",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-6417ae5005": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-6417ae5005__3XVtFbL",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-641cfcd541": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-641cfcd541__oanncgs",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-65bef2529b": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-65bef2529b__zNYtCqc",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-669bfb187c": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-669bfb187c__s32Kse3",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-67b7983b2c": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-67b7983b2c__7M8WryL",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-6d8fcf43ca": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-6d8fcf43ca__VXobFTY",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-732e9c56ac": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-732e9c56ac__N6vwmff",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-740b422c57": {
+  "geometry": 0.4502002463048267,
+  "job": "generic-01/freecad-740b422c57__DBpp9Vd",
+  "score": 0.6208801128698695,
+  "spec": 1.0
+ },
+ "freecad-7476ec86b6": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-7476ec86b6__fUh2BoM",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-77178c2112": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-77178c2112__VwPMmYr",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-7aa55dda29": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-7aa55dda29__YWVUiNA",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-7ba017c45b": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-7ba017c45b__xSoLFGP",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-7c683fcc0b": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-7c683fcc0b__nsNwpdV",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-7c8d69d649": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-7c8d69d649__LjReue8",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-82c93fd5d6": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-82c93fd5d6__QsrGMLX",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-83ca2dab2e": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-83ca2dab2e__rpoYu5c",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-8450a6402b": {
+  "geometry": 0.08270399158428227,
+  "job": "generic-01/freecad-8450a6402b__LBjpLsg",
+  "score": 0.15277304272844594,
+  "spec": 1.0
+ },
+ "freecad-85145e0d4e": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-85145e0d4e__pgXVi35",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-893b9137ff": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-893b9137ff__ANpnRqA",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-8acfa92b7f": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-8acfa92b7f__xjpeSu8",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-8ba92aba6e": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-8ba92aba6e__hfGRvhj",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-8dce996259": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-8dce996259__KrMEAkP",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-9c9ce03e0f": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-9c9ce03e0f__UUNZNHD",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-aa79a250e3": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-aa79a250e3__zgxBBLu",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-aad4a0fbad": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-aad4a0fbad__5RzvYbX",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-ab46933317": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-ab46933317__M3ML7Rh",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-ae6efafb3b": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-ae6efafb3b__dVuEqWW",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-aff93db55d": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-aff93db55d__7gqxhZo",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-b0baf87576": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-b0baf87576__2YmEMoV",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-b2de850e9c": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-b2de850e9c__dRTKS2y",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-b55517ee4b": {
+  "geometry": 0.0910723670229856,
+  "job": "generic-01/freecad-b55517ee4b__WTba2vB",
+  "score": 0.1669410201845337,
+  "spec": 1.0
+ },
+ "freecad-b849a4d94e": {
+  "geometry": 0.41767906910921193,
+  "job": "generic-01/freecad-b849a4d94e__NXgpCsR",
+  "score": 0.5892434729556352,
+  "spec": 1.0
+ },
+ "freecad-bee61f8386": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-bee61f8386__N88e3Yj",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-bf26b04486": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-bf26b04486__fhHG8vV",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-c4bad6c5af": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-c4bad6c5af__MG4yS8i",
+  "score": 0.8000239995200095,
+  "spec": 0.6667
+ },
+ "freecad-c5551173e6": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-c5551173e6__8tyySzm",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-c7364c0bbd": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-c7364c0bbd__GyVJRCL",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-c7ccc5660f": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-c7ccc5660f__F7XurEK",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-cb6f0c2fb5": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-cb6f0c2fb5__DPyLcCh",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-cda06f9dbf": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-cda06f9dbf__8g5bURe",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-d733bfa285": {
+  "geometry": 0.8518081506031834,
+  "job": "generic-01/freecad-d733bfa285__cXQRy27",
+  "score": 0.9199745128303132,
+  "spec": 1.0
+ },
+ "freecad-d7e1bdf8be": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-d7e1bdf8be__iVdgs4w",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-d831ec007c": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-d831ec007c__kVfGrXE",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-da772a2e0b": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-da772a2e0b__WDQktvw",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-db1ef53f08": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-db1ef53f08__56mHZg8",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-db4e2a4bcf": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-db4e2a4bcf__9fFUNup",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-dbf8356a78": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-dbf8356a78__pmiwWBg",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-dc935d877e": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-dc935d877e__4Cf3vA7",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-e0b89a1ecc": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-e0b89a1ecc__V4B5DpG",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-e20918a733": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-e20918a733__LUVqZxR",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-e4cf76d978": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-e4cf76d978__3rp8bE9",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-e50de66084": {
+  "geometry": 0.3357828161301203,
+  "job": "generic-01/freecad-e50de66084__vzFnCdf",
+  "score": 0.5027506149583695,
+  "spec": 1.0
+ },
+ "freecad-e74ef5c001": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-e74ef5c001__v2TnihS",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-e74ef5c002": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-e74ef5c002__ifA8sHd",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-e74ef5c003": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-e74ef5c003__squ8hoC",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-e74ef5c004": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-e74ef5c004__rRsQZJN",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-e74ef5c005": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-e74ef5c005__uumBMzb",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-ecdc59b900": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-ecdc59b900__9j7S8f3",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-eceefa2929": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-eceefa2929__zHZBLjH",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-ecf3ef894f": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-ecf3ef894f__73NPKny",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-f0d323e9ce": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-f0d323e9ce__QUJthQD",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-f3e10795e7": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-f3e10795e7__8Aqqagn",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-f67dad96d1": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-f67dad96d1__uh4qcoi",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-fa1a50cf2b": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-fa1a50cf2b__TNdmHgF",
+  "score": 1.0,
+  "spec": 1.0
+ },
+ "freecad-fc1e98cd09": {
+  "geometry": 1.0,
+  "job": "generic-01/freecad-fc1e98cd09__gVPG5Nt",
+  "score": 1.0,
+  "spec": 1.0
+ }
+}

@@ -1,0 +1,45 @@
+{
+  "manifest_version": "0.1.0",
+  "query": {
+    "query_version": "0.1.0",
+    "platform": "claude-code",
+    "source": {
+      "paths": [
+        "jobs/generic-01/freecad-8450a6402b__LBjpLsg/agent/sessions/projects/-app/a913ea60-3fe9-4cf4-89fb-a9f65ebf1e01.jsonl",
+        "jobs/generic-01/freecad-b55517ee4b__WTba2vB/agent/sessions/projects/-app/80caa98b-dc05-4a4b-8d72-dcfc7c9c8437.jsonl",
+        "jobs/generic-01/freecad-e50de66084__vzFnCdf/agent/sessions/projects/-app/fd60d772-e392-4b4e-b94b-d997373c166f.jsonl",
+        "jobs/generic-01/freecad-b849a4d94e__NXgpCsR/agent/sessions/projects/-app/c38c8881-a3ba-49e2-af7b-67d9f7fb2a69.jsonl",
+        "jobs/generic-01/freecad-740b422c57__DBpp9Vd/agent/sessions/projects/-app/1528f84e-aed5-4d5b-859f-91c12ce531ba.jsonl",
+        "jobs/generic-01/freecad-14da78600e__Ed7ppeu/agent/sessions/projects/-app/327a4d5b-a00c-4dfb-8e47-8fa8a4a27310.jsonl",
+        "jobs/generic-01/freecad-264ab71adf__GRGhwFT/agent/sessions/projects/-app/420632c1-f69e-426d-a0cc-dbc84a63b6bd.jsonl",
+        "jobs/generic-01/freecad-c4bad6c5af__MG4yS8i/agent/sessions/projects/-app/79a5d994-b987-46a6-8036-f8a6ddd69f3f.jsonl",
+        "jobs/generic-01/freecad-58a1b82005__CgKMpaj/agent/sessions/projects/-app/1a923e1e-f677-4d4f-9ecf-6942cf7e4701.jsonl",
+        "jobs/generic-01/freecad-d733bfa285__cXQRy27/agent/sessions/projects/-app/1625e9ae-7297-4fb5-833e-0d82c87f0e34.jsonl",
+        "jobs/generic-01/freecad-0fe9d9e3ce__FzcgEak/agent/sessions/projects/-app/75a0555b-00e8-445a-8ad0-7d8053fc2cff.jsonl"
+      ]
+    },
+    "export": {
+      "format": "jsonl",
+      "path": ".mutagent/traces/generic01-sub1/traces.jsonl"
+    }
+  },
+  "platform": "claude-code",
+  "count": 11,
+  "truncated": false,
+  "jsonlPath": ".mutagent/traces/generic01-sub1/traces.jsonl",
+  "sha256": "5d605ffaba7f95eab4344bbcae3f45b31681f85fe8392c28c49df2544e6f958c",
+  "bytes": 787937,
+  "format": "unitf@0.1",
+  "coverage": {
+    "fetched": 11,
+    "malformed": 0
+  },
+  "producedAt": "2026-08-19T08:47:07Z",
+  "timeRange": {
+    "earliest": "2026-08-19T06:49:54.558Z",
+    "latest": "2026-08-19T07:57:07.286Z"
+  },
+  "warnings": [
+    "post-augment: attached ext.eval.results[] (task_id, verifier reward.json scores) and computed.durationMs (from result.json started_at/finished_at) to 11/11 records; metadata sourced from gnucleus-bench/jobs/generic-01/<trial>/verifier/reward.json + result.json"
+  ]
+}
