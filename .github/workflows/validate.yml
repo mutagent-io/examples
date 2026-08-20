@@ -5,6 +5,8 @@ on:
     branches: [main]
   push:
     branches: [main]
+  # Re-run the scan on demand, without needing a commit to hang it on.
+  workflow_dispatch:
 
 # Default to read-only. Jobs that need more must opt in explicitly.
 permissions:
