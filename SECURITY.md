@@ -32,9 +32,8 @@ production services, and they are not part of any deployed system.
 
 ## Handling secrets
 
-Every entry in this repository is scanned before it is published:
-`scripts/public-scrub/sweep.mjs` runs on every push and pull request, and gitleaks scans the full
-history alongside it.
+Every entry in this repository is scanned before it is published, and gitleaks runs over the
+working tree and the full history on every push and pull request.
 
 If you believe a live credential has been committed, treat it as compromised and report it
 privately. Rotating the credential comes first; removing it from the repository comes second.

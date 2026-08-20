@@ -46,15 +46,13 @@ Two rules follow from that:
 
 ## Automated checks
 
-Every push and pull request runs:
+Every push and pull request runs **gitleaks** over the working tree and the full history. It
+must be green.
 
-- `node scripts/public-scrub/sweep.mjs .` — a deterministic scan for internal references,
-  client identities, and credential shapes. `scripts/public-scrub/sweep-rules.mjs` holds the
-  patterns; its denylist is base64-encoded so the file can pass its own gate.
-- **gitleaks**, over the full history as well as the working tree.
-
-Both must be green. If the sweep flags your entry, read the file and line it names — it prints
-both — and fix the source.
+Entries added by the MutagenT team pass through a second, deterministic scan before they are
+published here — for internal references, client identities, and credential shapes. You will
+not see that one; if it rejects something, the fix happens upstream and the entry simply
+arrives later.
 
 ## Pull requests
 
