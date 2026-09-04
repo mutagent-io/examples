@@ -1,0 +1,77 @@
+[project]
+name = "cadtools"
+version = "0.1.0"
+description = "Deterministic CAD geometry toolchain for the mutagent-brepsmith CAD-editing agent (evaluated on the CadGenBench editing task)"
+readme = "cadtools/README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "build123d>=0.11.1,<0.12",
+    "trimesh>=4.0",
+    "manifold3d>=3.0",
+    "numpy>=2.0",
+    "rtree>=1.3",
+    "huggingface-hub>=0.30",
+    "pyyaml>=6.0",
+]
+
+[project.scripts]
+cadtools = "cadtools.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+# LOAD-BEARING: `cadtools_devtools` (the synthetic ground-truth generator) is deliberately
+# NOT in this wheel. An eval venv installs this distribution alone, so a scored run cannot
+# resolve `cadtools.synthetic_pairs` or `cadtools_devtools` at all — the isolation boundary
+# F-003 found missing. See `devtools/pyproject.toml` for the two install profiles, and
+# `scripts/check_isolation.py` for the standing audit that proves the boundary held.
+#
+#   eval profile:  uv pip install .
+#   dev  profile:  uv pip install -e . -e ./devtools
+packages = ["cadtools"]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.6",
+    "mypy>=1.11",
+    "types-PyYAML>=6.0",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+# extend-exclude, NOT exclude: `exclude` REPLACES ruff's defaults (which cover .venv,
+# node_modules, .git, ...) and would drag the virtualenv into every lint run.
+extend-exclude = [".mutagent", ".claude", ".agents", ".codex", "runs", "datasets"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+ignore = ["B008"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["B011"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+ignore_missing_imports = true
+disallow_untyped_calls = false
+disallow_subclassing_any = false
+warn_return_any = false
+# build123d's `Shape` is generic over its OCCT wrapper type; spelling `Shape[Any]` at every
+# boundary would add noise without adding safety, and the OCP stubs vary between wheels, so
+# `type: ignore` comments on OCP imports are unused on some builds and required on others.
+disable_error_code = ["no-any-return", "misc", "type-arg", "unused-ignore"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# `-m 'not slow'` by default: the memory-ceiling regression runs a full 20000-sample proximity
+# query under tracemalloc and costs minutes. CI runs everything with `pytest -m ''`.
+addopts = "-ra -m 'not slow'"
+filterwarnings = ["ignore::DeprecationWarning"]
+markers = [
+    "slow: multi-minute regression (full-sample memory ceiling); deselected by default",
+]

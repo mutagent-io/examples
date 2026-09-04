@@ -1,0 +1,81 @@
+{
+ "run": "eval-run-004",
+ "arm": "armA",
+ "n": 32,
+ "validity_rate": 0.8125,
+ "valid": [
+  "201",
+  "203",
+  "204",
+  "205",
+  "206",
+  "208",
+  "209",
+  "211",
+  "212",
+  "214",
+  "215",
+  "218",
+  "224",
+  "225",
+  "229",
+  "230",
+  "231",
+  "238",
+  "241",
+  "243",
+  "244",
+  "245",
+  "246",
+  "247",
+  "248",
+  "249"
+ ],
+ "invalid": [
+  "202",
+  "207",
+  "217",
+  "240",
+  "242",
+  "250"
+ ],
+ "rounds_distribution": {
+  "1": 25,
+  "2": 2,
+  "3": 3,
+  "5": 2
+ },
+ "waiver_list": {
+  "201": [
+   "intent"
+  ],
+  "203": [
+   "operation_class"
+  ],
+  "206": [
+   "operation_class"
+  ],
+  "211": [
+   "surface_type_conservation"
+  ],
+  "214": [
+   "surface_type_conservation"
+  ],
+  "218": [
+   "surface_type_conservation"
+  ],
+  "238": [
+   "surface_type_conservation"
+  ],
+  "240": [
+   "validity"
+  ]
+ },
+ "inherited_defect_candidates": [
+  "217",
+  "240",
+  "242",
+  "250"
+ ],
+ "interpretation_documented_rate": 1.0
+}

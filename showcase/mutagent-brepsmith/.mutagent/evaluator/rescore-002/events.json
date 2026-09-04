@@ -1,0 +1,42 @@
+[
+ {
+  "arm": "armA",
+  "id": "abc_0054-boss-union",
+  "event": "OOM at default 20000 samples; python-API fallback"
+ },
+ {
+  "arm": "armA",
+  "id": "abc_0054-boss-union",
+  "event": "scored at n_samples=5000"
+ },
+ {
+  "arm": "armB",
+  "id": "abc_0054-boss-union",
+  "event": "OOM at default 20000 samples; python-API fallback"
+ },
+ {
+  "arm": "armB",
+  "id": "abc_0054-boss-union",
+  "event": "scored at n_samples=5000"
+ },
+ {
+  "arm": "armA",
+  "id": "abc_0368-fill-hole",
+  "event": "OOM at default 20000 samples; python-API fallback"
+ },
+ {
+  "arm": "armA",
+  "id": "abc_0368-fill-hole",
+  "event": "scored at n_samples=5000"
+ },
+ {
+  "arm": "armB",
+  "id": "abc_0368-fill-hole",
+  "event": "OOM at default 20000 samples; python-API fallback"
+ },
+ {
+  "arm": "armB",
+  "id": "abc_0368-fill-hole",
+  "event": "scored at n_samples=5000"
+ }
+]

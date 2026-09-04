@@ -1,0 +1,47 @@
+{
+ "sample_id": "209",
+ "validity": {
+  "official_aligned_gate": "pass",
+  "verify_exit_code": 0,
+  "verify_payload": {
+   "ok": true,
+   "command": "verify",
+   "data": {
+    "is_valid": true,
+    "brep_well_formed": true,
+    "shells_closed": true,
+    "mesh_manifold": true,
+    "mesh_closed": true,
+    "orientation_consistent": true,
+    "n_naked_edges": 0,
+    "n_non_manifold_edges": 0,
+    "n_faces": 122,
+    "n_mesh_triangles": 15374,
+    "mesh_deflection_divisor": 1,
+    "strict_mesh_closed": true,
+    "min_face_area": 0.4359811711141378,
+    "max_aspect_ratio": 2781315820611.971,
+    "max_brep_tolerance": 0.009056301414791756,
+    "failures": [],
+    "advisories": [
+     "advisory: maximum face aspect ratio 2781315820612.0 exceeds 1000 \u2014 not a validity failure"
+    ],
+    "strictness": []
+   },
+   "error": ""
+  },
+  "reported_in_report": "pass"
+ },
+ "rounds_used": 1,
+ "checks_normalized": {
+  "validity": "pass",
+  "locality": "pass",
+  "intent_volume": "pass",
+  "intent_cross_section": "pass"
+ },
+ "checks_passed_claimed": true,
+ "waivers": [],
+ "locality": "pass",
+ "interpretation_documented": true,
+ "score_source": "check-results"
+}

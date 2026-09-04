@@ -1,0 +1,25 @@
+{
+  "run": "eval-run-001", "subject": "cad-step-editor", "judge_model": "claude-fable-5", "temperature": 0,
+  "slice": {"n": 20, "source": "synthetic-edit-pairs", "stratified": "tier x editType, seed 42"},
+  "arms": {
+    "A_harness": {"proxy_mean_all": 0.7115, "proxy_mean_clean": 0.6812, "median": 1.0, "validity": 0.95, "real_rounds_mean": 1.15},
+    "B_baseline": {"proxy_mean": 0.4508, "median": 0.1543, "validity": 0.80}
+  },
+  "contamination": {"recipe_reuse_ids": ["abc_0123-fill-hole","abc_0128-fill-hole","abc_0067-fill-hole","abc_0098-thicken","abc_0011-thicken"], "clean_n": 15, "beats_baseline_robust_to_split": true},
+  "criteria": [
+    {"id": "output-always-valid", "verdict": "fail", "severity": "CRIT", "detail": "19/20 — armA/abc_0365-thicken emitted in a shifted frame (scored 0 under frame-agreement A4); agent self-verify claimed valid: verify-loop gap"},
+    {"id": "unrelated-geometry-preserved", "verdict": "pass", "detail": "locality clean on scored samples; caveats: abc_0397 Z-scale stretches all features, abc_0003 boss capped a pre-existing bore (literal-instruction reading)"},
+    {"id": "edit-matches-instruction", "verdict": "pass", "detail": "clean-subset mean 0.6812, median 1.0 vs GT; dragged by the frame-fail and Z-scale semantic miss"},
+    {"id": "budget-and-emission-discipline", "verdict": "pass", "detail": "20/20 emitted, real rounds mean 1.15, max 3, ledger enforced"},
+    {"id": "beats-same-model-baseline", "verdict": "pass", "detail": "+0.2607 all-samples, +0.2304 clean-subset — robust to the contamination split"}
+  ],
+  "gate": "fail",
+  "gate_reason": "CRIT criterion output-always-valid failed (1 frame-shifted emission the agent's own verify missed)",
+  "route_to_diagnose": [
+    "armA/abc_0365-thicken frame-shift emitted as valid (verify-loop frame check gap)",
+    "abc_0397-thicken semantic miss: Z-scale instead of material extension (valid+localized but wrong operation class)",
+    "eval-infra: subject can reach dataset generator (5/20 recipe_reuse) — needs mechanical isolation, not prompt rules",
+    "cadtools papercuts: ledger round double-count (3 independent reports), diff OOM at default 20000 samples on dense meshes"
+  ],
+  "known_limits": ["interface axis absent (0.7 renorm)", "parity vs real cadgenbench scorer unmeasured", "synthetic slice; R5 difficulty gap vs real instructions"]
+}

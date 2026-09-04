@@ -1,0 +1,60 @@
+{
+  "sample_id": "abc_0382-hole-pattern",
+  "arm": "armB",
+  "ok": true,
+  "scorecard": {
+    "convention": "cad-score-proxy/v1:interface-null-renormalized-0.7",
+    "valid": true,
+    "status": "ok",
+    "validity_failures": [],
+    "surface_distance_f1": 0.9310815030608958,
+    "volume_iou": 0.9274063620211308,
+    "shape_similarity": 0.9292439325410133,
+    "baseline_shape_similarity": 0.9427017667054692,
+    "shape_similarity_renormalized": 0.0,
+    "topology_match": 0.36,
+    "interface": null,
+    "interface_available": false,
+    "betti_ground_truth": [
+      1,
+      9,
+      0
+    ],
+    "betti_candidate": [
+      1,
+      5,
+      0
+    ],
+    "betti_input": [
+      1,
+      5,
+      0
+    ],
+    "cad_score_proxy": 0.05142857142857143,
+    "proxy_weight_total": 0.7,
+    "weights": {
+      "shape": 0.6,
+      "interface": 0.3,
+      "topology": 0.1
+    },
+    "raw_components": {
+      "shape_renormalized": 0.0,
+      "interface": null,
+      "topology_match": 0.036
+    },
+    "frame_agreement": {
+      "agree": true,
+      "centre_delta": 0.0,
+      "extent_delta": 0.0,
+      "pose_delta": 0.0,
+      "sorted_extent_delta": 0.0,
+      "axis_permutation": false,
+      "shape_divergence": false,
+      "tolerance": 13.382312050132285,
+      "reference_diagonal": 133.82312050132285,
+      "message": "bodies are posed in the same frame"
+    },
+    "n_samples": 20000
+  },
+  "elapsed_s": 19.1
+}

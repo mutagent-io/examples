@@ -1,0 +1,28 @@
+{
+  "jsonrpc": "2.0",
+  "id": "70927d98051040e2b356dabd1bf09849",
+  "method": "SendMessage",
+  "params": {
+    "message": {
+      "messageId": "1378b922048a43bea6e36dcda691334a",
+      "contextId": "ctx-abc",
+      "role": "ROLE_USER",
+      "parts": [
+        {
+          "data": {
+            "tool_results": [
+              {
+                "content": "{\"condition\":\"sunny\"}",
+                "tool_call_id": "call_1",
+                "tool_name": "get_weather"
+              }
+            ]
+          }
+        }
+      ],
+      "metadata": {
+        "source": "environment"
+      }
+    }
+  }
+}

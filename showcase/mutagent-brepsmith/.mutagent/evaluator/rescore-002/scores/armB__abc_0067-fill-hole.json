@@ -1,0 +1,62 @@
+{
+ "arm": "armB",
+ "id": "abc_0067-fill-hole",
+ "status": "invalid",
+ "cad_score_proxy": 0.0,
+ "scorecard": {
+  "convention": "cad-score-proxy/v1:interface-null-renormalized-0.7",
+  "valid": false,
+  "status": "invalid",
+  "validity_failures": [
+   "tessellation is not closed (3F != 2E; open boundary in the mesh)"
+  ],
+  "surface_distance_f1": 0.03828106824925816,
+  "volume_iou": 0.0,
+  "shape_similarity": 0.01914053412462908,
+  "baseline_shape_similarity": 0.5541316525403756,
+  "shape_similarity_renormalized": 0.0,
+  "topology_match": 0.25,
+  "interface": null,
+  "interface_available": false,
+  "betti_ground_truth": [
+   1,
+   0,
+   0
+  ],
+  "betti_candidate": [
+   1,
+   1,
+   0
+  ],
+  "betti_input": [
+   1,
+   3,
+   0
+  ],
+  "cad_score_proxy": 0.0,
+  "proxy_weight_total": 0.7,
+  "weights": {
+   "shape": 0.6,
+   "interface": 0.3,
+   "topology": 0.1
+  },
+  "raw_components": {
+   "shape_renormalized": 0.0,
+   "interface": null,
+   "topology_match": 0.025
+  },
+  "frame_agreement": {
+   "agree": true,
+   "centre_delta": 1.3016797171271395,
+   "extent_delta": 11.732619183348067,
+   "pose_delta": 0.0,
+   "sorted_extent_delta": 10.783281786394163,
+   "axis_permutation": false,
+   "shape_divergence": true,
+   "tolerance": 2.5415154449351163,
+   "reference_diagonal": 25.41515444935116,
+   "message": "bodies are posed in the same frame; their SIZES differ by 11.7326 mm, which is a shape finding, not a pose one"
+  }
+ },
+ "note": "for-the-record only: excluded from clean set by armA-twin contamination; re-scored under the new size-invariant pose test"
+}

@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 420" font-family="Helvetica, Arial, sans-serif">
+  <rect width="1180" height="420" fill="#FBFAF7"/>
+  <text x="70" y="52" fill="#1D2129" font-size="22" font-weight="bold" letter-spacing="-0.5">Where CARlo lands</text>
+  <text x="70" y="74" fill="#8A8371" font-size="13">all 34 entries of the IJCAI 2026 CAR-bench challenge, sorted by Pass&#179;</text>
+  <rect x="70" y="85" width="24" height="231" rx="3" fill="#D6D2C6"/>
+  <rect x="100" y="96" width="24" height="220" rx="3" fill="#D6D2C6"/>
+  <rect x="130" y="107" width="24" height="209" rx="3" fill="#D6D2C6"/>
+  <rect x="160" y="116" width="24" height="200" rx="3" fill="#B87708"/>
+  <text x="172" y="108" fill="#B87708" font-size="12" text-anchor="middle">0.605</text>
+  <rect x="190" y="118" width="24" height="198" rx="3" fill="#D6D2C6"/>
+  <rect x="220" y="118" width="24" height="198" rx="3" fill="#D6D2C6"/>
+  <rect x="250" y="118" width="24" height="198" rx="3" fill="#D6D2C6"/>
+  <rect x="280" y="118" width="24" height="198" rx="3" fill="#D6D2C6"/>
+  <rect x="310" y="129" width="24" height="187" rx="3" fill="#D6D2C6"/>
+  <rect x="340" y="129" width="24" height="187" rx="3" fill="#D6D2C6"/>
+  <rect x="370" y="140" width="24" height="176" rx="3" fill="#D6D2C6"/>
+  <rect x="400" y="140" width="24" height="176" rx="3" fill="#D6D2C6"/>
+  <rect x="430" y="140" width="24" height="176" rx="3" fill="#D6D2C6"/>
+  <rect x="460" y="151" width="24" height="165" rx="3" fill="#D6D2C6"/>
+  <rect x="490" y="151" width="24" height="165" rx="3" fill="#D6D2C6"/>
+  <rect x="520" y="151" width="24" height="165" rx="3" fill="#D6D2C6"/>
+  <rect x="550" y="162" width="24" height="154" rx="3" fill="#D6D2C6"/>
+  <rect x="580" y="173" width="24" height="143" rx="3" fill="#D6D2C6"/>
+  <rect x="610" y="173" width="24" height="143" rx="3" fill="#D6D2C6"/>
+  <rect x="640" y="173" width="24" height="143" rx="3" fill="#D6D2C6"/>
+  <rect x="670" y="195" width="24" height="121" rx="3" fill="#D6D2C6"/>
+  <rect x="700" y="195" width="24" height="121" rx="3" fill="#D6D2C6"/>
+  <rect x="730" y="195" width="24" height="121" rx="3" fill="#D6D2C6"/>
+  <rect x="760" y="195" width="24" height="121" rx="3" fill="#D6D2C6"/>
+  <rect x="790" y="206" width="24" height="110" rx="3" fill="#D6D2C6"/>
+  <rect x="820" y="206" width="24" height="110" rx="3" fill="#D6D2C6"/>
+  <rect x="850" y="217" width="24" height="99" rx="3" fill="#D6D2C6"/>
+  <rect x="880" y="217" width="24" height="99" rx="3" fill="#D6D2C6"/>
+  <rect x="910" y="239" width="24" height="77" rx="3" fill="#D6D2C6"/>
+  <rect x="940" y="261" width="24" height="55" rx="3" fill="#D6D2C6"/>
+  <rect x="970" y="261" width="24" height="55" rx="3" fill="#D6D2C6"/>
+  <rect x="1000" y="272" width="24" height="44" rx="3" fill="#D6D2C6"/>
+  <rect x="1030" y="272" width="24" height="44" rx="3" fill="#D6D2C6"/>
+  <rect x="1060" y="283" width="24" height="33" rx="3" fill="#D6D2C6"/>
+  <rect x="1090" y="305" width="24" height="11" rx="3" fill="#D6D2C6"/>
+  <line x1="64" y1="316" x2="1120" y2="316" stroke="#C9C5B8" stroke-width="1.5"/>
+  <path d="M 190 332 v8 H 1114 v-8" fill="none" stroke="#4F8F6B" stroke-width="1.5"/>
+  <text x="652" y="360" fill="#4F8F6B" font-size="14" font-weight="bold" text-anchor="middle">above 31 of 34 entries &#183; 91%</text>
+</svg>

@@ -1,0 +1,429 @@
+{
+ "parity_id": "parity-001",
+ "cadgenbench_version": "0.1.0",
+ "n_pairs": 8,
+ "validity": {
+  "n": 8,
+  "n_agree": 7,
+  "cases": [
+   {
+    "arm": "armA",
+    "id": "abc_0228-boss-union",
+    "proxy": true,
+    "official": true,
+    "agree": true
+   },
+   {
+    "arm": "armA",
+    "id": "abc_0285-hole-pattern",
+    "proxy": true,
+    "official": true,
+    "agree": true
+   },
+   {
+    "arm": "armA",
+    "id": "abc_0396-corner-fillet",
+    "proxy": true,
+    "official": true,
+    "agree": true
+   },
+   {
+    "arm": "armA",
+    "id": "abc_0397-thicken",
+    "proxy": true,
+    "official": true,
+    "agree": true
+   },
+   {
+    "arm": "armB",
+    "id": "abc_0067-fill-hole",
+    "proxy": false,
+    "official": true,
+    "agree": false
+   },
+   {
+    "arm": "armB",
+    "id": "abc_0152-through-hole",
+    "proxy": true,
+    "official": true,
+    "agree": true
+   },
+   {
+    "arm": "armB",
+    "id": "abc_0374-through-hole",
+    "proxy": true,
+    "official": true,
+    "agree": true
+   },
+   {
+    "arm": "armB",
+    "id": "abc_0380-boss-union",
+    "proxy": true,
+    "official": true,
+    "agree": true
+   }
+  ]
+ },
+ "axis_stats": {
+  "surface_distance_f1": {
+   "n": 7,
+   "pearson": 0.8278,
+   "spearman": 0.8975,
+   "mean_abs_diff": 0.0764,
+   "max_abs_diff": 0.3819,
+   "max_abs_diff_case": "armA/abc_0397-thicken",
+   "pairs": [
+    {
+     "case": "armA/abc_0228-boss-union",
+     "proxy": 1.0,
+     "official": 1.0
+    },
+    {
+     "case": "armA/abc_0285-hole-pattern",
+     "proxy": 0.8326,
+     "official": 0.7714
+    },
+    {
+     "case": "armA/abc_0396-corner-fillet",
+     "proxy": 1.0,
+     "official": 0.9279
+    },
+    {
+     "case": "armA/abc_0397-thicken",
+     "proxy": 0.3454,
+     "official": 0.7273
+    },
+    {
+     "case": "armB/abc_0152-through-hole",
+     "proxy": 0.834,
+     "official": 0.8169
+    },
+    {
+     "case": "armB/abc_0374-through-hole",
+     "proxy": 0.9993,
+     "official": 0.9965
+    },
+    {
+     "case": "armB/abc_0380-boss-union",
+     "proxy": 1.0,
+     "official": 1.0
+    }
+   ]
+  },
+  "volume_iou": {
+   "n": 7,
+   "pearson": 0.9566,
+   "spearman": 0.937,
+   "mean_abs_diff": 0.04,
+   "max_abs_diff": 0.2791,
+   "max_abs_diff_case": "armA/abc_0397-thicken",
+   "pairs": [
+    {
+     "case": "armA/abc_0228-boss-union",
+     "proxy": 1.0,
+     "official": 1.0
+    },
+    {
+     "case": "armA/abc_0285-hole-pattern",
+     "proxy": 0.797,
+     "official": 0.7978
+    },
+    {
+     "case": "armA/abc_0396-corner-fillet",
+     "proxy": 1.0,
+     "official": 1.0
+    },
+    {
+     "case": "armA/abc_0397-thicken",
+     "proxy": 0.3934,
+     "official": 0.6725
+    },
+    {
+     "case": "armB/abc_0152-through-hole",
+     "proxy": 0.8701,
+     "official": 0.8698
+    },
+    {
+     "case": "armB/abc_0374-through-hole",
+     "proxy": 0.9979,
+     "official": 0.9979
+    },
+    {
+     "case": "armB/abc_0380-boss-union",
+     "proxy": 1.0,
+     "official": 1.0
+    }
+   ]
+  },
+  "shape_similarity_raw": {
+   "n": 7,
+   "pearson": 0.9076,
+   "spearman": 0.75,
+   "mean_abs_diff": 0.0581,
+   "max_abs_diff": 0.3305,
+   "max_abs_diff_case": "armA/abc_0397-thicken",
+   "pairs": [
+    {
+     "case": "armA/abc_0228-boss-union",
+     "proxy": 1.0,
+     "official": 1.0
+    },
+    {
+     "case": "armA/abc_0285-hole-pattern",
+     "proxy": 0.8148,
+     "official": 0.7846
+    },
+    {
+     "case": "armA/abc_0396-corner-fillet",
+     "proxy": 1.0,
+     "official": 0.964
+    },
+    {
+     "case": "armA/abc_0397-thicken",
+     "proxy": 0.3694,
+     "official": 0.6999
+    },
+    {
+     "case": "armB/abc_0152-through-hole",
+     "proxy": 0.8521,
+     "official": 0.8434
+    },
+    {
+     "case": "armB/abc_0374-through-hole",
+     "proxy": 0.9986,
+     "official": 0.9972
+    },
+    {
+     "case": "armB/abc_0380-boss-union",
+     "proxy": 1.0,
+     "official": 1.0
+    }
+   ]
+  },
+  "baseline_shape_similarity": {
+   "n": 7,
+   "pearson": 0.9661,
+   "spearman": 0.9286,
+   "mean_abs_diff": 0.0155,
+   "max_abs_diff": 0.0411,
+   "max_abs_diff_case": "armA/abc_0396-corner-fillet",
+   "pairs": [
+    {
+     "case": "armA/abc_0228-boss-union",
+     "proxy": 0.8695,
+     "official": 0.8676
+    },
+    {
+     "case": "armA/abc_0285-hole-pattern",
+     "proxy": 0.9336,
+     "official": 0.9162
+    },
+    {
+     "case": "armA/abc_0396-corner-fillet",
+     "proxy": 0.997,
+     "official": 0.9559
+    },
+    {
+     "case": "armA/abc_0397-thicken",
+     "proxy": 0.9018,
+     "official": 0.8884
+    },
+    {
+     "case": "armB/abc_0152-through-hole",
+     "proxy": 0.872,
+     "official": 0.8612
+    },
+    {
+     "case": "armB/abc_0374-through-hole",
+     "proxy": 0.9466,
+     "official": 0.9241
+    },
+    {
+     "case": "armB/abc_0380-boss-union",
+     "proxy": 0.9601,
+     "official": 0.9586
+    }
+   ]
+  },
+  "shape_similarity_renormalized": {
+   "n": 7,
+   "pearson": 0.8248,
+   "spearman": 0.7308,
+   "mean_abs_diff": 0.1182,
+   "max_abs_diff": 0.8172,
+   "max_abs_diff_case": "armA/abc_0396-corner-fillet",
+   "pairs": [
+    {
+     "case": "armA/abc_0228-boss-union",
+     "proxy": 1.0,
+     "official": 1.0
+    },
+    {
+     "case": "armA/abc_0285-hole-pattern",
+     "proxy": 0.0,
+     "official": 0.0
+    },
+    {
+     "case": "armA/abc_0396-corner-fillet",
+     "proxy": 1.0,
+     "official": 0.1828
+    },
+    {
+     "case": "armA/abc_0397-thicken",
+     "proxy": 0.0,
+     "official": 0.0
+    },
+    {
+     "case": "armB/abc_0152-through-hole",
+     "proxy": 0.0,
+     "official": 0.0
+    },
+    {
+     "case": "armB/abc_0374-through-hole",
+     "proxy": 0.9734,
+     "official": 0.9629
+    },
+    {
+     "case": "armB/abc_0380-boss-union",
+     "proxy": 1.0,
+     "official": 1.0
+    }
+   ]
+  },
+  "topology_match": {
+   "n": 7,
+   "pearson": 1.0,
+   "spearman": 1.0,
+   "mean_abs_diff": 0.0,
+   "max_abs_diff": 0.0,
+   "max_abs_diff_case": "armA/abc_0228-boss-union",
+   "pairs": [
+    {
+     "case": "armA/abc_0228-boss-union",
+     "proxy": 1.0,
+     "official": 1.0
+    },
+    {
+     "case": "armA/abc_0285-hole-pattern",
+     "proxy": 0.36,
+     "official": 0.36
+    },
+    {
+     "case": "armA/abc_0396-corner-fillet",
+     "proxy": 1.0,
+     "official": 1.0
+    },
+    {
+     "case": "armA/abc_0397-thicken",
+     "proxy": 1.0,
+     "official": 1.0
+    },
+    {
+     "case": "armB/abc_0152-through-hole",
+     "proxy": 0.16,
+     "official": 0.16
+    },
+    {
+     "case": "armB/abc_0374-through-hole",
+     "proxy": 1.0,
+     "official": 1.0
+    },
+    {
+     "case": "armB/abc_0380-boss-union",
+     "proxy": 1.0,
+     "official": 1.0
+    }
+   ]
+  },
+  "final_score": {
+   "n": 7,
+   "pearson": 0.8506,
+   "spearman": 0.75,
+   "mean_abs_diff": 0.1013,
+   "max_abs_diff": 0.7004,
+   "max_abs_diff_case": "armA/abc_0396-corner-fillet",
+   "pairs": [
+    {
+     "case": "armA/abc_0228-boss-union",
+     "proxy": 1.0,
+     "official": 1.0
+    },
+    {
+     "case": "armA/abc_0285-hole-pattern",
+     "proxy": 0.0514,
+     "official": 0.0514
+    },
+    {
+     "case": "armA/abc_0396-corner-fillet",
+     "proxy": 1.0,
+     "official": 0.2996
+    },
+    {
+     "case": "armA/abc_0397-thicken",
+     "proxy": 0.1429,
+     "official": 0.1429
+    },
+    {
+     "case": "armB/abc_0152-through-hole",
+     "proxy": 0.0229,
+     "official": 0.0229
+    },
+    {
+     "case": "armB/abc_0374-through-hole",
+     "proxy": 0.9772,
+     "official": 0.9682
+    },
+    {
+     "case": "armB/abc_0380-boss-union",
+     "proxy": 1.0,
+     "official": 1.0
+    }
+   ]
+  }
+ },
+ "final_score_order_disagreements": [
+  {
+   "pair": [
+    "armA/abc_0285-hole-pattern",
+    "armB/abc_0067-fill-hole"
+   ],
+   "proxy": [
+    0.0514,
+    0.0
+   ],
+   "official": [
+    0.0514,
+    0.1429
+   ]
+  },
+  {
+   "pair": [
+    "armA/abc_0396-corner-fillet",
+    "armB/abc_0374-through-hole"
+   ],
+   "proxy": [
+    1.0,
+    0.9772
+   ],
+   "official": [
+    0.2996,
+    0.9682
+   ]
+  },
+  {
+   "pair": [
+    "armB/abc_0067-fill-hole",
+    "armB/abc_0152-through-hole"
+   ],
+   "proxy": [
+    0.0,
+    0.0229
+   ],
+   "official": [
+    0.1429,
+    0.0229
+   ]
+  }
+ ],
+ "spearman_final_all8": 0.7306
+}

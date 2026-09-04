@@ -1,0 +1,8 @@
+{
+ "shape_similarity_score": 0.861196427673634,
+ "shape_surface_distance_f1": 0.8683236812672617,
+ "shape_volume_iou": 0.8540691740800064,
+ "alignment_rmse": 1.3749,
+ "headroom": 0.138804,
+ "cadgenbench_version": "0.1.0"
+}

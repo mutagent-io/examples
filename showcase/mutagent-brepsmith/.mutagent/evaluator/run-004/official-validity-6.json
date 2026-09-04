@@ -1,0 +1,40 @@
+{
+ "202": {
+  "is_valid": false,
+  "is_watertight": false,
+  "topology_errors": [
+   "Face: BRepCheck_UnorientableShape"
+  ]
+ },
+ "207": {
+  "is_valid": true,
+  "is_watertight": true,
+  "topology_errors": []
+ },
+ "217": {
+  "is_valid": false,
+  "is_watertight": false,
+  "topology_errors": [
+   "Face: BRepCheck_UnorientableShape"
+  ]
+ },
+ "240": {
+  "is_valid": false,
+  "is_watertight": false,
+  "topology_errors": [
+   "Face: BRepCheck_UnorientableShape"
+  ]
+ },
+ "242": {
+  "is_valid": true,
+  "is_watertight": true,
+  "topology_errors": []
+ },
+ "250": {
+  "is_valid": false,
+  "is_watertight": true,
+  "topology_errors": [
+   "mesh non-manifold: edge (0, 1) shared by 4 triangles (expected \u2264 2)"
+  ]
+ }
+}

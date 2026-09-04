@@ -1,0 +1,10 @@
+node_modules
+dist
+traces
+results
+third_party
+bridge
+tests
+.git
+.env
+*.log

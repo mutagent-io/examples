@@ -1,0 +1,74 @@
+{
+ "sample_id": "abc_0054-boss-union",
+ "arm": "armB",
+ "n_samples": 20000,
+ "sample_reduction": false,
+ "output_present": true,
+ "score": {
+  "convention": "cad-score-proxy/v1:interface-null-renormalized-0.7",
+  "valid": true,
+  "validity_failures": [],
+  "surface_distance_f1": 1.0,
+  "volume_iou": 0.9999999999936051,
+  "shape_similarity": 0.9999999999968026,
+  "baseline_shape_similarity": 0.9142764789515267,
+  "shape_similarity_renormalized": 0.9999999999627005,
+  "topology_match": 1.0,
+  "betti_ground_truth": [
+   1,
+   0,
+   0
+  ],
+  "betti_candidate": [
+   1,
+   0,
+   0
+  ],
+  "betti_input": [
+   1,
+   0,
+   0
+  ],
+  "interface": null,
+  "interface_available": false,
+  "cad_score_proxy": 0.999999999968029,
+  "proxy_weight_total": 0.7,
+  "status": "ok",
+  "frame_agreement": {
+   "agree": true,
+   "centre_delta": 0.0,
+   "extent_delta": 0.0,
+   "tolerance": 30.170349683084023,
+   "reference_diagonal": 301.7034968308402,
+   "message": "bodies are posed in the same frame"
+  }
+ },
+ "locality": {
+  "max_distance": 35.0,
+  "mean_distance": 1.1496099537319175,
+  "changed_fraction": 0.054425,
+  "change_tolerance": 1.456880228432976,
+  "volume_delta_fraction": 0.13253794362494692,
+  "betti_delta": [
+   0,
+   0,
+   0
+  ],
+  "frame_agreement": {
+   "agree": false,
+   "centre_delta": 17.5,
+   "extent_delta": 35.0,
+   "tolerance": 29.137604568659523,
+   "reference_diagonal": 291.3760456865952,
+   "message": "frame disagreement: bbox extents changed by 35.0000 mm (> 29.1376 mm tolerance)"
+  }
+ },
+ "protocol_conformance": {
+  "no_cadtools_usage": true,
+  "cadtools_hits": []
+ },
+ "rounds": {
+  "attempts": 1,
+  "exported": true
+ }
+}

@@ -1,0 +1,449 @@
+{
+ "submission_id": "bruno-mutagent_mutagent-brepsmith-opus-5-xhigh-agentic-_20260828-132328",
+ "status": "completed",
+ "failure_reason": null,
+ "submitter_name": "bruno-mutagent",
+ "submission_name": "mutagent-brepsmith \u2014 Opus-5 xhigh agentic harness (editing-only)",
+ "agent_url": "",
+ "notes": "mutagent-brepsmith (MutagenT ADL): CAD-editing agent, evaluated on the editing task; the 49 generation folders are explicit not-attempted placeholders (phase 2). Claude Code harness on claude-opus-5 xhigh: interpretation disambiguation with recorded rejected readings, build123d edits, deterministic verification (validity, locality, volumetric intent), <=5 rounds. All 32 outputs pass the official validity gate, incl. 202/217/240 whose inputs fail it (repaired at <0.01% volume).",
+ "submitted_at": "2026-08-28T13:23:31Z",
+ "cadgenbench_version": "0.1.0",
+ "cadgenbench_data_revision": "f76f96558581",
+ "validity_rate": 0.3951,
+ "aggregate_score": 0.2635,
+ "score_by_task_type": {
+  "generation": 0.0,
+  "editing": 0.6669
+ },
+ "per_task_scores": {
+  "generation": {
+   "score": 0.0,
+   "validity_rate": 0.0,
+   "n_samples": 49,
+   "n_valid": 0,
+   "n_invalid": 0,
+   "n_missing": 49
+  },
+  "editing": {
+   "score": 0.6669,
+   "validity_rate": 1.0,
+   "n_samples": 32,
+   "n_valid": 32,
+   "n_invalid": 0,
+   "n_missing": 0
+  }
+ },
+ "per_sample_scores": {
+  "101": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "102": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "103": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "104": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "105": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "106": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "107": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "108": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "109": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "110": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "111": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "112": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "113": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "114": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "115": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "116": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "117": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "118": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "119": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "120": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "121": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "122": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "123": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "124": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "125": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "126": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "127": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "128": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "129": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "130": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "131": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "132": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "133": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "134": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "135": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "136": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "137": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "138": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "139": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "140": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "141": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "142": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "143": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "145": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "146": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "147": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "148": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "149": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "150": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "201": {
+   "status": "valid",
+   "cad_score": 0.3365,
+   "task_type": "editing"
+  },
+  "202": {
+   "status": "valid",
+   "cad_score": 0.3963,
+   "task_type": "editing"
+  },
+  "203": {
+   "status": "valid",
+   "cad_score": 0.4047,
+   "task_type": "editing"
+  },
+  "204": {
+   "status": "valid",
+   "cad_score": 0.5146,
+   "task_type": "editing"
+  },
+  "205": {
+   "status": "valid",
+   "cad_score": 0.9975,
+   "task_type": "editing"
+  },
+  "206": {
+   "status": "valid",
+   "cad_score": 0.7427,
+   "task_type": "editing"
+  },
+  "207": {
+   "status": "valid",
+   "cad_score": 0.9945,
+   "task_type": "editing"
+  },
+  "208": {
+   "status": "valid",
+   "cad_score": 0.6119,
+   "task_type": "editing"
+  },
+  "209": {
+   "status": "valid",
+   "cad_score": 0.7234,
+   "task_type": "editing"
+  },
+  "211": {
+   "status": "valid",
+   "cad_score": 0.6033,
+   "task_type": "editing"
+  },
+  "212": {
+   "status": "valid",
+   "cad_score": 0.9728,
+   "task_type": "editing"
+  },
+  "214": {
+   "status": "valid",
+   "cad_score": 0.5632,
+   "task_type": "editing"
+  },
+  "215": {
+   "status": "valid",
+   "cad_score": 0.9072,
+   "task_type": "editing"
+  },
+  "217": {
+   "status": "valid",
+   "cad_score": 0.5167,
+   "task_type": "editing"
+  },
+  "218": {
+   "status": "valid",
+   "cad_score": 0.4,
+   "task_type": "editing"
+  },
+  "224": {
+   "status": "valid",
+   "cad_score": 0.8466,
+   "task_type": "editing"
+  },
+  "225": {
+   "status": "valid",
+   "cad_score": 0.997,
+   "task_type": "editing"
+  },
+  "229": {
+   "status": "valid",
+   "cad_score": 0.4012,
+   "task_type": "editing"
+  },
+  "230": {
+   "status": "valid",
+   "cad_score": 0.9593,
+   "task_type": "editing"
+  },
+  "231": {
+   "status": "valid",
+   "cad_score": 0.9747,
+   "task_type": "editing"
+  },
+  "238": {
+   "status": "valid",
+   "cad_score": 0.4,
+   "task_type": "editing"
+  },
+  "240": {
+   "status": "valid",
+   "cad_score": 0.6003,
+   "task_type": "editing"
+  },
+  "241": {
+   "status": "valid",
+   "cad_score": 0.3083,
+   "task_type": "editing"
+  },
+  "242": {
+   "status": "valid",
+   "cad_score": 0.8756,
+   "task_type": "editing"
+  },
+  "243": {
+   "status": "valid",
+   "cad_score": 0.4,
+   "task_type": "editing"
+  },
+  "244": {
+   "status": "valid",
+   "cad_score": 0.8262,
+   "task_type": "editing"
+  },
+  "245": {
+   "status": "valid",
+   "cad_score": 0.5369,
+   "task_type": "editing"
+  },
+  "246": {
+   "status": "valid",
+   "cad_score": 0.4,
+   "task_type": "editing"
+  },
+  "247": {
+   "status": "valid",
+   "cad_score": 0.8024,
+   "task_type": "editing"
+  },
+  "248": {
+   "status": "valid",
+   "cad_score": 0.9378,
+   "task_type": "editing"
+  },
+  "249": {
+   "status": "valid",
+   "cad_score": 0.6068,
+   "task_type": "editing"
+  },
+  "250": {
+   "status": "valid",
+   "cad_score": 0.7814,
+   "task_type": "editing"
+  }
+ },
+ "per_sample_breakdown": null,
+ "submission_blob_url": "https://huggingface.co/datasets/HuggingAI4Engineering/cadgenbench-submissions/resolve/main/submissions/bruno-mutagent_mutagent-brepsmith-opus-5-xhigh-agentic-_20260828-132328.zip",
+ "submission_sha256": "28845a483db81d532e0557fad72d3447df8dc0334c959b7ee54bedf42aa87f94",
+ "validation_status": "unvalidated",
+ "validation_method": null,
+ "hf_username": "bruno-mutagent"
+}

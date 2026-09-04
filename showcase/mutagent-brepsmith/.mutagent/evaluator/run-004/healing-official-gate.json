@@ -1,0 +1,379 @@
+{
+ "202": {
+  "source": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/submission-staging/202/output.step",
+  "volume_mm3": 4366062.715205492,
+  "attempts": [
+   {
+    "strategy": "shapefix",
+    "volume_delta_frac": 0.0,
+    "official_is_valid": false,
+    "topology_errors": [
+     "Face: BRepCheck_UnorientableShape"
+    ],
+    "result": "rejected: official invalid",
+    "elapsed_s": 29.6
+   },
+   {
+    "strategy": "shapefix-tol0.01",
+    "volume_delta_frac": 0.0,
+    "official_is_valid": false,
+    "topology_errors": [
+     "Face: BRepCheck_UnorientableShape"
+    ],
+    "result": "rejected: official invalid",
+    "elapsed_s": 27.0
+   },
+   {
+    "strategy": "shapefix-tol0.1",
+    "volume_delta_frac": 0.0,
+    "official_is_valid": false,
+    "topology_errors": [
+     "Face: BRepCheck_UnorientableShape"
+    ],
+    "result": "rejected: official invalid",
+    "elapsed_s": 27.6
+   },
+   {
+    "strategy": "sew-solid",
+    "volume_delta_frac": 0.0,
+    "official_is_valid": false,
+    "topology_errors": [
+     "Face: BRepCheck_UnorientableShape"
+    ],
+    "result": "rejected: official invalid",
+    "elapsed_s": 25.3
+   },
+   {
+    "strategy": "sew-solid-tol0.01",
+    "volume_delta_frac": 0.0,
+    "official_is_valid": false,
+    "topology_errors": [
+     "Face: BRepCheck_UnorientableShape"
+    ],
+    "result": "rejected: official invalid",
+    "elapsed_s": 24.8
+   },
+   {
+    "strategy": "fix-then-sew",
+    "volume_delta_frac": 0.0,
+    "official_is_valid": false,
+    "topology_errors": [
+     "Face: BRepCheck_UnorientableShape"
+    ],
+    "result": "rejected: official invalid",
+    "elapsed_s": 27.9
+   },
+   {
+    "strategy": "unify",
+    "volume_delta_frac": 1.555544996515227e-08,
+    "official_is_valid": false,
+    "topology_errors": [
+     "Face: BRepCheck_UnorientableShape"
+    ],
+    "result": "rejected: official invalid",
+    "elapsed_s": 24.8
+   },
+   {
+    "strategy": "smallface-1e-3",
+    "volume_delta_frac": 0.0,
+    "official_is_valid": false,
+    "topology_errors": [
+     "Face: BRepCheck_UnorientableShape"
+    ],
+    "result": "rejected: official invalid",
+    "elapsed_s": 30.4
+   },
+   {
+    "strategy": "smallface-1e-2",
+    "volume_delta_frac": 0.0,
+    "official_is_valid": false,
+    "topology_errors": [
+     "Face: BRepCheck_UnorientableShape"
+    ],
+    "result": "rejected: official invalid",
+    "elapsed_s": 29.5
+   }
+  ],
+  "accepted": null
+ },
+ "217": {
+  "source": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/submission-staging/217/output.step",
+  "volume_mm3": 222144.44951042137,
+  "attempts": [
+   {
+    "strategy": "shapefix",
+    "volume_delta_frac": 0.0,
+    "official_is_valid": false,
+    "topology_errors": [
+     "Face: BRepCheck_UnorientableShape"
+    ],
+    "result": "rejected: official invalid",
+    "elapsed_s": 4.2
+   },
+   {
+    "strategy": "shapefix-tol0.01",
+    "volume_delta_frac": 0.0,
+    "official_is_valid": false,
+    "topology_errors": [
+     "Face: BRepCheck_UnorientableShape"
+    ],
+    "result": "rejected: official invalid",
+    "elapsed_s": 4.4
+   },
+   {
+    "strategy": "shapefix-tol0.1",
+    "volume_delta_frac": 0.0,
+    "official_is_valid": false,
+    "topology_errors": [
+     "Face: BRepCheck_UnorientableShape"
+    ],
+    "result": "rejected: official invalid",
+    "elapsed_s": 4.4
+   },
+   {
+    "strategy": "sew-solid",
+    "volume_delta_frac": 0.0002443076525581728,
+    "official_is_valid": false,
+    "topology_errors": [
+     "Face: BRepCheck_UnorientableShape"
+    ],
+    "result": "rejected: official invalid",
+    "elapsed_s": 4.0
+   },
+   {
+    "strategy": "sew-solid-tol0.01",
+    "volume_delta_frac": 0.0002443076525581728,
+    "official_is_valid": false,
+    "topology_errors": [
+     "Face: BRepCheck_UnorientableShape"
+    ],
+    "result": "rejected: official invalid",
+    "elapsed_s": 4.1
+   },
+   {
+    "strategy": "fix-then-sew",
+    "volume_delta_frac": 0.0002443076525581728,
+    "official_is_valid": false,
+    "topology_errors": [
+     "Face: BRepCheck_UnorientableShape"
+    ],
+    "result": "rejected: official invalid",
+    "elapsed_s": 4.6
+   },
+   {
+    "strategy": "unify",
+    "volume_delta_frac": 1.2828518115147335e-07,
+    "official_is_valid": false,
+    "topology_errors": [
+     "Face: BRepCheck_UnorientableShape"
+    ],
+    "result": "rejected: official invalid",
+    "elapsed_s": 4.0
+   },
+   {
+    "strategy": "smallface-1e-3",
+    "volume_delta_frac": 0.0,
+    "official_is_valid": false,
+    "topology_errors": [
+     "Face: BRepCheck_UnorientableShape"
+    ],
+    "result": "rejected: official invalid",
+    "elapsed_s": 4.9
+   },
+   {
+    "strategy": "smallface-1e-2",
+    "volume_delta_frac": 0.0,
+    "official_is_valid": false,
+    "topology_errors": [
+     "Face: BRepCheck_UnorientableShape"
+    ],
+    "result": "rejected: official invalid",
+    "elapsed_s": 4.9
+   }
+  ],
+  "accepted": null
+ },
+ "240": {
+  "source": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/submission-staging/240/output.step",
+  "volume_mm3": 107821.1614810332,
+  "attempts": [
+   {
+    "strategy": "shapefix",
+    "volume_delta_frac": 0.0,
+    "official_is_valid": false,
+    "topology_errors": [
+     "Face: BRepCheck_UnorientableShape"
+    ],
+    "result": "rejected: official invalid",
+    "elapsed_s": 12.2
+   },
+   {
+    "strategy": "shapefix-tol0.01",
+    "volume_delta_frac": 0.0,
+    "official_is_valid": false,
+    "topology_errors": [
+     "Face: BRepCheck_UnorientableShape"
+    ],
+    "result": "rejected: official invalid",
+    "elapsed_s": 11.6
+   },
+   {
+    "strategy": "shapefix-tol0.1",
+    "volume_delta_frac": 0.0,
+    "official_is_valid": false,
+    "topology_errors": [
+     "Face: BRepCheck_UnorientableShape"
+    ],
+    "result": "rejected: official invalid",
+    "elapsed_s": 11.7
+   },
+   {
+    "strategy": "sew-solid",
+    "volume_delta_frac": 0.0,
+    "official_is_valid": false,
+    "topology_errors": [
+     "Face: BRepCheck_UnorientableShape"
+    ],
+    "result": "rejected: official invalid",
+    "elapsed_s": 10.6
+   },
+   {
+    "strategy": "sew-solid-tol0.01",
+    "volume_delta_frac": 0.0,
+    "official_is_valid": false,
+    "topology_errors": [
+     "Face: BRepCheck_UnorientableShape"
+    ],
+    "result": "rejected: official invalid",
+    "elapsed_s": 10.6
+   },
+   {
+    "strategy": "fix-then-sew",
+    "volume_delta_frac": 0.0,
+    "official_is_valid": false,
+    "topology_errors": [
+     "Face: BRepCheck_UnorientableShape"
+    ],
+    "result": "rejected: official invalid",
+    "elapsed_s": 12.0
+   },
+   {
+    "strategy": "unify",
+    "volume_delta_frac": 2.0265926348941783e-06,
+    "official_is_valid": false,
+    "topology_errors": [
+     "Face: BRepCheck_UnorientableShape"
+    ],
+    "result": "rejected: official invalid",
+    "elapsed_s": 10.4
+   },
+   {
+    "strategy": "smallface-1e-3",
+    "volume_delta_frac": 0.0,
+    "official_is_valid": false,
+    "topology_errors": [
+     "Face: BRepCheck_UnorientableShape"
+    ],
+    "result": "rejected: official invalid",
+    "elapsed_s": 13.1
+   },
+   {
+    "strategy": "smallface-1e-2",
+    "volume_delta_frac": 6.925790565043668e-06,
+    "official_is_valid": false,
+    "topology_errors": [
+     "Face: BRepCheck_UnorientableShape"
+    ],
+    "result": "rejected: official invalid",
+    "elapsed_s": 14.1
+   }
+  ],
+  "accepted": null
+ },
+ "250": {
+  "source": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/submission-staging/250/output.step",
+  "volume_mm3": 636549.6079958484,
+  "attempts": [
+   {
+    "strategy": "shapefix",
+    "volume_delta_frac": 0.0,
+    "official_is_valid": false,
+    "topology_errors": [
+     "mesh non-manifold: edge (0, 1) shared by 4 triangles (expected \u2264 2)"
+    ],
+    "result": "rejected: official invalid",
+    "elapsed_s": 22.8
+   },
+   {
+    "strategy": "shapefix-tol0.01",
+    "volume_delta_frac": 0.0,
+    "official_is_valid": false,
+    "topology_errors": [
+     "mesh non-manifold: edge (0, 1) shared by 4 triangles (expected \u2264 2)"
+    ],
+    "result": "rejected: official invalid",
+    "elapsed_s": 18.3
+   },
+   {
+    "strategy": "shapefix-tol0.1",
+    "volume_delta_frac": 0.0,
+    "official_is_valid": false,
+    "topology_errors": [
+     "mesh non-manifold: edge (0, 1) shared by 4 triangles (expected \u2264 2)"
+    ],
+    "result": "rejected: official invalid",
+    "elapsed_s": 18.2
+   },
+   {
+    "strategy": "sew-solid",
+    "volume_delta_frac": 0.0,
+    "official_is_valid": false,
+    "topology_errors": [
+     "mesh non-manifold: edge (0, 1) shared by 4 triangles (expected \u2264 2)"
+    ],
+    "result": "rejected: official invalid",
+    "elapsed_s": 17.3
+   },
+   {
+    "strategy": "sew-solid-tol0.01",
+    "volume_delta_frac": 0.0,
+    "official_is_valid": false,
+    "topology_errors": [
+     "mesh non-manifold: edge (0, 1) shared by 4 triangles (expected \u2264 2)"
+    ],
+    "result": "rejected: official invalid",
+    "elapsed_s": 17.2
+   },
+   {
+    "strategy": "fix-then-sew",
+    "volume_delta_frac": 0.0,
+    "official_is_valid": false,
+    "topology_errors": [
+     "mesh non-manifold: edge (0, 1) shared by 4 triangles (expected \u2264 2)"
+    ],
+    "result": "rejected: official invalid",
+    "elapsed_s": 18.0
+   },
+   {
+    "strategy": "unify",
+    "volume_delta_frac": 9.105337566886589e-06,
+    "official_is_valid": true,
+    "topology_errors": [],
+    "result": "ACCEPTED",
+    "candidate": "/tmp/claude-1000/-home-bruno-dev-mutagent-playground-cad-agents-stl-agent/361aa583-b6e2-4356-8565-75ed26f1b981/scratchpad/heal-candidates/250__unify.step",
+    "saved_to": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/armA/250/output.step.healed-official",
+    "elapsed_s": 8.7
+   }
+  ],
+  "accepted": {
+   "strategy": "unify",
+   "volume_delta_frac": 9.105337566886589e-06,
+   "official_is_valid": true,
+   "topology_errors": [],
+   "result": "ACCEPTED",
+   "candidate": "/tmp/claude-1000/-home-bruno-dev-mutagent-playground-cad-agents-stl-agent/361aa583-b6e2-4356-8565-75ed26f1b981/scratchpad/heal-candidates/250__unify.step",
+   "saved_to": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/armA/250/output.step.healed-official",
+   "elapsed_s": 8.7
+  }
+ }
+}

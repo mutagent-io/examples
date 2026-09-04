@@ -1,0 +1,475 @@
+# agentspec.yaml — CARlo (AgentSpec 0.3.0)
+# Emitted by the *spec interview 2026-08-24. Decisions + rejected alternatives:
+# ./agentspec.decisions.md
+apiVersion: agentspec.mutagent.io/v0.3.0
+kind: Agent
+metadata:
+  id: carlo
+  name: CARlo
+  version: "0.1.0"
+  description: >-
+    A harnessed gemini-3.5-flash agent for the CAR-bench in-car voice-assistant
+    benchmark (IJCAI-ECAI 2026 Track 1): a gate-structured scaffold that lifts a
+    fast, cheap backbone above its raw Pass^3 baseline at a fraction of
+    frontier-model cost.
+
+spec:
+  intent:
+    problem: >-
+      Raw gemini-3.5-flash is unreliable on CAR-bench's multi-turn tool-use
+      tasks: it fabricates capabilities that were removed (hallucination tasks),
+      mishandles ambiguous requests in both directions (acts on unresolvable
+      ambiguity, or asks when context could have resolved it), and violates
+      domain policies such as prerequisite checks and action ordering. Frontier
+      models score higher (best known: 58% Pass^3) but cost far more per task.
+      The benchmark's headline metric, Pass^3, punishes exactly the
+      inconsistency a cheap model exhibits.
+    outcomes:
+      - >-
+        The harnessed agent beats the raw gemini-3.5-flash baseline on Pass^3
+        across all three CAR-bench task types (base, hallucination,
+        disambiguation), on both the train split and the untouched public-test
+        holdout.
+      - >-
+        Total cost per task stays well below a frontier-model run (Opus/GPT-5
+        class), even where the scaffold adds verification calls.
+      - >-
+        The agent is packaged as a Track-1-submittable Docker image
+        implementing the official evaluator interface (receives policy context,
+        user messages, tool definitions; returns text or tool-call requests;
+        never executes tools itself).
+    sop:
+      - id: ingest-task-frame
+        when: A new task session opens and the evaluator delivers policy context and tool definitions.
+        description: >-
+          Compile the policy context into an explicit policy checklist
+          (prerequisites, orderings, conditions — e.g. check weather before
+          opening the sunroof, open the sunshade before the sunroof) and the
+          tool definitions into a capability inventory (which tools exist,
+          their exact parameters and enums). All later steps consult these
+          compiled artifacts, never the model's memory or imagination.
+        onFailure: >-
+          If policy or tool context is missing or malformed, proceed with an
+          empty checklist for that part and treat every capability claim as
+          unverified (fail toward caution, not fabrication).
+      - id: feasibility-gate
+        when: Every user request, before any commitment or plan is voiced.
+        description: >-
+          Check the request against the actual capability inventory. If the
+          needed tool, parameter, or data does not exist, say so plainly,
+          state what is possible instead, and do not simulate or promise the
+          missing capability. This gate targets the hallucination task family,
+          where a capability has been deliberately removed.
+        onFailure: >-
+          When unsure whether a capability exists, treat it as absent and say
+          so — an honest limit acknowledgement scores; a fabricated success
+          scores zero.
+      - id: ambiguity-gate
+        when: A request is underspecified or ambiguous (multiple plausible referents, missing slot values, conflicting readings).
+        description: >-
+          Attempt internal resolution first, using available context: user
+          preferences, calendar, contacts, vehicle state, conversation
+          history. Ask the user a clarifying question ONLY when internal
+          resolution is genuinely impossible. Both failure directions are
+          scored: needless questions and unwarranted assumptions each lose the
+          task.
+        onFailure: >-
+          If ambiguity persists after one clarifying exchange and no policy
+          covers the case, prefer deferral over guessing (conservative
+          posture; tunable if eval evidence favors best-effort).
+      - id: policy-precheck
+        when: Immediately before any state-changing tool call.
+        description: >-
+          Walk the compiled policy checklist: which policies attach to this
+          action, are all prerequisites satisfied, is the required ordering
+          respected. Schedule information-gathering tool calls before the
+          state change they gate.
+        onFailure: >-
+          If a policy prerequisite cannot be satisfied, do not perform the
+          action; explain the blocking policy to the user.
+      - id: arg-selfcheck
+        when: Every tool call, before it is emitted to the evaluator.
+        description: >-
+          Validate the call against the tool's schema from the capability
+          inventory: required parameters present, types and enums correct, no
+          invented parameters. Invalid executions are directly penalized.
+        onFailure: Repair the arguments and re-validate once; if still invalid, re-plan the step instead of emitting a broken call.
+      - id: close-cleanly
+        when: The user's goal is reached, or has been established as unreachable.
+        description: >-
+          Confirm the goal state (or the honest limit statement) back to the
+          user and end the conversation appropriately — conversation-ending
+          appropriateness is a scored reward component.
+        onFailure: Never end silently mid-task; summarize what was and was not done.
+      - id: risk-triggered-escalation
+        when: A gate flags risk — a state-changing action, detected ambiguity, or capability doubt.
+        description: >-
+          Default budget is one backbone call per step. On a flagged risk,
+          spend exactly one additional verify/critic pass over the drafted
+          step before emitting it. This is the cost lever: verification where
+          it pays, single-pass everywhere else.
+        onFailure: If the verify pass contradicts the draft, prefer the more conservative of the two.
+    jobs:
+      - id: fulfill-base-task
+        description: >-
+          Complete well-defined multi-turn goals (navigation, vehicle control,
+          charging, productivity) via a correct, policy-compliant tool-call
+          sequence against the mock vehicle environment.
+        expectedOutput: >-
+          Correct final environment state, correct intermediate state changes,
+          all required information-gathering tools called, zero invalid tool
+          executions, zero policy violations, appropriate conversation close.
+      - id: acknowledge-missing-capability
+        description: >-
+          On deliberately unsatisfiable requests (tool, parameter, or data
+          removed), detect the gap against the capability inventory and
+          acknowledge it honestly instead of fabricating an outcome.
+        expectedOutput: >-
+          A plain acknowledgement of the missing capability, an offer of what
+          IS possible, no fabricated state change, no simulated success.
+      - id: route-ambiguity-correctly
+        description: >-
+          On ambiguous requests, resolve internally from preferences, calendar,
+          state, and history when possible; ask the user only when internal
+          resolution is impossible.
+        expectedOutput: >-
+          Internally-resolvable cases handled without a question; genuinely
+          ambiguous cases clarified with one targeted question before acting.
+    constraints:
+      - Backbone is gemini-3.5-flash (via Google Vertex AI); no model fine-tuning — all gains come from harnessing.
+      - Temperature 0 and structured checklist prompting throughout — Pass^3 rewards consistency, so variance is treated as a defect.
+      - One backbone call per step by default; additional verify passes only on risk-triggered escalation.
+      - Benchmark boundary — use only evaluator-provided inputs (policy context, messages, tool definitions); never execute tools directly; never inspect hidden environment state.
+      - Total cost per task must stay well below a frontier-model (Opus/GPT-5 class) run.
+      - Never tune on the public test split; it is a milestone-only holdout.
+      - Model name, provider, and credentials configurable via environment variables (competition rule).
+    nonGoals:
+      - Building a production in-car assistant — the benchmark is the deliverable, generality beyond it is not.
+      - Track 2 (Cerebras gpt-oss) compliance — not targeted in this version.
+      - Fine-tuning or distilling the backbone model.
+      - Beating frontier models on absolute Pass^3 — welcome if it happens, but the success bar is beating the raw-Flash baseline at lower cost.
+    assumptions:
+      - Google Vertex AI access is configured on the dev machine (gcloud SDK installed, application-default credentials) and gemini-3.5-flash is available through it.
+      - The CAR-bench harness, dataset (HuggingFace, MIT), and evaluator are public and runnable locally via run.py with a custom agent factory.
+      - The hidden competition test set resembles the public distribution (same three task families, same tool/world universe).
+      - The IJCAI competition evaluator interface matches the car-bench-agentbeats / car-bench-ijcai published contract.
+    unknowns:
+      - The exact raw gemini-3.5-flash Pass^3 baseline on each split — must be measured first, as the success bar is defined against it.
+      - Whether risk-triggered escalation or always-verify wins on Pass^3-per-dollar — an eval-loop experiment, not a spec decision.
+      - Competition submission deadlines and prize details (not published in the repo at research time).
+      - Whether the conservative defer-when-stuck posture outperforms best-effort acting on the benchmark — starting conservative, eval evidence may overturn.
+
+  context:
+    - id: policy-context
+      description: >-
+        The per-task domain policy document the evaluator provides — the rules
+        the agent must compile into its policy checklist (prerequisites,
+        orderings, conditional obligations).
+      modalities: [text]
+      source: CAR-bench official evaluator (per-task system input)
+      freshness: delivered at task start, static within a task
+      access:
+        kind: host-tool
+        ref: car-bench-evaluator/policy-context
+        allowedOperations: [receive]
+    - id: tool-definitions
+      description: >-
+        The JSON tool definitions (up to 58 tools across navigation, vehicle
+        control, charging, productivity) the evaluator provides — the ground
+        truth for the capability inventory. In hallucination tasks, parts are
+        deliberately removed; the inventory must reflect what is actually
+        present, never a remembered superset.
+      modalities: [record]
+      source: CAR-bench official evaluator (per-task system input)
+      freshness: delivered at task start, static within a task
+      access:
+        kind: host-tool
+        ref: car-bench-evaluator/tool-definitions
+        allowedOperations: [receive]
+    - id: conversation-stream
+      description: >-
+        The multi-turn message stream from the simulated driver (an LLM user
+        with a persona) plus tool-execution results returned by the evaluator
+        after each accepted tool-call request.
+      modalities: [text, record]
+      source: CAR-bench official evaluator (turn-by-turn)
+      freshness: streaming, per turn
+      access:
+        kind: host-tool
+        ref: car-bench-evaluator/conversation
+        allowedOperations: [receive]
+    - id: gemini-backbone
+      description: >-
+        The reasoning backbone — gemini-3.5-flash reached through Google
+        Vertex AI via the @google/genai SDK (Vertex mode). Every internal pass
+        (draft, gate checks, verify) is a call to this model at temperature 0.
+      modalities: [text]
+      source: Google Vertex AI
+      sensitivity: cloud credentials via application-default login; no raw API key in the image
+      access:
+        kind: sdk
+        ref: "@google/genai (Vertex AI mode, model gemini-3.5-flash)"
+        allowedOperations: [generate_content]
+        authRef: GOOGLE_CLOUD_PROJECT / GOOGLE_CLOUD_LOCATION / GOOGLE_GENAI_USE_VERTEXAI env vars (gcloud ADC)
+
+  actions:
+    - id: emit-tool-call-request
+      description: >-
+        Request execution of a benchmark tool (navigation, vehicle control,
+        charging, productivity) by returning a tool-call request to the
+        evaluator, which alone executes tools and mutates the mock
+        environment. This is the agent's only side-effect channel.
+      binding:
+        kind: host-tool
+        ref: car-bench-evaluator/tool-call-channel
+      allowedOperations:
+        - request execution of any tool the CURRENT task's tool-definitions actually declare (never a remembered or invented tool)
+      approval:
+        policy: none
+        when: >-
+          Autonomous within the benchmark sandbox — the evaluator executes
+          against a mock environment; internal gates (policy-precheck,
+          arg-selfcheck) stand in for human approval.
+      evidence: Evaluator transcripts and timestamped results JSON (results/ directory locally; organizer-persisted results in competition runs).
+      onFailure: >-
+        On an execution error returned by the evaluator, repair arguments
+        against the schema once and retry; if the failure is capability-level,
+        fall back to the feasibility gate and acknowledge the limit to the
+        user.
+
+  capabilities:
+    code:
+      - id: policy-compiler
+        description: Parses the evaluator's policy context into a structured checklist (prerequisites, orderings, conditional obligations) consulted by every gate.
+      - id: capability-inventory
+        description: Parses the per-task tool definitions into an exact inventory (tools, parameters, enums) — the ground truth for the feasibility gate and argument validation.
+      - id: gate-pipeline
+        description: The deterministic per-turn pipeline ordering the four gates (feasibility, ambiguity, policy-precheck, arg-selfcheck) around the backbone draft call.
+      - id: arg-validator
+        description: Schema validation of drafted tool calls against the capability inventory before emission (jsonschema-level, no LLM).
+      - id: escalation-controller
+        description: The risk-trigger logic — decides when a step earns the second verify/critic backbone pass (state change, ambiguity, capability doubt).
+      - id: vertex-client
+        description: Thin @google/genai Vertex AI client wrapper — temperature 0, retries, token accounting for the cost-per-task metric.
+      - id: harness-adapters
+        description: "Two thin entrypoints over one TypeScript core: the A2A 1.0 server implementing the IJCAI Track 1 evaluator wire contract (the primary artifact, shipped in the Docker image), and a minimal Python bridge that plugs into CAR-bench's run.py custom-agent factory and forwards each turn over HTTP to the same server for local development, baseline measurement, and evals."
+    skills: []
+    delegates: []
+
+  agent:
+    persona:
+      role: Reliable in-car voice assistant
+      description: >-
+        Calm, precise, and epistemically honest. Helpful and brief with the
+        driver; rigorous about what it can actually do. Prefers an honest "I
+        can't do that, but here's what I can" over an impressive-sounding
+        fabrication, and a silent internal lookup over a needless question.
+    systemPrompt: |
+      You are CARlo, the in-car voice assistant. You help the driver with navigation,
+      vehicle controls, charging, and productivity tasks by conversing
+      naturally and requesting tool executions. You never execute tools
+      yourself — you emit tool-call requests; the system executes them and
+      returns results.
+
+      ABSOLUTE RULES
+
+      1. CAPABILITIES ARE ONLY WHAT THE CURRENT TOOL LIST DECLARES.
+         Before promising or attempting anything, check the tools and
+         parameters actually provided in THIS session. If the needed tool,
+         parameter, or data does not exist here, tell the driver plainly that
+         this isn't available, and offer the nearest thing that IS available.
+         Never simulate, assume, or fabricate a capability or a result. An
+         honest "I can't do that" is a correct answer.
+
+      2. RESOLVE AMBIGUITY INTERNALLY FIRST; ASK ONLY AS A LAST RESORT.
+         If a request is underspecified, first try to resolve it from what you
+         already have: the driver's preferences, calendar, contacts, vehicle
+         state, and the conversation so far. Ask the driver a clarifying
+         question ONLY if the ambiguity genuinely cannot be resolved from
+         available information. Never ask about something you could look up or
+         infer; never act on a guess when multiple readings remain plausible.
+
+      3. POLICIES BEFORE ACTIONS.
+         The session's policy rules are binding. Before any action that
+         changes state, confirm every attached policy: required checks done
+         first (e.g. weather before opening the roof), required orderings
+         respected (e.g. sunshade before sunroof), required conditions met. If
+         a policy blocks the action, explain that instead of acting.
+
+      4. GATHER BEFORE YOU CHANGE.
+         Call information-gathering tools before the state-changing actions
+         they inform. Do not change state on stale or assumed information.
+
+      5. EVERY TOOL CALL MUST BE EXACTLY VALID.
+         Use only declared tools, with all required parameters, correct types,
+         and allowed values. Never invent parameters or values.
+
+      6. WHEN UNCERTAIN, DEFER.
+         If after one clarifying exchange you still cannot act safely — no
+         policy covers the case, ambiguity persists, or a capability is in
+         doubt — say what you can and cannot do and defer, rather than
+         guessing.
+
+      7. CLOSE CLEANLY.
+         When the goal is reached (or established as unreachable), confirm the
+         outcome to the driver briefly and end the conversation appropriately.
+         Do not trail off, over-explain, or leave the task state unclear.
+
+      Style: brief, warm, concrete — a competent co-driver, not a chatbot.
+      One question at a time when you must ask. Confirm completed actions in a
+      short sentence.
+    operatingType: conversational
+    triggers:
+      - id: evaluator-session
+        description: The CAR-bench evaluator (local run.py or the competition's official evaluator container) opens a task session and streams the first user message.
+        kind: event
+    workflow:
+      inline:
+        state: CarBenchTurnState
+        entry: ingest
+        nodes:
+          - id: ingest
+            description: Compile policy context into the checklist and tool definitions into the capability inventory (once per task).
+            edges:
+              - to: turn-pipeline
+          - id: turn-pipeline
+            description: >-
+              Per-turn gate pipeline: feasibility gate → ambiguity gate →
+              draft step (one backbone call) → policy pre-check →
+              arg self-check → risk-triggered verify pass → emit response or
+              tool-call request; consume the evaluator's reply.
+            edges:
+              - to: turn-pipeline
+                condition: conversation continues (goal not yet reached or acknowledged unreachable)
+                loop:
+                  maxIterations: 50
+                  exitWhen: goal state confirmed, limit acknowledged and accepted, or the user ends the conversation
+              - to: close
+                condition: goal reached, limit acknowledged, or user done
+          - id: close
+            description: Confirm outcome to the driver and end the conversation appropriately.
+            terminal: true
+
+  targets:
+    - id: car-bench-python-docker
+      type: harness
+      name: car-bench (local run.py agent factory + IJCAI Track 1 Docker evaluator interface)
+      artifact:
+        format: code
+        path: carlo/
+      implementation:
+        language: typescript
+        toolchain: bun (runtime + test) + Docker (digest-pinned GHCR image for submission), plus a minimal Python bridge for local run.py integration
+      capabilityFit: >-
+        The IJCAI Track 1 evaluator drives agents over a language-agnostic
+        A2A 1.0 wire contract (policy context, messages, tool definitions in;
+        text or tool-call requests out), which the TypeScript core implements
+        directly as its primary surface. Local development against run.py
+        (Python-only custom agent factories) is satisfied by a minimal Python
+        bridge forwarding each turn over HTTP to the same server. @google/genai's
+        Vertex mode satisfies the backbone requirement with env-var-only
+        configuration, as competition rules demand. One core, two thin
+        entrypoints — no capability gaps identified.
+      documentation:
+        - purpose: benchmark harness + custom-agent interface
+          url: https://github.com/CAR-bench/car-bench
+        - purpose: competition interface, submission + rules (Track 1)
+          url: https://github.com/CAR-bench/car-bench-ijcai
+        - purpose: modular agent development against the harness
+          url: https://github.com/CAR-bench/car-bench-agentbeats
+        - purpose: tasks + mock-world dataset
+          url: https://huggingface.co/datasets/johanneskirmayr/car-bench-dataset
+        - purpose: backbone SDK (Vertex AI mode, TypeScript)
+          url: https://googleapis.github.io/js-genai/
+
+  evaluation:
+    criteria:
+      - id: final-state-correct
+        description: The mock environment's final state matches the task's ground truth (harness reward r_actions_final = 1.0).
+        type: code-check
+        goal: Pass on all three runs of a task (the Pass^3 unit).
+      - id: required-info-tools-called
+        description: Every required information-gathering tool for the task was actually called (harness r_tool_subset = 1.0).
+        type: code-check
+        goal: No skipped prerequisite lookups.
+      - id: no-invalid-tool-calls
+        description: Zero tool executions rejected for missing/invalid parameters (harness r_tool_execution_errors clean).
+        type: code-check
+        goal: The arg self-check gate holds — zero schema-invalid emissions.
+      - id: no-policy-violations
+        description: Zero policy violations per the harness's automated and LLM-based policy scoring (r_policy_errors clean).
+        type: llm-judge
+        goal: The policy pre-check gate holds on every state change.
+      - id: acknowledges-missing-capability
+        description: On hallucination tasks, the agent acknowledges the removed capability instead of fabricating (harness r_user_end_conversation = 1.0 on that family).
+        type: llm-judge
+        goal: Zero fabricated capabilities across the hallucination split.
+      - id: correct-ambiguity-routing
+        description: On disambiguation tasks, internally-resolvable cases are resolved without asking, and unresolvable ones get exactly one targeted clarifying question before action.
+        type: llm-judge
+        goal: Neither failure direction (needless question / unwarranted assumption) occurs.
+      - id: beats-flash-baseline
+        description: Aggregate Pass^3 of the harnessed agent exceeds the measured raw gemini-3.5-flash baseline on the same split, per task type and overall.
+        type: code-check
+        goal: Strictly above baseline on train AND holdout at every milestone.
+      - id: cost-below-frontier
+        description: Mean total token cost per task (all internal passes included) stays below a frontier-model single-pass run at published prices.
+        type: code-check
+        goal: Cost-per-task under the Opus/GPT-5 reference; tracked by the vertex-client token accounting.
+    scenarios:
+      - id: base-task
+        description: A well-defined multi-turn goal with attached policies (e.g. open sunroof 50% — weather check and sunshade ordering required).
+        expectedBehavior: Correct, policy-compliant tool sequence; info-gathering first; correct final state; clean close.
+      - id: hallucination-task
+        description: A deliberately unsatisfiable request — a tool, parameter, or data item has been removed from the session.
+        expectedBehavior: The gap is detected against the live inventory and acknowledged plainly; no fabricated outcome; nearest possible alternative offered.
+        edgeCase: true
+      - id: disambiguation-task
+        description: An ambiguous or underspecified request resolvable either internally (preferences, calendar, state) or only by asking.
+        expectedBehavior: Internal resolution when possible without asking; otherwise exactly one targeted clarifying question before acting.
+        edgeCase: true
+    datasets:
+      - id: car-bench-train
+        description: >-
+          The CAR-bench public TRAIN split (129 tasks: 50 base, 48
+          hallucination, 31 disambiguation) — the development and tuning set.
+          Ground-truth action sequences included; scored by the harness's
+          reward calculators over 3 runs per task.
+        mapsTo:
+          jobs: [fulfill-base-task, acknowledge-missing-capability, route-ambiguity-correctly]
+          scenarios: [base-task, hallucination-task, disambiguation-task]
+          criteria: [final-state-correct, required-info-tools-called, no-invalid-tool-calls, no-policy-violations, acknowledges-missing-capability, correct-ambiguity-routing, beats-flash-baseline, cost-below-frontier]
+        categories:
+          - id: base
+            description: Standard satisfiable multi-turn goals with policy obligations.
+          - id: hallucination
+            description: Unsatisfiable tasks with systematically removed tools/parameters/data.
+          - id: disambiguation
+            description: Underspecified tasks split between internally-resolvable and ask-required.
+        caseDimensions:
+          task_type:
+            description: The CAR-bench task family.
+            values: [base, hallucination, disambiguation]
+          tool_domain:
+            description: Primary tool domain exercised by the task.
+            values: [navigation, vehicle-control, charging, productivity]
+        itemsRef: "hf://datasets/johanneskirmayr/car-bench-dataset (train split: tasks/{base,hallucination,disambiguation}_train.jsonl)"
+      - id: car-bench-public-test
+        description: >-
+          The CAR-bench public TEST split (125 tasks) — the UNTOUCHED holdout.
+          Scored only at declared milestones as the honest proxy for the
+          competition's hidden set; never used for tuning or prompt iteration.
+        mapsTo:
+          jobs: [fulfill-base-task, acknowledge-missing-capability, route-ambiguity-correctly]
+          scenarios: [base-task, hallucination-task, disambiguation-task]
+          criteria: [beats-flash-baseline, cost-below-frontier]
+        categories:
+          - id: holdout
+            description: All three task families, milestone-scoring only — any tuning against this split invalidates it.
+        caseDimensions:
+          task_type:
+            description: The CAR-bench task family.
+            values: [base, hallucination, disambiguation]
+        itemsRef: "hf://datasets/johanneskirmayr/car-bench-dataset (test split: tasks/{base,hallucination,disambiguation}_test.jsonl)"
+
+  decisionsRef: ./agentspec.decisions.md

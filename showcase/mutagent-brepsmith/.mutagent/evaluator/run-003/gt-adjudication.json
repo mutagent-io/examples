@@ -1,0 +1,591 @@
+{
+  "abc_0128-fill-hole": {
+    "instruction": "Remove the 17.0 mm diameter hole by filling it with solid material flush with the surrounding faces. Change nothing else.",
+    "stated_diameter_mm": 17.0,
+    "input": {
+      "volume": 92173.11585258799,
+      "area": 32160.721762173584,
+      "n_faces": 117
+    },
+    "gt": {
+      "volume": 104899.66156769297,
+      "area": 33751.01906554551,
+      "n_faces": 120
+    },
+    "volume_delta": 12726.545715104978,
+    "volume_delta_fraction": 0.13807220898833972,
+    "face_count_delta": 3,
+    "gt_differs_from_input": true,
+    "input_cylindrical_faces": 40,
+    "input_concave_cyl_diameters": [
+      3.0,
+      4.0,
+      4.9,
+      17.0
+    ],
+    "concave_faces_matching_stated_diameter": 2,
+    "classification": "gt-ok"
+  },
+  "abc_0372-fill-hole": {
+    "instruction": "Fill 65.0 mm hole.",
+    "stated_diameter_mm": 65.0,
+    "input": {
+      "volume": 14387.782485260557,
+      "area": 8130.082895555779,
+      "n_faces": 18
+    },
+    "gt": {
+      "volume": 27650.06489834424,
+      "area": 10925.79453382153,
+      "n_faces": 28
+    },
+    "volume_delta": 13262.282413083683,
+    "volume_delta_fraction": 0.9217739027310231,
+    "face_count_delta": 10,
+    "gt_differs_from_input": true,
+    "input_cylindrical_faces": 16,
+    "input_concave_cyl_diameters": [
+      21.5,
+      30.6
+    ],
+    "concave_faces_matching_stated_diameter": 0,
+    "classification": "gt-mismatch",
+    "mismatch_detail": "concave-cavities-exist-but-none-match-stated-diameter"
+  },
+  "abc_0368-fill-hole": {
+    "instruction": "Remove the 9.525 mm diameter hole by filling it with solid material flush with the surrounding faces. Change nothing else.",
+    "stated_diameter_mm": 9.525,
+    "input": {
+      "volume": 1237.8241599573412,
+      "area": 940.3411703114489,
+      "n_faces": 28
+    },
+    "gt": {
+      "volume": 2828.867111851258,
+      "area": 1330.4871692249108,
+      "n_faces": 6
+    },
+    "volume_delta": 1591.0429518939168,
+    "volume_delta_fraction": 1.2853545789159169,
+    "face_count_delta": -22,
+    "gt_differs_from_input": true,
+    "input_cylindrical_faces": 5,
+    "input_concave_cyl_diameters": [],
+    "concave_faces_matching_stated_diameter": 0,
+    "classification": "gt-mismatch",
+    "mismatch_detail": "no-concave-cylindrical-cavity-in-input"
+  },
+  "abc_0281-fill-hole": {
+    "instruction": "Get rid of that big hole \u2014 just fill it in so it's solid again.",
+    "stated_diameter_mm": null,
+    "input": {
+      "volume": 94467.6363257837,
+      "area": 69418.0117602284,
+      "n_faces": 139
+    },
+    "gt": {
+      "volume": 182634.86335246125,
+      "area": 78252.17030212349,
+      "n_faces": 139
+    },
+    "volume_delta": 88167.22702667756,
+    "volume_delta_fraction": 0.9333061613039796,
+    "face_count_delta": 0,
+    "gt_differs_from_input": true,
+    "input_cylindrical_faces": 50,
+    "input_concave_cyl_diameters": [
+      2.0,
+      3.5,
+      6.0,
+      10.0,
+      37.0
+    ],
+    "concave_faces_matching_stated_diameter": 0,
+    "classification": "gt-mismatch",
+    "mismatch_detail": "concave-cavities-exist-but-none-match-stated-diameter"
+  },
+  "abc_0358-fill-hole": {
+    "instruction": "Remove the 19.0 mm diameter hole by filling it with solid material flush with the surrounding faces. Change nothing else.",
+    "stated_diameter_mm": 19.0,
+    "input": {
+      "volume": 5243.528914852597,
+      "area": 2163.167427152098,
+      "n_faces": 35
+    },
+    "gt": {
+      "volume": 13609.379387524867,
+      "area": 3432.1899766096667,
+      "n_faces": 6
+    },
+    "volume_delta": 8365.85047267227,
+    "volume_delta_fraction": 1.5954618747262967,
+    "face_count_delta": -29,
+    "gt_differs_from_input": true,
+    "input_cylindrical_faces": 5,
+    "input_concave_cyl_diameters": [],
+    "concave_faces_matching_stated_diameter": 0,
+    "classification": "gt-mismatch",
+    "mismatch_detail": "no-concave-cylindrical-cavity-in-input"
+  },
+  "abc_0378-fill-hole": {
+    "instruction": "Fill 134.0 mm hole.",
+    "stated_diameter_mm": 134.0,
+    "input": {
+      "volume": 113347.28966612798,
+      "area": 26242.443990142645,
+      "n_faces": 45
+    },
+    "gt": {
+      "volume": 155115.4630700366,
+      "area": 22791.616793021592,
+      "n_faces": 10
+    },
+    "volume_delta": 41768.17340390863,
+    "volume_delta_fraction": 0.36849732822848763,
+    "face_count_delta": -35,
+    "gt_differs_from_input": true,
+    "input_cylindrical_faces": 14,
+    "input_concave_cyl_diameters": [
+      6.5,
+      10.5,
+      14.0,
+      27.9961,
+      28.0
+    ],
+    "concave_faces_matching_stated_diameter": 0,
+    "classification": "gt-mismatch",
+    "mismatch_detail": "concave-cavities-exist-but-none-match-stated-diameter"
+  },
+  "abc_0361-fill-hole": {
+    "instruction": "Fill 40.0 mm hole.",
+    "stated_diameter_mm": 40.0,
+    "input": {
+      "volume": 2538.0555886743537,
+      "area": 2146.829146635708,
+      "n_faces": 21
+    },
+    "gt": {
+      "volume": 9263.053672127062,
+      "area": 2624.4262034221456,
+      "n_faces": 9
+    },
+    "volume_delta": 6724.998083452709,
+    "volume_delta_fraction": 2.649665402705079,
+    "face_count_delta": -12,
+    "gt_differs_from_input": true,
+    "input_cylindrical_faces": 3,
+    "input_concave_cyl_diameters": [],
+    "concave_faces_matching_stated_diameter": 0,
+    "classification": "gt-mismatch",
+    "mismatch_detail": "no-concave-cylindrical-cavity-in-input"
+  },
+  "abc_0259-fill-hole": {
+    "instruction": "Fill 46.6 mm hole.",
+    "stated_diameter_mm": 46.6,
+    "input": {
+      "volume": 914.5812759570825,
+      "area": 1145.3529599571725,
+      "n_faces": 94
+    },
+    "gt": {
+      "volume": 3657.735810577363,
+      "area": 1842.6568556461173,
+      "n_faces": 12
+    },
+    "volume_delta": 2743.15453462028,
+    "volume_delta_fraction": 2.999355668800074,
+    "face_count_delta": -82,
+    "gt_differs_from_input": true,
+    "input_cylindrical_faces": 4,
+    "input_concave_cyl_diameters": [
+      36.0,
+      41.8
+    ],
+    "concave_faces_matching_stated_diameter": 0,
+    "classification": "gt-mismatch",
+    "mismatch_detail": "concave-cavities-exist-but-none-match-stated-diameter"
+  },
+  "abc_0349-fill-hole": {
+    "instruction": "Get rid of that big hole \u2014 just fill it in so it's solid again.",
+    "stated_diameter_mm": null,
+    "input": {
+      "volume": 11641.786020600966,
+      "area": 5196.522745180008,
+      "n_faces": 21
+    },
+    "gt": {
+      "volume": 30030.230613022522,
+      "area": 5737.804805562865,
+      "n_faces": 21
+    },
+    "volume_delta": 18388.444592421554,
+    "volume_delta_fraction": 1.5795209222950755,
+    "face_count_delta": 0,
+    "gt_differs_from_input": true,
+    "input_cylindrical_faces": 8,
+    "input_concave_cyl_diameters": [
+      5.4,
+      10.0
+    ],
+    "concave_faces_matching_stated_diameter": 0,
+    "classification": "gt-mismatch",
+    "mismatch_detail": "concave-cavities-exist-but-none-match-stated-diameter"
+  },
+  "abc_0282-fill-hole": {
+    "instruction": "Remove the 23.2 mm diameter hole by filling it with solid material flush with the surrounding faces. Change nothing else.",
+    "stated_diameter_mm": 23.2,
+    "input": {
+      "volume": 7836.469409158963,
+      "area": 10083.300021607021,
+      "n_faces": 112
+    },
+    "gt": {
+      "volume": 28946.95900099468,
+      "area": 8122.018142701482,
+      "n_faces": 44
+    },
+    "volume_delta": 21110.489591835718,
+    "volume_delta_fraction": 2.6938776239160194,
+    "face_count_delta": -68,
+    "gt_differs_from_input": true,
+    "input_cylindrical_faces": 26,
+    "input_concave_cyl_diameters": [
+      3.2,
+      6.0,
+      9.0,
+      10.0,
+      14.0,
+      20.0
+    ],
+    "concave_faces_matching_stated_diameter": 0,
+    "classification": "gt-mismatch",
+    "mismatch_detail": "concave-cavities-exist-but-none-match-stated-diameter"
+  },
+  "abc_0010-fill-hole": {
+    "instruction": "Fill 5.08 mm hole.",
+    "stated_diameter_mm": 5.08,
+    "input": {
+      "volume": 2659.764654827401,
+      "area": 1323.0003163723156,
+      "n_faces": 99
+    },
+    "gt": {
+      "volume": 2763.509184838656,
+      "area": 1393.0558830705793,
+      "n_faces": 92
+    },
+    "volume_delta": 103.74453001125494,
+    "volume_delta_fraction": 0.039005154017277964,
+    "face_count_delta": -7,
+    "gt_differs_from_input": true,
+    "input_cylindrical_faces": 34,
+    "input_concave_cyl_diameters": [
+      1.016,
+      2.032
+    ],
+    "concave_faces_matching_stated_diameter": 0,
+    "classification": "gt-mismatch",
+    "mismatch_detail": "concave-cavities-exist-but-none-match-stated-diameter"
+  },
+  "abc_0067-fill-hole": {
+    "instruction": "Fill 15.0 mm hole.",
+    "stated_diameter_mm": 15.0,
+    "input": {
+      "volume": 1582.2893623472014,
+      "area": 1428.1177514204262,
+      "n_faces": 99
+    },
+    "gt": {
+      "volume": 2473.999663947817,
+      "area": 1013.1620329836418,
+      "n_faces": 10
+    },
+    "volume_delta": 891.7103016006158,
+    "volume_delta_fraction": 0.5635570350279255,
+    "face_count_delta": -89,
+    "gt_differs_from_input": true,
+    "input_cylindrical_faces": 85,
+    "input_concave_cyl_diameters": [
+      1.1,
+      3.0,
+      5.0
+    ],
+    "concave_faces_matching_stated_diameter": 0,
+    "classification": "gt-mismatch",
+    "mismatch_detail": "concave-cavities-exist-but-none-match-stated-diameter"
+  },
+  "abc_0170-fill-hole": {
+    "instruction": "Get rid of that big hole \u2014 just fill it in so it's solid again.",
+    "stated_diameter_mm": null,
+    "input": {
+      "volume": 4681.456073556497,
+      "area": 4529.4038414301685,
+      "n_faces": 250
+    },
+    "gt": {
+      "volume": 11164.107987536507,
+      "area": 3124.3616582335435,
+      "n_faces": 112
+    },
+    "volume_delta": 6482.651913980009,
+    "volume_delta_fraction": 1.384751199652963,
+    "face_count_delta": -138,
+    "gt_differs_from_input": true,
+    "input_cylindrical_faces": 81,
+    "input_concave_cyl_diameters": [
+      3.0,
+      5.75,
+      17.35,
+      22.35
+    ],
+    "concave_faces_matching_stated_diameter": 0,
+    "classification": "gt-mismatch",
+    "mismatch_detail": "concave-cavities-exist-but-none-match-stated-diameter"
+  },
+  "abc_0201-fill-hole": {
+    "instruction": "Fill 48.441 mm hole.",
+    "stated_diameter_mm": 48.441,
+    "input": {
+      "volume": 20011.213839954147,
+      "area": 7333.4146249681135,
+      "n_faces": 682
+    },
+    "gt": {
+      "volume": 25880.365933204055,
+      "area": 5823.030683423853,
+      "n_faces": 5
+    },
+    "volume_delta": 5869.152093249908,
+    "volume_delta_fraction": 0.2932931575360826,
+    "face_count_delta": -677,
+    "gt_differs_from_input": true,
+    "input_cylindrical_faces": 76,
+    "input_concave_cyl_diameters": [
+      4.826,
+      20.4107,
+      26.3616
+    ],
+    "concave_faces_matching_stated_diameter": 0,
+    "classification": "gt-mismatch",
+    "mismatch_detail": "concave-cavities-exist-but-none-match-stated-diameter"
+  },
+  "abc_0300-fill-hole": {
+    "instruction": "Remove the 7.0 mm diameter hole by filling it with solid material flush with the surrounding faces. Change nothing else.",
+    "stated_diameter_mm": 7.0,
+    "input": {
+      "volume": 214.28251326084393,
+      "area": 400.79763553961743,
+      "n_faces": 100
+    },
+    "gt": {
+      "volume": 1060.4649966290153,
+      "area": 682.9490180866411,
+      "n_faces": 3
+    },
+    "volume_delta": 846.1824833681715,
+    "volume_delta_fraction": 3.9489105783360032,
+    "face_count_delta": -97,
+    "gt_differs_from_input": true,
+    "input_cylindrical_faces": 18,
+    "input_concave_cyl_diameters": [],
+    "concave_faces_matching_stated_diameter": 0,
+    "classification": "gt-mismatch",
+    "mismatch_detail": "no-concave-cylindrical-cavity-in-input"
+  },
+  "abc_0102-fill-hole": {
+    "instruction": "Fill 6.0 mm hole.",
+    "stated_diameter_mm": 6.0,
+    "input": {
+      "volume": 920.2602769425158,
+      "area": 1074.6639187227988,
+      "n_faces": 160
+    },
+    "gt": {
+      "volume": 1134.6423348466958,
+      "area": 1111.454613129332,
+      "n_faces": 133
+    },
+    "volume_delta": 214.38205790418,
+    "volume_delta_fraction": 0.2329580698804534,
+    "face_count_delta": -27,
+    "gt_differs_from_input": true,
+    "input_cylindrical_faces": 14,
+    "input_concave_cyl_diameters": [],
+    "concave_faces_matching_stated_diameter": 0,
+    "classification": "gt-mismatch",
+    "mismatch_detail": "no-concave-cylindrical-cavity-in-input"
+  },
+  "abc_0270-fill-hole": {
+    "instruction": "Fill 60.0 mm hole.",
+    "stated_diameter_mm": 60.0,
+    "input": {
+      "volume": 30517.15920663406,
+      "area": 17666.578328547577,
+      "n_faces": 108
+    },
+    "gt": {
+      "volume": 118581.53137068194,
+      "area": 13806.994811625224,
+      "n_faces": 21
+    },
+    "volume_delta": 88064.37216404788,
+    "volume_delta_fraction": 2.8857329598655355,
+    "face_count_delta": -87,
+    "gt_differs_from_input": true,
+    "input_cylindrical_faces": 41,
+    "input_concave_cyl_diameters": [
+      2.0,
+      12.0,
+      16.0,
+      30.0,
+      34.0,
+      49.8
+    ],
+    "concave_faces_matching_stated_diameter": 0,
+    "classification": "gt-mismatch",
+    "mismatch_detail": "concave-cavities-exist-but-none-match-stated-diameter"
+  },
+  "abc_0219-fill-hole": {
+    "instruction": "Fill 24.32 mm hole.",
+    "stated_diameter_mm": 24.32,
+    "input": {
+      "volume": 4071.940412149059,
+      "area": 3464.6838034731704,
+      "n_faces": 115
+    },
+    "gt": {
+      "volume": 7252.304600048432,
+      "area": 2450.795783522624,
+      "n_faces": 14
+    },
+    "volume_delta": 3180.364187899373,
+    "volume_delta_fraction": 0.7810438920988197,
+    "face_count_delta": -101,
+    "gt_differs_from_input": true,
+    "input_cylindrical_faces": 41,
+    "input_concave_cyl_diameters": [
+      2.2606,
+      3.81,
+      15.0
+    ],
+    "concave_faces_matching_stated_diameter": 0,
+    "classification": "gt-mismatch",
+    "mismatch_detail": "concave-cavities-exist-but-none-match-stated-diameter"
+  },
+  "abc_0254-fill-hole": {
+    "instruction": "Get rid of that big hole \u2014 just fill it in so it's solid again.",
+    "stated_diameter_mm": null,
+    "input": {
+      "volume": 13592.734748131797,
+      "area": 5963.990207701396,
+      "n_faces": 229
+    },
+    "gt": {
+      "volume": 25310.030542923945,
+      "area": 4937.403629977112,
+      "n_faces": 5
+    },
+    "volume_delta": 11717.295794792148,
+    "volume_delta_fraction": 0.8620263701094136,
+    "face_count_delta": -224,
+    "gt_differs_from_input": true,
+    "input_cylindrical_faces": 120,
+    "input_concave_cyl_diameters": [
+      1.2192,
+      4.0,
+      8.0
+    ],
+    "concave_faces_matching_stated_diameter": 0,
+    "classification": "gt-mismatch",
+    "mismatch_detail": "concave-cavities-exist-but-none-match-stated-diameter"
+  },
+  "abc_0184-fill-hole": {
+    "instruction": "Remove the 23.825 mm diameter hole by filling it with solid material flush with the surrounding faces. Change nothing else.",
+    "stated_diameter_mm": 23.825,
+    "input": {
+      "volume": 3002.8361415615295,
+      "area": 2625.8433086872105,
+      "n_faces": 135
+    },
+    "gt": {
+      "volume": 7785.193536562605,
+      "area": 2198.699020295142,
+      "n_faces": 7
+    },
+    "volume_delta": 4782.357395001076,
+    "volume_delta_fraction": 1.5926135058818638,
+    "face_count_delta": -128,
+    "gt_differs_from_input": true,
+    "input_cylindrical_faces": 65,
+    "input_concave_cyl_diameters": [
+      1.2192,
+      3.5052,
+      4.7752
+    ],
+    "concave_faces_matching_stated_diameter": 0,
+    "classification": "gt-mismatch",
+    "mismatch_detail": "concave-cavities-exist-but-none-match-stated-diameter"
+  },
+  "abc_0032-fill-hole": {
+    "instruction": "Fill 54.0 mm hole.",
+    "stated_diameter_mm": 54.0,
+    "input": {
+      "volume": 82898.9780185426,
+      "area": 13307.132647821556,
+      "n_faces": 186
+    },
+    "gt": {
+      "volume": 135470.77687720317,
+      "area": 16161.580966408901,
+      "n_faces": 43
+    },
+    "volume_delta": 52571.798858660564,
+    "volume_delta_fraction": 0.6341670321545032,
+    "face_count_delta": -143,
+    "gt_differs_from_input": true,
+    "input_cylindrical_faces": 46,
+    "input_concave_cyl_diameters": [
+      2.5,
+      6.35,
+      7.366,
+      7.9248,
+      32.8422,
+      50.165
+    ],
+    "concave_faces_matching_stated_diameter": 0,
+    "classification": "gt-mismatch",
+    "mismatch_detail": "concave-cavities-exist-but-none-match-stated-diameter"
+  },
+  "abc_0348-fill-hole": {
+    "instruction": "Fill 21.2 mm hole.",
+    "stated_diameter_mm": 21.2,
+    "input": {
+      "volume": 2579.636941217129,
+      "area": 3788.3494873506856,
+      "n_faces": 44
+    },
+    "gt": {
+      "volume": 11472.15394856389,
+      "area": 2870.536052758276,
+      "n_faces": 5
+    },
+    "volume_delta": 8892.51700734676,
+    "volume_delta_fraction": 3.4471971095091685,
+    "face_count_delta": -39,
+    "gt_differs_from_input": true,
+    "input_cylindrical_faces": 20,
+    "input_concave_cyl_diameters": [
+      1.0,
+      16.1
+    ],
+    "concave_faces_matching_stated_diameter": 0,
+    "classification": "gt-mismatch",
+    "mismatch_detail": "concave-cavities-exist-but-none-match-stated-diameter"
+  },
+  "_meta": {
+    "run": "run-003",
+    "adjudication_set": "all 22 fill-hole cases in slice; scan of non-fill-hole armA reports found no documented instruction/geometry mismatch (all \"unchanged\" mentions were locality statements)",
+    "method": "(a) GT-vs-input volume/area/face-count deltas via BRepGProp; (b) concave cylindrical faces enumerated in input via BRepAdaptor_Surface + oriented GeomLProp normal vs radial direction; diameter tolerance max(0.02mm, 0.5%)",
+    "classification_rule": "gt-noop: |dV|/V<1e-6 and equal face count; gt-mismatch: no concave cylindrical face matching stated diameter; else gt-ok"
+  }
+}

@@ -1,0 +1,257 @@
+{
+  "generatedAt": "2026-08-26T17:03:42.955Z",
+  "backbone": "gemini-3.5-flash",
+  "prices": {
+    "input": 0.0000015,
+    "output": 0.000009,
+    "thinking": 0.000009,
+    "cacheRead": 1.5e-7
+  },
+  "runs": [
+    {
+      "label": "smoke/baseline",
+      "files": 3,
+      "records": 45,
+      "harnessUserCost": 0.031506700000000006,
+      "harnessAgentCost": 1.8474336000000002,
+      "carloTokens": null,
+      "carloCost": null,
+      "carloLlmCalls": 0,
+      "tracesAttributed": 0,
+      "tracesRedacted": 0,
+      "endMtimeMs": 1787645457429.151
+    },
+    {
+      "label": "smoke/carlo",
+      "files": 4,
+      "records": 60,
+      "harnessUserCost": 0.030117599999999994,
+      "harnessAgentCost": 0,
+      "carloTokens": null,
+      "carloCost": null,
+      "carloLlmCalls": 567,
+      "tracesAttributed": 60,
+      "tracesRedacted": 60,
+      "endMtimeMs": 1787646100784.1165
+    },
+    {
+      "label": "smoke/carlo-fix-goff",
+      "files": 3,
+      "records": 45,
+      "harnessUserCost": 0.045884999999999995,
+      "harnessAgentCost": 0,
+      "carloTokens": null,
+      "carloCost": null,
+      "carloLlmCalls": 605,
+      "tracesAttributed": 45,
+      "tracesRedacted": 45,
+      "endMtimeMs": 1787649367709.9058
+    },
+    {
+      "label": "smoke/carlo-fix-gon",
+      "files": 3,
+      "records": 45,
+      "harnessUserCost": 0.04728130000000001,
+      "harnessAgentCost": 0,
+      "carloTokens": null,
+      "carloCost": null,
+      "carloLlmCalls": 490,
+      "tracesAttributed": 45,
+      "tracesRedacted": 45,
+      "endMtimeMs": 1787649804969.282
+    },
+    {
+      "label": "smoke/carlo-v2-goff",
+      "files": 3,
+      "records": 45,
+      "harnessUserCost": 0.037640400000000004,
+      "harnessAgentCost": 0,
+      "carloTokens": null,
+      "carloCost": null,
+      "carloLlmCalls": 477,
+      "tracesAttributed": 45,
+      "tracesRedacted": 45,
+      "endMtimeMs": 1787650391722.7542
+    },
+    {
+      "label": "smoke/carlo-v2-gon",
+      "files": 3,
+      "records": 45,
+      "harnessUserCost": 0.039779599999999984,
+      "harnessAgentCost": 0,
+      "carloTokens": {
+        "prompt": 4575390,
+        "completion": 18074,
+        "thinking": 0,
+        "cached": 4313575
+      },
+      "carloCost": 1.20242475,
+      "carloLlmCalls": 452,
+      "tracesAttributed": 45,
+      "tracesRedacted": 0,
+      "endMtimeMs": 1787650767859.0488
+    },
+    {
+      "label": "smoke/carlo-v3-goff",
+      "files": 3,
+      "records": 45,
+      "harnessUserCost": 0.035305500000000004,
+      "harnessAgentCost": 0,
+      "carloTokens": {
+        "prompt": 4893533,
+        "completion": 22970,
+        "thinking": 106,
+        "cached": 4018574
+      },
+      "carloCost": 2.1229086,
+      "carloLlmCalls": 482,
+      "tracesAttributed": 45,
+      "tracesRedacted": 0,
+      "endMtimeMs": 1787659098645.6675
+    },
+    {
+      "label": "smoke/carlo-v3-gon",
+      "files": 3,
+      "records": 45,
+      "harnessUserCost": 0.030942900000000002,
+      "harnessAgentCost": 0,
+      "carloTokens": {
+        "prompt": 5100559,
+        "completion": 20661,
+        "thinking": 0,
+        "cached": 4778514
+      },
+      "carloCost": 1.3857936,
+      "carloLlmCalls": 504,
+      "tracesAttributed": 45,
+      "tracesRedacted": 0,
+      "endMtimeMs": 1787659507732.1235
+    },
+    {
+      "label": "train/baseline",
+      "files": 3,
+      "records": 480,
+      "harnessUserCost": 0.40869907000000016,
+      "harnessAgentCost": 73.31039790000007,
+      "carloTokens": {
+        "prompt": 78920518,
+        "completion": 563949,
+        "thinking": 364,
+        "cached": 65106855
+      },
+      "carloCost": 35.56533975,
+      "carloLlmCalls": 6771,
+      "tracesAttributed": 356,
+      "tracesRedacted": 0,
+      "endMtimeMs": 1787675479532.6914
+    },
+    {
+      "label": "train/carlo",
+      "files": 3,
+      "records": 387,
+      "harnessUserCost": 0.3455806999999998,
+      "harnessAgentCost": 0,
+      "carloTokens": {
+        "prompt": 7221593,
+        "completion": 47001,
+        "thinking": 0,
+        "cached": 6109160
+      },
+      "carloCost": 3.0080325,
+      "carloLlmCalls": 634,
+      "tracesAttributed": 31,
+      "tracesRedacted": 0,
+      "endMtimeMs": 1787675894787.1494
+    },
+    {
+      "label": "ablation-minimal",
+      "files": 3,
+      "records": 90,
+      "harnessUserCost": 0.06861930000000002,
+      "harnessAgentCost": 0,
+      "carloTokens": {
+        "prompt": 27650778,
+        "completion": 175210,
+        "thinking": 749820,
+        "cached": 22297508
+      },
+      "carloCost": 19.6998012,
+      "carloLlmCalls": 1840,
+      "tracesAttributed": 90,
+      "tracesRedacted": 0,
+      "endMtimeMs": 1787730709618.476
+    },
+    {
+      "label": "ablation-medium",
+      "files": 3,
+      "records": 90,
+      "harnessUserCost": 0.07323960000000002,
+      "harnessAgentCost": 0,
+      "carloTokens": {
+        "prompt": 21623294,
+        "completion": 142208,
+        "thinking": 484052,
+        "cached": 17452934
+      },
+      "carloCost": 14.509820099999999,
+      "carloLlmCalls": 1528,
+      "tracesAttributed": 90,
+      "tracesRedacted": 0,
+      "endMtimeMs": 1787733210667.1492
+    },
+    {
+      "label": "full-minimal",
+      "files": 3,
+      "records": 387,
+      "harnessUserCost": 0.32810332999999986,
+      "harnessAgentCost": 0,
+      "carloTokens": {
+        "prompt": 126009902,
+        "completion": 777628,
+        "thinking": 3830146,
+        "cached": 100423244
+      },
+      "carloCost": 94.9134396,
+      "carloLlmCalls": 8346,
+      "tracesAttributed": 387,
+      "tracesRedacted": 0,
+      "endMtimeMs": 1787745562059.0793
+    },
+    {
+      "label": "fidelity-baseline",
+      "files": 3,
+      "records": 90,
+      "harnessUserCost": 0.2618505,
+      "harnessAgentCost": 7.1159329499999995,
+      "carloTokens": null,
+      "carloCost": null,
+      "carloLlmCalls": 0,
+      "tracesAttributed": 0,
+      "tracesRedacted": 0,
+      "endMtimeMs": 1787761779539.6948
+    },
+    {
+      "label": "fidelity-minimal",
+      "files": 3,
+      "records": 90,
+      "harnessUserCost": 0.27161699999999994,
+      "harnessAgentCost": 0,
+      "carloTokens": {
+        "prompt": 29486098,
+        "completion": 182278,
+        "thinking": 663184,
+        "cached": 23416150
+      },
+      "carloCost": 20.2265025,
+      "carloLlmCalls": 1978,
+      "tracesAttributed": 90,
+      "tracesRedacted": 0,
+      "endMtimeMs": 1787763816486.1562
+    }
+  ],
+  "total": {
+    "harness": 84.32993295000006,
+    "carlo": 192.63406260000002,
+    "redactedTraces": 195
+  }
+}

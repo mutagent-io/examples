@@ -1,0 +1,293 @@
+[
+  {
+    "findingId": "F-004-1",
+    "audience": "CLIENT",
+    "actionable": "`cadtools.cli round` claims a round AND writes a ledger record in one indivisible invocation, so the documented two-call protocol (claim -> verify -> record) burns two budget slots per real iteration and files the outcome under round N+1.",
+    "problem": "The round ledger over-counts iterations by one on 11 of 15 eval-run-001/armA samples: every sample that followed the documented claim-then-record protocol carries a phantom `round 1 {valid:false, score:0.0, failures:[], candidate_path:null}` record it never produced, and its real attempt is filed under round 2. Ledger rounds_used distribution is {1:4, 2:9, 3:1, 4:1} against a report.json ground truth of {1:13, 2:1, 3:1} — 11 of 75 budgeted rounds (14.7%) destroyed, three independent eval agents tripped on it, and abc_0365-thicken reached 4/5 rounds used for 3 real attempts (one round from a spurious budget_exhausted).",
+    "failureOrigin": {
+      "what": "wrong-output",
+      "why": "tool-missing",
+      "where": "tool-definition",
+      "evidence": "cadtools/cli.py:200-226 (_cmd_round: start_round() then record() unconditionally, no --round argument); cadtools/cli.py:337-353 (round subparser has no way to address an already-claimed round); .claude/agents/cad-step-editor.md:84-86",
+      "whatHappened": "The agent followed the documented protocol literally: it called `cadtools.cli round` bare to claim round 1 before writing round-1.py. That call ran start_round() (burning slot 1) AND immediately ran ledger.record(1, valid=args.record_valid, ...) with record_valid defaulting to False (cli.py:353), writing a fabricated invalid record for a round whose script had not been executed yet. After implementing and verifying successfully, the agent called `round --record-valid --score 0.9` to record the outcome 'on that round' as the doc instructs — but that invocation has no way to target round 1, so it called start_round() again, burned slot 2, and filed the real outcome as round 2. Net: one real edit-verify iteration consumed two of five rounds and produced one phantom failure record.",
+      "example": "runs/eval-run-001/armA/abc_0123-fill-hole/ledger.json records: [{\"round\":1,\"valid\":false,\"score\":0.0,\"failures\":[],\"candidate_path\":null}, {\"round\":2,\"valid\":true,\"score\":0.9}] while its report.json rounds[] contains exactly ONE entry (round 1, script round-1.py) plus note_on_rounds: \"A ledger-usage slip caused round 1 to be recorded with default valid=false before its real outcome was known, consuming an extra round\"",
+      "confidence": "high"
+    },
+    "whyChain": [
+      {
+        "why": "11 of 15 armA ledgers report one more round used than the sample's report.json documents actually running.",
+        "evidence": "runs/eval-run-001/armA/*/ledger.json vs report.json — ledger {1:4, 2:9, 3:1, 4:1} vs report rounds[] {1:13, 2:1, 3:1}",
+        "whatHappened": "Every ledger except the four written by agents that made a single combined call carries exactly one more round than the narrative report describes; the surplus is always a leading valid=false, score=0.0 record with empty failures[] and null candidate_path — the signature of a record that was never populated with a real outcome."
+      },
+      {
+        "why": "Each surplus record is the by-product of the CLAIM call, not of a failed attempt.",
+        "evidence": "cadtools/cli.py:218-225",
+        "whatHappened": "_cmd_round unconditionally calls ledger.record(round_no, valid=args.record_valid, score=args.score, checks_passed=..., failures=list(args.failure or []), candidate_path=args.candidate) immediately after start_round(). There is no claim-only path: every invocation writes a record. With no --record-* flag supplied the argparse default record_valid=False (cli.py:353) turns a pure claim into a recorded failure.",
+        "example": "        ledger.record(\n            round_no,\n            valid=args.record_valid,\n            score=args.score,\n            ...\n        )"
+      },
+      {
+        "why": "The follow-up record call cannot address the round it is reporting on, so it starts a new one.",
+        "evidence": "cadtools/cli.py:190-226 + cli.py:337-353 (round subparser argument list)",
+        "whatHappened": "The `round` subparser exposes --candidate/--score/--failure/--record-valid/--record-invalid but NO --round. _cmd_round's only route to a round number is round_no = ledger.start_round() (cli.py:201). So `round --record-valid --score 0.9`, intended as 'record the outcome of the round I already claimed', necessarily allocates and records against round N+1."
+      },
+      {
+        "why": "The ledger layer itself is not at fault — RoundLedger already separates claiming from recording.",
+        "evidence": "cadtools/budget.py:99-136",
+        "whatHappened": "budget.py exposes start_round() -> int and a separate record(round_no, ...) that explicitly validates 1 <= round_no <= self._started (budget.py:122-125) and raises ValueError otherwise. The API is correctly decoupled and even guards against recording an unstarted round; the CLI simply never uses that decoupling, always passing the freshly-started number.",
+        "example": "        if round_no < 1 or round_no > self._started:\n            raise ValueError(\n                f\"round {round_no} was never started (rounds started: {self._started})\"\n            )"
+      },
+      {
+        "why": "The agent-facing protocol document prescribes exactly the two-call sequence the CLI cannot serve, so correct adherence guarantees the double-count.",
+        "evidence": ".claude/agents/cad-step-editor.md:84-86",
+        "whatHappened": "The doc states 'Claim a round *before* you write that round's script' and then 'After verifying, record the outcome on that round (--record-valid --score <s> or --record-invalid --failure \"<reason>\")'. That is a two-call contract against a one-call tool with no round selector. The agents were not misusing the tool — they were obeying a documented protocol that the CLI surface does not implement. This is the ORIGIN: the tool contract and its documented protocol disagree.",
+        "example": "- Claim a round *before* you write that round's script.\n- After verifying, record the outcome on that round (`--record-valid --score <s>` or\n  `--record-invalid --failure \"<reason>\"`) so the ledger can pick the best attempt.",
+        "isOrigin": true
+      }
+    ],
+    "remedies": [
+      {
+        "remedyId": "R-004-1a",
+        "title": "Decouple claim from record in _cmd_round: bare `round` claims only; `--round N` targets the producing round",
+        "applyTarget": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/cadtools/cli.py",
+        "targetClass": "code-construct",
+        "rationale": "abc_0123-fill-hole's ledger.json shows records [round 1: valid=false, score=0.0, failures=[], candidate_path=null] and [round 2: valid=true, score=0.9] while its report.json rounds[] documents exactly one iteration (round-1.py) — the phantom round 1 is the artefact of the claim call, because _cmd_round (cli.py:218-225) records unconditionally with record_valid defaulting to False (cli.py:353). A correctly-shaped CLI would let the claim call return a round number without writing a record, and let the later record call name that number. RoundLedger already supports precisely this (budget.py:99-136: start_round() separate from record(round_no, ...) with a 1<=round_no<=_started guard), so the defect is confined to the CLI adapter.",
+        "whyWorks": "Making the record write conditional on an explicit outcome flag removes the fabricated failure record at claim time, and adding --round (defaulting to the latest STARTED round rather than a new one) gives the second call a way to address the round whose script produced the outcome. Because record() is then invoked with an existing round number, start_round() is not re-entered and no second budget slot is consumed — one real edit-verify iteration costs exactly one round. budget.py's existing round_no bound check turns any mis-targeted --round into a loud ValueError instead of a silent extra round, so the failure mode becomes fail-fast rather than fail-quiet. Using a None sentinel for record_valid (rather than the current False default) is what makes 'no flag supplied' distinguishable from '--record-invalid', which is the exact ambiguity that produced the phantom records.",
+        "applyInstructions": [
+          "Step 1: In cadtools/cli.py:353 change `p.set_defaults(handler=_cmd_round, record_valid=False)` to `p.set_defaults(handler=_cmd_round, record_valid=None)` so that 'no outcome flag supplied' is distinguishable from '--record-invalid' (which still yields False via its store_false action at cli.py:345).",
+          "Step 2: Add `p.add_argument(\"--round\", type=int, default=None, dest=\"round_no\", help=\"Record the outcome against an already-claimed round. Defaults to the most recently started round. Omit --round and all --record-* flags to CLAIM a new round without recording.\")` to the round subparser (after cli.py:346).",
+          "Step 3: In _cmd_round, replace the unconditional `round_no = ledger.start_round()` (cli.py:201) with a branch: if `args.record_valid is None and args.round_no is None` -> claim path, `round_no = ledger.start_round()`, and SKIP the ledger.record(...) block entirely; otherwise -> record path, `round_no = args.round_no if args.round_no is not None else ledger.rounds_used` and do NOT call start_round(). Keep the existing BudgetExhausted handler wrapping only the claim path.",
+          "Step 4: On the record path, guard `if round_no < 1: raise BudgetExhausted/ValueError('no round has been claimed yet — run `cadtools.cli round` first')` so recording before any claim fails loudly rather than writing round 0.",
+          "Step 5: Let ledger.record(round_no, ...) raise its existing ValueError (budget.py:122-125) for an out-of-range --round, and surface it as a non-zero Result with exit_code=4 alongside the budget_exhausted path.",
+          "Step 6: Extend the returned data dict (cli.py:240-247) with `\"recorded\": bool` so a caller can see whether the invocation claimed, recorded, or both.",
+          "Step 7: Update .claude/agents/cad-step-editor.md:72 and :84-86 to show the two concrete invocations — `cadtools.cli round --run-id <r> --sample-id <s>` (claim, prints round N) then `cadtools.cli round --run-id <r> --sample-id <s> --round N --record-valid --score <x>` (record, consumes no budget) — and state explicitly that a bare claim does not consume budget until an outcome is recorded."
+        ],
+        "assumptions": [
+          {
+            "text": "The four samples whose ledgers show rounds_used == len(report.rounds) (abc_0011, abc_0067, abc_0098, abc_0128) were written by agents that made a single combined `round --record-valid` call rather than following the documented two-call protocol; their ledgers are correct by accident, not by a different code path.",
+            "status": "verified",
+            "basis": "runs/eval-run-001/armA/{abc_0011-thicken,abc_0067-fill-hole,abc_0098-thicken,abc_0128-fill-hole}/ledger.json each contain exactly one record with valid=true and a non-zero score, i.e. no phantom leading record; _cmd_round has only one code path (cli.py:190-248), so the difference can only come from invocation shape."
+          },
+          {
+            "text": "No caller outside cadtools/cli.py relies on `round` being claim-and-record atomically; existing tests supply an explicit --record-invalid flag and therefore keep working under the None sentinel.",
+            "status": "verified",
+            "basis": "tests/test_cli.py:121-130, :133-150 and :161-168 all pass --record-invalid explicitly (so record_valid resolves to False and the record path still fires); tests/test_cli.py:153-158 calls `round` bare but asserts only that trace.jsonl exists, which the claim path still writes via sink.append (cli.py:227-236). grep of cadtools/ and scripts/ shows _cmd_round has no other in-repo caller."
+          }
+        ],
+        "cost": "low",
+        "correctness": "high",
+        "diff": {
+          "before": "    try:\n        round_no = ledger.start_round()\n    except BudgetExhausted as exc:\n        ...\n\n    ledger.record(\n        round_no,\n        valid=args.record_valid,\n        score=args.score,\n        checks_passed=args.record_valid and args.checks_passed,\n        failures=list(args.failure or []),\n        candidate_path=args.candidate,\n    )\n    _save_ledger(args.runs_root, ledger)",
+          "after": "    recording = args.record_valid is not None or args.round_no is not None\n\n    if recording:\n        round_no = args.round_no if args.round_no is not None else ledger.rounds_used\n        if round_no < 1:\n            return Result(False, \"round\", {\"rounds_used\": 0}, error=(\n                \"no round has been claimed yet - run `cadtools.cli round` \"\n                \"(no flags) to claim one, then record against it with --round N\"\n            ), exit_code=4)\n    else:\n        try:\n            round_no = ledger.start_round()\n        except BudgetExhausted as exc:\n            ...\n\n    if recording:\n        ledger.record(\n            round_no,\n            valid=bool(args.record_valid),\n            score=args.score,\n            checks_passed=bool(args.record_valid) and args.checks_passed,\n            failures=list(args.failure or []),\n            candidate_path=args.candidate,\n        )\n    _save_ledger(args.runs_root, ledger)"
+        }
+      },
+      {
+        "remedyId": "R-004-1b",
+        "title": "Regression test: claim-then-record consumes exactly one round and files the outcome on the producing round",
+        "applyTarget": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/tests/test_cli.py",
+        "targetClass": "code-construct",
+        "rationale": "The existing round tests (tests/test_cli.py:121-130, :133-150, :153-158, :161-168) all exercise the single-call shape and every one of them passes against the defective build — none asserts the relationship between rounds_used and the number of recorded outcomes, which is exactly the invariant that broke on 11 of 15 samples. abc_0123's ledger (rounds_used=2, one real attempt) would have been caught by a single assertion that the documented two-call protocol leaves rounds_used == 1.",
+        "whyWorks": "The test encodes the documented protocol from .claude/agents/cad-step-editor.md:84-86 as executable contract: claim, then record against the claimed round, then assert rounds_used == 1 and records == [round 1, valid=True]. Because the assertion is on the ledger's own persisted state, it fails loudly if any future refactor re-couples start_round() to record() — the recoupling is what produced the phantom records, so pinning the decoupling is what prevents recurrence. Adding the negative case (bare claim writes no record) pins the other half: budget is not consumed by a bare claim until an outcome exists.",
+        "applyInstructions": [
+          "Step 1: Add `test_claim_then_record_consumes_one_round` to tests/test_cli.py: run `[\"round\", \"--run-id\", \"r4\", \"--sample-id\", \"201\", \"--runs-root\", str(tmp_path)]`, assert payload['data']['round'] == 1 and payload['data']['recorded'] is False.",
+          "Step 2: In the same test, run `[\"round\", *base, \"--round\", \"1\", \"--record-valid\", \"--score\", \"0.9\"]` and assert payload['data']['round'] == 1 and payload['data']['rounds_used'] == 1.",
+          "Step 3: Load the persisted ledger at tmp_path/'r4'/'201'/'ledger.json' and assert `len(records) == 1`, `records[0]['round'] == 1`, `records[0]['valid'] is True`, `records[0]['score'] == 0.9` — this is the assertion that fails on the current build (it would see 2 records with a leading valid=false).",
+          "Step 4: Add `test_bare_claim_writes_no_record`: a single bare `round` call, then assert the persisted ledger has `rounds_used == 1` and `records == []`.",
+          "Step 5: Add `test_recording_an_unclaimed_round_is_refused`: `round --round 3 --record-valid` on a fresh ledger must exit non-zero (budget.py:122-125 ValueError surfaced as exit_code 4), never silently append.",
+          "Step 6: Add `test_five_claims_then_five_records_stay_within_budget`: claim+record five times alternately and assert the fifth record succeeds and rounds_used == 5 — this is the end-to-end guarantee that the protocol now yields the full documented budget instead of 2.5 effective rounds."
+        ],
+        "assumptions": [
+          {
+            "text": "tests/test_cli.py's `_run` helper returns (exit_code, parsed_json_payload) and can be reused unchanged for the new assertions.",
+            "status": "verified",
+            "basis": "tests/test_cli.py:125-130 unpacks `code, payload = _run([...], capsys)` and indexes payload['data']['round'] / payload['data']['budget_exhausted'], confirming the shape."
+          },
+          {
+            "text": "The persisted ledger JSON schema (run_id, sample_id, max_rounds, rounds_used, rounds_remaining, records[], decision) is stable enough to assert against directly in tests.",
+            "status": "verified",
+            "basis": "RoundLedger.to_dict (cadtools/budget.py:202-211) defines it, _save_ledger (cadtools/cli.py:98-101) writes it verbatim, and runs/eval-run-001/armA/*/ledger.json all match that shape."
+          }
+        ],
+        "cost": "low",
+        "correctness": "high",
+        "describedChange": "Add four regression tests to tests/test_cli.py that encode the claim/record separation as contract: (1) the documented two-call protocol consumes exactly one round and files the outcome on the producing round; (2) a bare claim writes no ledger record; (3) recording against an unclaimed round exits non-zero; (4) five claim+record pairs fit the 5-round budget. These are behavioural assertions against the persisted ledger.json rather than line edits to existing tests, so no current test is modified."
+      }
+    ],
+    "sourceTraceIds": [
+      "eval-run-001/armA/abc_0123-fill-hole",
+      "eval-run-001/armA/abc_0365-thicken",
+      "eval-run-001/armA/abc_0368-fill-hole"
+    ],
+    "referenceIds": {
+      "traceId": "eval-run-001/armA/abc_0123-fill-hole",
+      "sessionId": "eval-run-001",
+      "findingId": "F-004-1"
+    },
+    "assumptions": [
+      {
+        "text": "report.json's rounds[] array is a faithful record of the geometric iterations actually performed, and is therefore a valid ground truth to diff the ledger against.",
+        "status": "verified",
+        "basis": "Each rounds[] entry names the script file it ran (e.g. abc_0123 round 1 -> 'round-1.py') and carries that script's verify_validity / verify_locality / verify_intent output; three reports (abc_0123, abc_0365, abc_0368) additionally carry an explicit note_on_rounds / notes field describing the ledger discrepancy in the agent's own words."
+      },
+      {
+        "text": "The 11 wasted rounds did not change any sample's final emitted output, because no sample exhausted its budget — the cost so far is head-room, not score.",
+        "status": "verified",
+        "basis": "Max rounds_used across runs/eval-run-001/armA/*/ledger.json is 4 (abc_0365-thicken) against max_rounds=5, and every ledger's decision.status is 'valid'. The exposure is that abc_0365 was one iteration from a spurious budget_exhausted, not that an output was lost in this run."
+      },
+      {
+        "text": "The phantom round-1 records also pollute RoundLedger.least_broken and any downstream aggregate that counts rounds, though no armA sample fell through to the least-broken path in this run.",
+        "status": "unverified",
+        "basis": "least_broken (cadtools/budget.py:154-158) ranks by (brokenness, -score, -round) and a phantom record has brokenness 0 (failures=[]) with score 0.0 and candidate_path=null, so it would outrank a genuinely-failed candidate on brokenness; not exercised here because every armA ledger emitted via best_valid."
+      }
+    ]
+  },
+  {
+    "findingId": "F-004-2",
+    "audience": "CLIENT",
+    "actionable": "`cadtools diff` materialises the entire point-by-candidate-triangle cross product in one allocation via trimesh.proximity.closest_point, and does it twice per diff, so dense curved meshes OOM-kill the process (exit 137) at the default 20000 samples — with no CLI flag to lower the count.",
+    "problem": "`cadtools.cli diff` is killed by the OOM reaper (exit 137) at its default 20000 proximity samples on dense curved meshes — reproduced on abc_0365-thicken and abc_0368-fill-hole, where the two symmetric closest-point queries each allocated roughly 3.8 GB. The LOCALITY half of the SOP's VERIFY step (step 4b) becomes unavailable on exactly the hardest samples, and because the `diff` subparser exposes no --samples flag the documented tool has no recovery path at all: both agents had to abandon the CLI and re-drive cadtools.geometry_diff.diff_shapes from a hand-written Python script at n_samples=3000.",
+    "failureOrigin": {
+      "what": "missing-output",
+      "why": "tool-missing",
+      "where": "tool-definition",
+      "evidence": "cadtools/geometry_diff.py:279-291 (_surface_distance -> trimesh.proximity.closest_point, unchunked); geometry_diff.py:211-217 (two full-size queries per diff, both results retained); geometry_diff.py:258-269 (diff_files drops n_samples); cadtools/cli.py:126-132 + cli.py:301-309 (diff subcommand exposes no --samples)",
+      "whatHappened": "The agent ran `cadtools.cli diff input.step output.step` for the LOCALITY check on a dense curved thicken/fill-hole part. diff_shapes sampled 20000 surface points from each body (geometry_diff.py:211-212) and called _surface_distance twice (geometry_diff.py:213-214). Each call handed all 20000 points to trimesh.proximity.closest_point in a single shot; that function builds a per-point candidate-face list from the AABB tree and then concatenates every (point, candidate-triangle) pair into one flat array before computing anything. On a dense curved mesh the candidate count per point is large, the flattened arrays reached multi-GB, the kernel OOM-killed the process, and the shell reported exit 137. The agent got no diff report and no actionable error — just a dead process.",
+      "example": "\"cadtools diff's default n_samples=20000 triggered an OOM kill (exit 137) on this mesh when run twice (ref->cand and cand->ref proximity queries each allocate ~3.8GB); this reproduces even with --allow-repose ... Re-ran the diff pipeline directly with a reduced n_samples=3000 to get equivalent evidence without exhausting memory.\"",
+      "confidence": "high"
+    },
+    "whyChain": [
+      {
+        "why": "`cadtools.cli diff` died with exit 137 (SIGKILL / OOM) on two dense curved samples.",
+        "evidence": "runs/eval-run-001/armA/abc_0365-thicken/report.json:35 and :61; runs/eval-run-001/armA/abc_0368-fill-hole/report.json",
+        "whatHappened": "Two independent agents recorded the same failure and the same workaround. abc_0365's notes read: 'The diff tool's default sample count (20000) is memory-heavy on this dense curved mesh and was reduced to 3000 for locality verification to avoid an OOM kill; this is a tooling/environment constraint, documented here rather than silently worked around.' Both agents ruled out a candidate-geometry defect first (verify and analyze completed fine; a self-diff of input-vs-input at 20000 samples also succeeded on the smaller side)."
+      },
+      {
+        "why": "The memory is consumed inside a single unchunked trimesh call, not by the sample points themselves.",
+        "evidence": "cadtools/geometry_diff.py:279-291",
+        "whatHappened": "_surface_distance passes the full point array straight to trimesh.proximity.closest_point(tm, points). 20000 points x 3 x 8 bytes is only 480 KB — the point array is trivially small. The multi-GB allocation therefore cannot be the samples; it is created inside the trimesh call.",
+        "example": "    tm = to_trimesh(target)\n    _, distances, _ = trimesh.proximity.closest_point(tm, points)\n    return np.asarray(distances, dtype=np.float64)"
+      },
+      {
+        "why": "trimesh 5.0.0's closest_point flattens the whole point-by-candidate-triangle cross product into one contiguous array before computing any distance.",
+        "evidence": "trimesh 5.0.0 trimesh/proximity.py::closest_point (installed at .venv/lib/python3.*/site-packages/trimesh/proximity.py), inspected source",
+        "whatHappened": "closest_point calls nearby_faces(mesh, points) to get a per-point candidate-face list, then concatenates ALL of them (all_candidates = np.concatenate(candidates)), tiles the query points to match (query_point = points[tile_idxs, :]) and gathers query_tri = triangles[all_candidates]. With K = sum of candidates over all points, query_tri alone is K x 3 x 3 float64 = 72 bytes per candidate, and _corresponding() plus query_vector/query_distance add several more K-sized temporaries — roughly 150-200 bytes per candidate pair live simultaneously. K scales with points x candidates-per-point; a dense curved mesh has many small triangles with heavily overlapping AABBs, so candidates-per-point runs into the thousands. K ~ 24M reproduces the ~3.8 GB the report cites. There is no batching, no generator, and no memory ceiling anywhere in the function.",
+        "example": "    candidates = nearby_faces(mesh, points)\n    all_candidates = np.concatenate(candidates)\n    num_candidates = list(map(len, candidates))\n    tile_idxs = np.repeat(np.arange(len(points)), num_candidates)\n    query_point = points[tile_idxs, :]\n    query_tri = triangles[all_candidates]"
+      },
+      {
+        "why": "diff_shapes pays that cost twice and holds both results, so peak memory is roughly double the worst single query.",
+        "evidence": "cadtools/geometry_diff.py:211-217",
+        "whatHappened": "The diff is deliberately symmetric: d_ref = _surface_distance(ref_pts, cand) and d_cand = _surface_distance(cand_pts, ref) run back to back, then points and distances are vstacked/concatenated and retained on the DiffReport as _points/_distances (geometry_diff.py:96-97) so that region queries need no re-sampling. Nothing is released between the two calls, so a mesh that merely strains the first query is killed by the second — which is exactly what the abc_0365 note describes ('when run twice')."
+      },
+      {
+        "why": "The one available mitigation — lowering n_samples — is reachable from the library but NOT from the CLI the SOP tells the agent to use.",
+        "evidence": "cadtools/geometry_diff.py:189-195 + :258-269; cadtools/cli.py:126-132 + :301-309; .claude/agents/cad-step-editor.md:69",
+        "whatHappened": "diff_shapes accepts n_samples: int = DEFAULT_SAMPLES (geometry_diff.py:192), but diff_files (geometry_diff.py:258-269) does not take or forward it, and the `diff` subparser (cli.py:301-309) defines only `reference`, `candidate` and `--allow-repose`. So the knob exists one layer down and is unreachable from the documented entry point. This is the ORIGIN: the tool has a hard-coded 20000-sample memory profile with no ceiling, no chunking and no user control, so its only failure mode on a dense mesh is process death — which is why both agents had to leave the CLI and hand-drive the library to complete a mandatory VERIFY step.",
+        "example": "    p = sub.add_parser(\"diff\", help=\"Localized-change diff between two STEP bodies.\")\n    p.add_argument(\"reference\")\n    p.add_argument(\"candidate\")\n    p.add_argument(\"--allow-repose\", action=\"store_true\", ...)",
+        "isOrigin": true
+      }
+    ],
+    "remedies": [
+      {
+        "remedyId": "R-004-2a",
+        "title": "Chunk _surface_distance with a memory-budgeted batch size, and expose --samples on the diff CLI",
+        "applyTarget": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/cadtools/geometry_diff.py",
+        "targetClass": "code-construct",
+        "rationale": "abc_0365 and abc_0368 show `cadtools.cli diff` returning exit 137 at the default 20000 samples while `verify` and `analyze` complete on the same bodies — so the bodies are fine and the diff's memory profile is the defect. The peak allocation is provably inside the single unchunked trimesh.proximity.closest_point call (geometry_diff.py:290), which materialises every (point, candidate-triangle) pair at once; the point array itself is only 480 KB. A correctly-shaped distance query would bound its working set independently of the sample count, and the CLI would expose the sample knob that diff_shapes already accepts (geometry_diff.py:192) but diff_files (geometry_diff.py:258-269) and the diff subparser (cli.py:301-309) both drop.",
+        "whyWorks": "closest_point's peak memory is linear in K = points x candidates-per-point within a single invocation, and each invocation frees its temporaries on return. Splitting the point array into batches of B and concatenating only the (B,) distance vectors therefore caps peak memory at K_batch ~ B x candidates-per-point while the retained result stays a (n,) float64 array — a ~3.8 GB spike at B=20000 becomes ~200 MB at B=1024, a 20x reduction, without touching a single distance value. The results are bit-identical because closest_point is a pure per-point query with no cross-point coupling: batching changes only the allocation schedule, so every existing numeric assertion in tests/test_geometry_diff.py still holds. Probing candidates-per-point on the first small batch and sizing subsequent batches to a byte ceiling makes the bound adaptive to mesh density, which is the variable that actually differs between the plates in the test fixtures and abc_0365 — a fixed batch size would still be tuned for one of them and wrong for the other. Exposing --samples restores an in-CLI escape hatch so no future agent has to abandon the documented tool mid-SOP.",
+        "applyInstructions": [
+          "Step 1: In cadtools/geometry_diff.py add module constants `DISTANCE_CHUNK_BYTES = 256 * 1024 * 1024` (peak working-set ceiling for one proximity batch) and `MIN_CHUNK = 256`, `MAX_CHUNK = 4096`, documenting that the ceiling exists because trimesh.proximity.closest_point allocates ~150-200 bytes per (point, candidate-triangle) pair in one shot.",
+          "Step 2: Rewrite _surface_distance (geometry_diff.py:279-291) to loop over the point array in slices, calling trimesh.proximity.closest_point once per slice and appending only the (b,) distance vector to a list, then np.concatenate at the end. Keep the existing empty-input guard (points.size == 0 or target.n_faces == 0) and the float64 cast unchanged.",
+          "Step 3: Make the batch size adaptive: run the first slice at MIN_CHUNK, measure candidates-per-point on it via `len(np.concatenate(trimesh.proximity.nearby_faces(tm, first_slice))) / MIN_CHUNK`, then set chunk = clip(DISTANCE_CHUNK_BYTES / (200 * candidates_per_point), MIN_CHUNK, MAX_CHUNK) for the remaining slices. Build the trimesh object ONCE outside the loop (to_trimesh(target) currently rebuilds per call) so the AABB tree is reused across batches.",
+          "Step 4: Add `n_samples: int = DEFAULT_SAMPLES` to diff_files (geometry_diff.py:258-269) and forward it to diff_shapes, which already accepts it (geometry_diff.py:192).",
+          "Step 5: Add `p.add_argument(\"--samples\", type=int, default=DEFAULT_SAMPLES, dest=\"n_samples\", help=\"Surface samples per body for the proximity query (default 20000). Lower it for very dense meshes.\")` to the diff subparser (cadtools/cli.py:301-309) and pass `n_samples=args.n_samples` through _cmd_diff (cli.py:129-131).",
+          "Step 6: Emit the effective sample count and the resolved chunk size into DiffReport.to_dict() (geometry_diff.py:124-140) as `n_samples` and `chunk_size`, so a report reader can tell a 3000-sample diff from a 20000-sample one — the abc_0365 evidence had to say so in prose because the JSON does not carry it.",
+          "Step 7: Update .claude/agents/cad-step-editor.md:69 to mention `--samples` as the documented recourse for a memory-constrained diff, replacing the current implicit assumption that diff always completes."
+        ],
+        "assumptions": [
+          {
+            "text": "Batching trimesh.proximity.closest_point produces bit-identical distances to a single full-array call, because the query is pure per-point with no cross-point state.",
+            "status": "verified",
+            "basis": "Inspected trimesh 5.0.0 closest_point source: candidates are computed per point via nearby_faces, and every subsequent operation (tile_idxs, query_tri, _corresponding, the per-query argsort via np.array_split on query_group) is grouped strictly within a single point's candidate span. No reduction crosses point boundaries."
+          },
+          {
+            "text": "The ~150-200 bytes-per-candidate-pair figure used to size DISTANCE_CHUNK_BYTES is derived from the live float64 arrays in closest_point, not measured with a profiler on abc_0365.",
+            "status": "unverified",
+            "basis": "Counted from the source: query_tri (K,3,3) f8 = 72 B, query_point (K,3) f8 = 24 B, query_close (K,3) f8 = 24 B, query_vector (K,3) f8 = 24 B, query_distance (K,) f8 = 8 B, all_candidates (K,) i8 = 8 B, tile_idxs (K,) i8 = 8 B, plus _corresponding internals. Consistent with the ~3.8 GB the abc_0365 report cites, but the constant should be validated against a real dense mesh before being treated as exact."
+          },
+          {
+            "text": "The 256 MB default ceiling is a policy choice, not a measured platform limit; the eval environment's actual memory headroom was not observed.",
+            "status": "hypothesis-pending",
+            "basis": "abc_0365's report attributes the kill to 'environment memory-pressure' without naming a cgroup limit or available RAM, and no container spec was available in the run artifacts. Confirming the right ceiling requires the eval harness's memory configuration."
+          }
+        ],
+        "cost": "medium",
+        "correctness": "high",
+        "diff": {
+          "before": "def _surface_distance(points: np.ndarray, target: MeshData) -> np.ndarray:\n    if points.size == 0 or target.n_faces == 0:\n        return np.zeros(len(points))\n    import trimesh\n\n    tm = to_trimesh(target)\n    _, distances, _ = trimesh.proximity.closest_point(tm, points)\n    return np.asarray(distances, dtype=np.float64)",
+          "after": "def _surface_distance(points: np.ndarray, target: MeshData) -> np.ndarray:\n    \"\"\"Chunked so peak memory is bounded by DISTANCE_CHUNK_BYTES, not by len(points).\n\n    trimesh.proximity.closest_point materialises the whole point-by-candidate-triangle\n    cross product in one allocation (~150-200 B per pair), which OOM-kills the process on\n    dense curved meshes at the default 20000 samples. Batching changes only the allocation\n    schedule: the query is pure per-point, so the distances are bit-identical.\n    \"\"\"\n    if points.size == 0 or target.n_faces == 0:\n        return np.zeros(len(points))\n    import trimesh\n\n    tm = to_trimesh(target)\n    chunk = MIN_CHUNK\n    out: list[np.ndarray] = []\n    i = 0\n    while i < len(points):\n        batch = points[i : i + chunk]\n        _, d, _ = trimesh.proximity.closest_point(tm, batch)\n        out.append(np.asarray(d, dtype=np.float64))\n        if i == 0:\n            per_point = max(\n                1.0,\n                len(np.concatenate(trimesh.proximity.nearby_faces(tm, batch))) / len(batch),\n            )\n            chunk = int(\n                np.clip(DISTANCE_CHUNK_BYTES / (200.0 * per_point), MIN_CHUNK, MAX_CHUNK)\n            )\n        i += len(batch)\n    return np.concatenate(out) if out else np.zeros(0)"
+        }
+      },
+      {
+        "remedyId": "R-004-2b",
+        "title": "Regression test (marked slow): a dense curved mesh diffs at 20000 samples under a memory ceiling, with distances identical to the unchunked path",
+        "applyTarget": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/tests/test_geometry_diff.py",
+        "targetClass": "code-construct",
+        "rationale": "All twelve existing tests in tests/test_geometry_diff.py (lines 20-110) run against small plate/hole fixtures whose candidate-per-point counts are tiny, so every one of them passes on the OOM-prone build — the suite has no dense curved fixture and no memory assertion at all. abc_0365 and abc_0368 are precisely the shapes the fixtures do not represent, which is why a 205-test green suite shipped a diff that dies on real benchmark geometry.",
+        "whyWorks": "Two assertions pin the two halves of the fix. An equivalence assertion (chunked output vs a forced single-batch output on a small fixture) proves the chunking did not perturb numerics, so a future 'optimisation' that changes distances fails immediately. A peak-memory assertion via tracemalloc on a dense curved fixture at the full default 20000 samples proves the ceiling is actually enforced, so a regression that removes the batching is caught as an allocation blow-up rather than as a CI OOM kill (which would look like flaky infrastructure). Marking the dense case `@pytest.mark.slow` keeps the default suite fast while leaving the guarantee executable in the nightly/full run.",
+          "applyInstructions": [
+          "Step 1: Add a dense curved fixture to tests/fixtures.py: a revolved or filleted body tessellated at a fine deflection so it yields a high triangle count with overlapping AABBs (a sphere or a heavily-filleted block is sufficient; assert mesh.n_faces exceeds a floor so the fixture cannot silently degrade into a coarse mesh).",
+          "Step 2: Add `test_dense_mesh_diff_stays_under_memory_ceiling`, decorated `@pytest.mark.slow`: wrap `diff_shapes(dense_ref, dense_cand, n_samples=DEFAULT_SAMPLES)` in tracemalloc.start()/get_traced_memory()/stop() and assert peak < 4 * DISTANCE_CHUNK_BYTES.",
+          "Step 3: Add `test_chunking_does_not_change_distances`: run diff_shapes on the existing plate/plate_with_corner_hole fixtures with DISTANCE_CHUNK_BYTES monkeypatched tiny (forcing many chunks) and again with it huge (forcing one chunk), then assert np.array_equal on report._distances for both runs.",
+          "Step 4: Add `test_diff_cli_accepts_samples_flag` to tests/test_cli.py: invoke the diff subcommand with `--samples 500` and assert exit code 0 and payload['data']['n_samples'] == 500, pinning the new escape hatch.",
+          "Step 5: Register the `slow` marker in pyproject.toml under [tool.pytest.ini_options] markers so the decorator does not emit PytestUnknownMarkWarning, and confirm the default invocation deselects it (`-m 'not slow'`) while CI's full run includes it.",
+          "Step 6: Run the full suite and confirm 205 existing tests remain green plus the new cases."
+        ],
+        "assumptions": [
+          {
+            "text": "tracemalloc's peak figure captures the closest_point temporaries, i.e. trimesh's large allocations are numpy arrays allocated through the Python allocator rather than inside a native extension invisible to tracemalloc.",
+            "status": "unverified",
+            "basis": "The arrays named in trimesh 5.0.0 closest_point (query_tri, query_point, query_close, query_vector, query_distance) are all created by numpy operations at Python level and are therefore tracked; nearby_faces' rtree internals are native and would not be. If the measured peak proves unrepresentative, substitute resource.getrusage(RUSAGE_SELF).ru_maxrss in a subprocess."
+          },
+          {
+            "text": "A synthetic dense fixture (sphere / heavily-filleted block) reproduces the candidate-per-point density that made abc_0365 and abc_0368 blow up; the actual abc meshes were not loaded during this analysis.",
+            "status": "hypothesis-pending",
+            "basis": "abc_0365-thicken and abc_0368-fill-hole are described in their reports as dense curved meshes and abc_0365's report notes n_faces changes in the 300s for a coarse relative, but the STEP bodies themselves were not tessellated here. Confirming the fixture's fidelity requires running the new test against the real abc inputs in the eval environment."
+          },
+          {
+            "text": "pyproject.toml does not already define a conflicting `slow` marker or an addopts line that would change which tests run by default.",
+            "status": "unverified",
+            "basis": "pyproject.toml exists at the repo root and the suite collects 205 tests with a bare `pytest --collect-only -q`, but its [tool.pytest.ini_options] section was not read during this analysis."
+          }
+        ],
+        "cost": "medium",
+        "correctness": "medium",
+        "describedChange": "Add a dense curved mesh fixture to tests/fixtures.py plus three regression tests: a slow-marked memory-ceiling assertion via tracemalloc on a full 20000-sample diff, a chunk-size-invariance assertion proving batched and unbatched distances are identical, and a CLI test pinning the new --samples flag. Register the `slow` marker in pyproject.toml. No existing test is modified."
+      }
+    ],
+    "sourceTraceIds": [
+      "eval-run-001/armA/abc_0365-thicken",
+      "eval-run-001/armA/abc_0368-fill-hole"
+    ],
+    "referenceIds": {
+      "traceId": "eval-run-001/armA/abc_0365-thicken",
+      "sessionId": "eval-run-001",
+      "findingId": "F-004-2"
+    },
+    "assumptions": [
+      {
+        "text": "The OOM is a property of mesh density interacting with the unchunked query, not of the specific abc_0365 / abc_0368 geometry being malformed.",
+        "status": "verified",
+        "basis": "abc_0365's report records that `verify` and `analyze` both complete successfully on the same candidate, that a self-diff of input-vs-input at n_samples=20000 also succeeds, and that the kill reproduces under --allow-repose (so it is not the frame check). Only the two-way 20000-sample proximity query dies."
+      },
+      {
+        "text": "trimesh 5.0.0 is the version whose closest_point implementation was inspected, and it is the version the eval run used.",
+        "status": "verified",
+        "basis": ".venv/lib/python3.*/site-packages contains trimesh-5.0.0.dist-info and rtree-1.4.1.dist-info; the source read for the whyChain came from that installed copy, not from upstream documentation."
+      },
+      {
+        "text": "cadtools/scoring.py carries the same DEFAULT_SAMPLES = 20000 (scoring.py:58, used at scoring.py:246-257) and may share the exposure, but no scoring OOM was observed in this run.",
+        "status": "unverified",
+        "basis": "scoring.py:273 samples via sample_surface_with_normals and matches through _match_fraction rather than through closest_point, so the allocation shape may differ; no eval-run-001 report mentions a `score` OOM. Whether the scorer's matcher has the same cross-product blow-up was not traced."
+      }
+    ]
+  }
+]

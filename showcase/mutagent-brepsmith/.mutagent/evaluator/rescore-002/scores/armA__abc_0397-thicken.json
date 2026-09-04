@@ -1,0 +1,59 @@
+{
+ "arm": "armA",
+ "id": "abc_0397-thicken",
+ "status": "ok",
+ "cad_score_proxy": 0.14285714285714288,
+ "scorecard": {
+  "convention": "cad-score-proxy/v1:interface-null-renormalized-0.7",
+  "valid": true,
+  "status": "ok",
+  "validity_failures": [],
+  "surface_distance_f1": 0.345436754176611,
+  "volume_iou": 0.3933837854427784,
+  "shape_similarity": 0.3694102698096947,
+  "baseline_shape_similarity": 0.9018455551353957,
+  "shape_similarity_renormalized": 0.0,
+  "topology_match": 1.0,
+  "interface": null,
+  "interface_available": false,
+  "betti_ground_truth": [
+   1,
+   0,
+   0
+  ],
+  "betti_candidate": [
+   1,
+   0,
+   0
+  ],
+  "betti_input": [
+   1,
+   0,
+   0
+  ],
+  "cad_score_proxy": 0.14285714285714288,
+  "proxy_weight_total": 0.7,
+  "weights": {
+   "shape": 0.6,
+   "interface": 0.3,
+   "topology": 0.1
+  },
+  "raw_components": {
+   "shape_renormalized": 0.0,
+   "interface": null,
+   "topology_match": 0.1
+  },
+  "frame_agreement": {
+   "agree": true,
+   "centre_delta": 0.00428052965673124,
+   "extent_delta": 0.008562825138257315,
+   "pose_delta": 0.0,
+   "sorted_extent_delta": 0.008562825138257315,
+   "axis_permutation": false,
+   "shape_divergence": false,
+   "tolerance": 16.667940610625337,
+   "reference_diagonal": 166.67940610625337,
+   "message": "bodies are posed in the same frame"
+  }
+ }
+}
