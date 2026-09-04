@@ -1,0 +1,200 @@
+{
+ "201": {
+  "is_valid": true,
+  "is_watertight": true,
+  "topology_errors": [],
+  "elapsed_s": 12.7
+ },
+ "202": {
+  "is_valid": false,
+  "is_watertight": false,
+  "topology_errors": [
+   "Face: BRepCheck_UnorientableShape"
+  ],
+  "elapsed_s": 17.0
+ },
+ "203": {
+  "is_valid": true,
+  "is_watertight": true,
+  "topology_errors": [],
+  "elapsed_s": 2.9
+ },
+ "204": {
+  "is_valid": true,
+  "is_watertight": true,
+  "topology_errors": [],
+  "elapsed_s": 1.9
+ },
+ "205": {
+  "is_valid": true,
+  "is_watertight": true,
+  "topology_errors": [],
+  "elapsed_s": 1.8
+ },
+ "206": {
+  "is_valid": true,
+  "is_watertight": true,
+  "topology_errors": [],
+  "elapsed_s": 7.4
+ },
+ "207": {
+  "is_valid": true,
+  "is_watertight": true,
+  "topology_errors": [],
+  "elapsed_s": 2.6
+ },
+ "208": {
+  "is_valid": true,
+  "is_watertight": true,
+  "topology_errors": [],
+  "elapsed_s": 6.0
+ },
+ "209": {
+  "is_valid": true,
+  "is_watertight": true,
+  "topology_errors": [],
+  "elapsed_s": 1.1
+ },
+ "211": {
+  "is_valid": true,
+  "is_watertight": true,
+  "topology_errors": [],
+  "elapsed_s": 8.7
+ },
+ "212": {
+  "is_valid": true,
+  "is_watertight": true,
+  "topology_errors": [],
+  "elapsed_s": 4.3
+ },
+ "214": {
+  "is_valid": true,
+  "is_watertight": true,
+  "topology_errors": [],
+  "elapsed_s": 3.6
+ },
+ "215": {
+  "is_valid": true,
+  "is_watertight": true,
+  "topology_errors": [],
+  "elapsed_s": 3.0
+ },
+ "217": {
+  "is_valid": false,
+  "is_watertight": false,
+  "topology_errors": [
+   "Face: BRepCheck_UnorientableShape"
+  ],
+  "elapsed_s": 2.5
+ },
+ "218": {
+  "is_valid": true,
+  "is_watertight": true,
+  "topology_errors": [],
+  "elapsed_s": 0.5
+ },
+ "224": {
+  "is_valid": true,
+  "is_watertight": true,
+  "topology_errors": [],
+  "elapsed_s": 1.1
+ },
+ "225": {
+  "is_valid": true,
+  "is_watertight": true,
+  "topology_errors": [],
+  "elapsed_s": 5.4
+ },
+ "229": {
+  "is_valid": true,
+  "is_watertight": true,
+  "topology_errors": [],
+  "elapsed_s": 1.5
+ },
+ "230": {
+  "is_valid": true,
+  "is_watertight": true,
+  "topology_errors": [],
+  "elapsed_s": 2.1
+ },
+ "231": {
+  "is_valid": true,
+  "is_watertight": true,
+  "topology_errors": [],
+  "elapsed_s": 0.8
+ },
+ "238": {
+  "is_valid": true,
+  "is_watertight": true,
+  "topology_errors": [],
+  "elapsed_s": 4.5
+ },
+ "240": {
+  "is_valid": false,
+  "is_watertight": false,
+  "topology_errors": [
+   "Face: BRepCheck_UnorientableShape"
+  ],
+  "elapsed_s": 6.5
+ },
+ "241": {
+  "is_valid": true,
+  "is_watertight": true,
+  "topology_errors": [],
+  "elapsed_s": 1.7
+ },
+ "242": {
+  "is_valid": true,
+  "is_watertight": true,
+  "topology_errors": [],
+  "elapsed_s": 8.8
+ },
+ "243": {
+  "is_valid": true,
+  "is_watertight": true,
+  "topology_errors": [],
+  "elapsed_s": 12.7
+ },
+ "244": {
+  "is_valid": true,
+  "is_watertight": true,
+  "topology_errors": [],
+  "elapsed_s": 2.2
+ },
+ "245": {
+  "is_valid": true,
+  "is_watertight": true,
+  "topology_errors": [],
+  "elapsed_s": 2.7
+ },
+ "246": {
+  "is_valid": true,
+  "is_watertight": true,
+  "topology_errors": [],
+  "elapsed_s": 5.4
+ },
+ "247": {
+  "is_valid": true,
+  "is_watertight": true,
+  "topology_errors": [],
+  "elapsed_s": 10.1
+ },
+ "248": {
+  "is_valid": true,
+  "is_watertight": true,
+  "topology_errors": [],
+  "elapsed_s": 16.2
+ },
+ "249": {
+  "is_valid": true,
+  "is_watertight": true,
+  "topology_errors": [],
+  "elapsed_s": 3.9
+ },
+ "250": {
+  "is_valid": true,
+  "is_watertight": true,
+  "topology_errors": [],
+  "elapsed_s": 6.9
+ }
+}

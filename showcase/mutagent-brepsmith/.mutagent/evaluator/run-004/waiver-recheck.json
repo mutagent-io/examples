@@ -1,0 +1,85 @@
+{
+ "211": {
+  "classification": "false-positive (same-domain merge only)",
+  "evidence": {
+   "volume_delta_mm3": 55223.972,
+   "expected_volume_delta_mm3": 55231.936,
+   "volume_error_pct": 0.0144,
+   "locality_is_localized_to": true,
+   "max_distance_outside_mm": 0.07398,
+   "changed_fraction": 0.0105,
+   "betti_delta": [
+    0,
+    0,
+    0
+   ],
+   "frame_agree": true,
+   "surface_types_destroyed": {
+    "PLANE": 3
+   },
+   "surface_type_allowance": {
+    "PLANE": 1
+   },
+   "diff_exit_code": 0,
+   "diff_checks_passed": true
+  }
+ },
+ "214": {
+  "classification": "false-positive (same-domain merge only)",
+  "evidence": {
+   "volume_delta_mm3": 39993.569,
+   "expected_volume_delta_mm3": 40015.518,
+   "volume_error_pct": 0.0549,
+   "locality_is_localized_to": true,
+   "max_distance_outside_mm": 0.0,
+   "changed_fraction": 0.0,
+   "betti_delta": [
+    0,
+    0,
+    0
+   ],
+   "frame_agree": true,
+   "surface_types_destroyed": {
+    "CONE": 2,
+    "CYLINDER": 27,
+    "SPHERE": 3,
+    "TORUS": 29
+   },
+   "surface_type_allowance": {
+    "CONE": 1,
+    "CYLINDER": 1,
+    "SPHERE": 1,
+    "TORUS": 1
+   },
+   "diff_exit_code": 0,
+   "diff_checks_passed": true
+  }
+ },
+ "218": {
+  "classification": "false-positive (same-domain merge only)",
+  "evidence": {
+   "volume_delta_mm3": 257.46,
+   "expected_volume_delta_mm3": 257.46,
+   "volume_error_pct": 0.0001,
+   "locality_is_localized_to": true,
+   "max_distance_outside_mm": 0.0,
+   "changed_fraction": 0.0,
+   "betti_delta": [
+    0,
+    0,
+    0
+   ],
+   "frame_agree": true,
+   "surface_types_destroyed": {
+    "CONE": 4,
+    "CYLINDER": 10
+   },
+   "surface_type_allowance": {
+    "CONE": 1,
+    "CYLINDER": 1
+   },
+   "diff_exit_code": 0,
+   "diff_checks_passed": true
+  }
+ }
+}

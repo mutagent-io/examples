@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+runs/*
+!runs/.gitkeep
+datasets/**/samples/
+*.egg-info/
+
+# bulk data — reconstructible, not tracked (provenance manifests ARE tracked)
+datasets/cadgenbench-data/
+datasets/abc-pool/admitted/
+datasets/synthetic-edit-pairs/cases/
+datasets/abc-raw/gap2b_work/*.step
+node_modules/

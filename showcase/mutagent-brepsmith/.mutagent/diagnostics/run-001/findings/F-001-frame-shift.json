@@ -1,0 +1,218 @@
+[
+  {
+    "findingId": "F-001-frame-shift",
+    "actionable": "abc_0365-thicken was NOT frame-shifted; the ground truth is defective and the scorer's A4 check mislabels a legitimate shape divergence as 'frame-disagreement'.",
+    "problem": "The abc_0365-thicken ground truth grows the part in +Y (footprint 80mm -> 106.25mm, Z thickness unchanged at 165mm), directly contradicting its own generated instruction ('thickness 165.0 -> 206.25 mm ... keep the footprint identical') -- so an instruction-faithful candidate is scored 0.0 by the A4 frame-agreement gate on 1/20 armA samples and the identical 1/20 armB sample, and the gate reports the cause as 'frame-disagreement' when all three bodies share the identical bbox origin (-0.0, -40.0, -40.0).",
+    "audience": "META",
+    "failureOrigin": {
+      "what": "wrong-output",
+      "why": "spec-mismatch",
+      "where": "dataset-generator",
+      "evidence": "cadtools/synthetic_pairs.py:191-200 (_thicken) + :89-93 (_top_planar_face)",
+      "whatHappened": "_thicken picks the planar face with the greatest centre-Z and calls bd.extrude(face, amount), which grows along that FACE NORMAL, while the instruction metadata on lines 198-199 is computed from bbox.size.Z on the assumption the growth is in Z. abc_0365's top is a domed cylinder/torus/bspline blend with no +Z-facing planar face, so the max-centre-Z planar face faces sideways: the realized ground truth grew Y from 80mm to 106.25mm and left Z at 165mm, while the rendered instruction promised Z 165->206.25 with an identical footprint. The generator emitted an unsatisfiable pair and nothing validated it.",
+      "example": "amount = round(bbox.size.Z * 0.25, 3); face = _top_planar_face(shape); grown = bd.extrude(face, amount)  # extrudes along the FACE NORMAL, not +Z",
+      "confidence": "high"
+    },
+    "whyChain": [
+      {
+        "why": "The scorer zeroed armA/abc_0365-thicken with validity_failures: ['frame-disagreement'] and cad_score_proxy 0.0.",
+        "evidence": ".mutagent/evaluator/run-001/scores/armA/abc_0365-thicken.json:10-30",
+        "whatHappened": "The scorecard records valid:false, status 'frame-disagreement', surface_distance_f1 0.0, volume_iou 0.0, cad_score_proxy 0.0, with frame_agreement.centre_delta 24.4471 and extent_delta 48.8938 against a tolerance of 24.3993.",
+        "example": "\"message\": \"frame disagreement: bbox centre moved 24.4471 mm (> 24.3993 mm tolerance); bbox extents changed by 48.8938 mm (> 24.3993 mm tolerance)\""
+      },
+      {
+        "why": "The candidate is not displaced: input, ground truth and candidate all share an identical bbox minimum corner.",
+        "evidence": "measured via cadtools.step_io.import_step_file().bounding_box() on the three STEP files",
+        "whatHappened": "input bbox min (-0.0, -40.0, -40.0) size (145, 80, 165); ground_truth bbox min (-0.0, -40.0, -40.0) size (145, 106.25, 165); output.step bbox min (-0.0, -40.0, -40.0) size (145, 80, 206.25). No translation and no rotation exists anywhere in the triple -- the candidate is squarely in the input's coordinate frame. The scorer's 24.4471mm 'centre move' is entirely the arithmetic consequence of the two bodies having different SIZES about a shared origin corner.",
+        "example": "cand size (145.0, 80.0, 206.25) vs gt size (145.0, 106.25, 165.0); delta vector (0, -26.25, +41.25), norm 48.8938 -- exactly the reported extent_delta, and half of it (24.4471) is exactly the reported centre_delta"
+      },
+      {
+        "why": "check_frame_agreement gates on extent_delta as well as centre_delta, so any large legitimate dimension-change edit trips the A4 'pose' assertion.",
+        "evidence": "cadtools/geometry_diff.py:143-186, specifically :164 and :169-172",
+        "whatHappened": "The function computes extent_delta as the norm of the bbox-size difference and raises a problem whenever it exceeds FRAME_TOLERANCE_RATIO (0.10, line 49) times the reference diagonal. For a body whose diagonal is ~244mm that caps ANY size change at 24.4mm, but the thicken recipe family deliberately changes a dimension by 25% of the Z extent (41.25mm here). The check therefore cannot distinguish 'the candidate was re-posed' from 'the candidate is a different shape', and reports the latter under the former's name.",
+        "example": "FRAME_TOLERANCE_RATIO = 0.10 ... if extent_delta > tolerance: problems.append(f\"bbox extents changed by {extent_delta:.4f} mm ...\")"
+      },
+      {
+        "why": "The mislabel is fatal rather than cosmetic because scoring.py evaluates the frame gate BEFORE any similarity term and hard-raises.",
+        "evidence": "cadtools/scoring.py:340-346",
+        "whatHappened": "score_editing_sample calls check_frame_agreement(gt_mesh, candidate_mesh) as its first act and raises FrameDisagreementError before validity, surface F1, volume IoU or Betti comparison are ever computed. The harness catches it and writes a zeroed card, so all the diagnostic signal that would have shown 'this candidate is a well-formed body that simply disagrees with the GT in Y and Z' is discarded.",
+        "example": "frame = check_frame_agreement(gt_mesh, candidate_mesh)\n    if require_frame_agreement and not frame.agree:\n        raise FrameDisagreementError(..."
+      },
+      {
+        "why": "The agent's verify loop structurally cannot catch this class of miss: cadtools verify contains no frame check and no ground-truth comparison at all.",
+        "evidence": "cadtools/cli.py:113-123 (_cmd_verify) -> cadtools/validity.py:83-165 (check_validity)",
+        "whatHappened": "_cmd_verify calls check_validity_file and returns only BRep/shell/manifold/solid-count evidence; grep for 'frame' across validity.py returns nothing. The frame assertion lives exclusively in diff (cli.py:126-132) and score (cli.py:135-139), and diff's reference is the INPUT, never the ground truth -- which the agent does not possess. So the agent's report.json round-4 verify_validity block was correct and complete for what verify measures; verify was never the frame authority the failure narrative assumes it was.",
+        "example": "def _cmd_verify(args): report = check_validity_file(args.step); return Result(ok=report.is_valid, command=\"verify\", data=report.to_dict(), ...)"
+      },
+      {
+        "why": "The evaluator's suspected causes -- the round-3 2mm overlap slab, the --allow-repose flag, and the OOM-reduced sample count -- are all disconfirmed as causal.",
+        "evidence": "runs/eval-run-001/armA/abc_0365-thicken/round-3.py:20-26 + cadtools/geometry_diff.py:143-186 + .mutagent/evaluator/run-001/scores/armA/abc_0365-thicken.json:4-5",
+        "whatHappened": "(a) The 2mm overlap sinks the slab base to bbox.max.Z - 2.0 and raises its height to amount + 2.0, so the overlap is absorbed inside pre-existing material and the final Z max is 125 + 41.25 = 166.25 exactly, as the measured candidate bbox confirms -- the slab contributes zero bbox error. (b) check_frame_agreement reads mesh_bbox only and never touches sample_surface, so n_samples is irrelevant to it; the agent's reduction from 20000 to 3000 could not have weakened the frame assertion, and the scorer itself ran reduced (n_samples 5000, sample_reduction true) and still flagged. (c) --allow-repose only flips require_frame_agreement in the diff path against the INPUT; it has no reach into the scorer.",
+        "example": "overlap = 2.0; slab_height = amount + overlap; slab_z0 = bbox.max.Z - overlap   ->   measured cand bbox max Z = 166.25 = 125.0 + 41.25"
+      },
+      {
+        "why": "Both independent arms produced a byte-identical frame result, proving the divergence originates upstream of the agent.",
+        "evidence": ".mutagent/evaluator/run-001/scores/armA/abc_0365-thicken.json:23-30 vs .mutagent/evaluator/run-001/scores/armB/abc_0365-thicken.json (same block)",
+        "whatHappened": "armA and armB report centre_delta 24.44710987705213 and extent_delta 48.89381762227994 to the last digit. Two independently-run agents, one with the verify loop and one without, converged on the same instruction-faithful Z-thickened body. A defect located in the agent procedure could not reproduce identically across both arms; a defect in the shared ground truth necessarily does.",
+        "example": "armA frame_agreement.extent_delta == armB frame_agreement.extent_delta == 48.89381762227994"
+      },
+      {
+        "why": "Nothing in the generation pipeline validates that the realized ground-truth geometry matches the instruction it renders.",
+        "evidence": "cadtools/synthetic_pairs.py:191-200 + cadtools/manifest.py:86-137 (validate_manifest) + cadtools/cli.py:148-164 (_cmd_gen_pairs)",
+        "whatHappened": "_thicken returns its metadata dict computed from bbox.size.Z without ever re-measuring the fused result, the render template interpolates that unverified metadata into instruction prose, and _cmd_gen_pairs then calls validate_manifest -- which checks only key presence, id uniqueness, tier and edit_type enums, and path bookkeeping. No geometric assertion connects the emitted ground_truth.step back to the sentence describing it. This is the origin: the pipeline can publish a pair whose instruction is unsatisfiable by its own answer key, and did.",
+        "example": "return _solid(shape.fuse(grown)), {\"amount\": amount, \"old_thickness\": round(bbox.size.Z, 3), \"new_thickness\": round(bbox.size.Z + amount, 3)}   # metadata asserted, never measured",
+        "isOrigin": true
+      }
+    ],
+    "remedies": [
+      {
+        "remedyId": "R-001-thicken-axis",
+        "title": "Make _thicken grow the actual thickness axis, or refuse the sample",
+        "applyTarget": "cadtools/synthetic_pairs.py",
+        "targetClass": "code-construct",
+        "rationale": "The ground truth for abc_0365 grew Y from 80mm to 106.25mm and left Z at 165mm, while the instruction rendered from the same call promised Z 165->206.25 with an identical footprint. _thicken (synthetic_pairs.py:191-200) computes amount from bbox.size.Z but hands the extrusion direction to bd.extrude(face, amount), which follows the face normal of whatever _top_planar_face (:89-93) returned -- and that helper picks by greatest centre-Z among planar faces with no test that the face actually faces +Z. On a part with a domed top it returns a sideways face. A correct generator would either extrude along +Z regardless of the face normal, or decline to emit a thicken pair for a part that has no +Z-facing planar face.",
+        "whyWorks": "Constraining the growth direction to the same axis the metadata is measured on removes the divergence at its source: amount, old_thickness and new_thickness are all derived from bbox.size.Z, so forcing the extrusion along +Z makes the realized geometry satisfy the rendered sentence by construction. The guard clause covers the residual case where no +Z-facing planar face exists at all, so the recipe fails loudly at generation time instead of silently publishing an unsatisfiable pair. Because the fix lands upstream of both the scorer and the agent, every downstream consumer of the pair inherits the correction without further change.",
+        "applyInstructions": [
+          "Step 1: In cadtools/synthetic_pairs.py, add a helper _top_z_facing_face(shape) that filters shape.faces() to planar faces whose normal_at() has a +Z component above a threshold (e.g. dot with (0,0,1) > 0.9), then selects max by center().Z.",
+          "Step 2: In _thicken (line ~194), replace `face = _top_planar_face(shape)` with the new helper and raise a clear RecipeNotApplicable error naming the sample when the filtered list is empty.",
+          "Step 3: Replace `grown = bd.extrude(face, amount)` (line 195) with an explicit +Z extrusion, e.g. bd.extrude(face, amount, dir=(0,0,1)), so the direction no longer depends on the face normal.",
+          "Step 4: After the fuse, re-measure the result bbox and assert size.Z == pytest.approx(old + amount) and size.X/size.Y unchanged before returning the metadata dict, so the metadata is measured rather than asserted.",
+          "Step 5: Have generate_pairs skip (and record in the manifest) any case where the recipe raises RecipeNotApplicable, rather than aborting the whole batch.",
+          "Step 6: Regenerate datasets/synthetic-edit-pairs/cases/abc_0365-thicken and re-score both arms."
+        ],
+        "assumptions": [
+          {
+            "text": "build123d's extrude accepts an explicit direction argument in the pinned version; if the installed API differs, the equivalent is to build the extrusion solid directly (as round-2.py/round-3.py do with Solid.make_box) rather than relying on the face normal.",
+            "status": "unverified",
+            "basis": "Read synthetic_pairs.py:195 which uses the two-argument form; did not inspect the installed build123d signature or run the modified recipe."
+          },
+          {
+            "text": "Regenerating abc_0365-thicken is acceptable for eval-run-001 comparability; if the dataset is frozen for published results, this remedy applies to the next dataset revision and R-003 carries the interim mitigation.",
+            "status": "hypothesis-pending",
+            "basis": "No dataset-freeze policy found in the files read; requires an operator decision."
+          }
+        ],
+        "cost": "medium",
+        "correctness": "high",
+        "describedChange": "Constrain the thicken recipe's extrusion to the +Z axis that its metadata is measured on, guard the no-+Z-planar-face case with an explicit RecipeNotApplicable skip, and replace the asserted metadata dict with values re-measured from the fused result."
+      },
+      {
+        "remedyId": "R-002-gt-instruction-assert",
+        "title": "Assert ground-truth geometry against the rendered instruction at generation time",
+        "applyTarget": "cadtools/synthetic_pairs.py",
+        "targetClass": "code-construct",
+        "rationale": "The pipeline published a pair whose answer key contradicts its own question and no stage objected: _thicken returned metadata it never measured (synthetic_pairs.py:196-200), the render template interpolated it verbatim, and validate_manifest (manifest.py:86-137) checked only key presence, id uniqueness and enum membership. The defect surfaced only at scoring time, one full eval run downstream, disguised as a frame error. A pipeline that measured what it emitted would have rejected this case before it reached either arm.",
+        "whyWorks": "A post-generation geometric assertion closes the gap between the metadata the instruction is rendered from and the geometry actually written to ground_truth.step. Because it re-measures the emitted file rather than trusting the recipe's return value, it catches this failure mode for every recipe at once -- not just thicken -- including future recipes whose direction heuristics have the same latent weakness. Running it inside generate_pairs makes the check unskippable for anything that enters the dataset.",
+        "applyInstructions": [
+          "Step 1: Add a module-level function _assert_pair_consistent(input_shape, gt_shape, recipe_name, metadata) in cadtools/synthetic_pairs.py.",
+          "Step 2: For dimension-change recipes, assert the realized bbox delta matches the metadata: gt.bounding_box().size.Z - input.bounding_box().size.Z == approx(metadata['amount'], abs=1e-3), and assert size.X/size.Y are unchanged within the same tolerance when the instruction text contains the footprint-identical clause.",
+          "Step 3: For each other recipe family, add the analogous invariant (hole-pattern: volume decreases and betti_1 increases by count; boss-union: volume increases with bbox X/Y unchanged).",
+          "Step 4: Call _assert_pair_consistent from generate_pairs immediately after apply() and before the instruction is rendered or the STEP is written; raise a PairConsistencyError naming the sample, the recipe, the expected delta and the measured delta.",
+          "Step 5: Run the generator over the existing case set and triage every case it now rejects."
+        ],
+        "assumptions": [
+          {
+            "text": "abc_0365-thicken is the only pair in the current 20-sample set with a GT/instruction contradiction; the armB/abc_0067-fill-hole frame-disagreement is a separate cluster not analyzed here and may or may not share this root.",
+            "status": "unverified",
+            "basis": "grep over .mutagent/evaluator/run-001/scores/*/*.json returned exactly three frame-disagreement files: armA and armB abc_0365-thicken plus armB abc_0067-fill-hole; the fill-hole case was outside this slice's scope and its bboxes were not measured."
+          }
+        ],
+        "cost": "medium",
+        "correctness": "high",
+        "describedChange": "Add a generation-time consistency gate that re-measures the emitted ground truth against the metadata its instruction is rendered from, invoked from generate_pairs before the pair is written, raising PairConsistencyError with expected-vs-measured deltas."
+      },
+      {
+        "remedyId": "R-003-separate-pose-from-shape",
+        "title": "Split A4 into a pose check and a shape-divergence check so the scorer stops mislabelling",
+        "applyTarget": "cadtools/geometry_diff.py",
+        "targetClass": "code-construct",
+        "rationale": "All three bodies in this case share the bbox minimum corner (-0.0, -40.0, -40.0) -- there is no translation or rotation anywhere -- yet check_frame_agreement reported a 24.4471mm centre move and the scorer recorded status 'frame-disagreement'. The reported centre_delta is arithmetically forced: two bodies of different size sharing an origin corner have centres offset by exactly half the size difference, which is why centre_delta (24.4471) is precisely half of extent_delta (48.8938) in the score card. The check as written (geometry_diff.py:163-172) conflates 'posed differently' with 'shaped differently', and the docstring's own promise at :48-49 -- that the tolerance passes a legitimate dimensional edit -- does not hold for the 25%-of-Z thicken family it must grade.",
+        "whyWorks": "Testing pose on quantities that are invariant to size -- the bbox minimum corner, or the principal axes -- makes the assertion measure what A4 actually claims to measure, so a body that was genuinely translated or spun still fails while a same-origin resize does not. Downgrading an extent-only mismatch from a raise to a distinct 'shape-divergence' status lets scoring.py proceed past line 340 and compute surface F1, volume IoU and Betti deltas, which turns a zeroed card carrying a false cause into a scored card carrying the real one. This is defence-in-depth behind R-001: even with a correct dataset it prevents the next legitimate large edit from being zeroed under a misleading label.",
+        "applyInstructions": [
+          "Step 1: In cadtools/geometry_diff.py, change check_frame_agreement to compute pose evidence from the bbox minimum corner (and optionally principal-axis alignment) instead of the centre, so it is invariant to a same-origin resize.",
+          "Step 2: Keep extent_delta on the FrameAgreement dataclass as reported evidence, but stop letting it set agree=False; introduce a separate boolean field (e.g. extents_diverge) alongside agree.",
+          "Step 3: In cadtools/scoring.py:340-346, raise FrameDisagreementError only when the pose check fails; when only extents diverge, proceed to score and record status 'shape-divergence' rather than 'frame-disagreement'.",
+          "Step 4: Update the module docstring at geometry_diff.py:16-21 and the FRAME_TOLERANCE_RATIO comment at :46-49 to state the new split explicitly.",
+          "Step 5: Re-score eval-run-001 and confirm abc_0365-thicken now yields a real (low, GT-disagreeing) proxy score with an informative status rather than a hard zero."
+        ],
+        "assumptions": [
+          {
+            "text": "No downstream consumer depends on the exact string 'frame-disagreement' appearing in validity_failures; the aggregate and reporting paths were not read.",
+            "status": "unverified",
+            "basis": "Read scoring.py:327-399 and cli.py only; cadtools/aggregate.py and the evaluator's report renderer were not inspected within the time cap."
+          },
+          {
+            "text": "A bbox-minimum-corner pose test is sufficient for the re-pose cases A4 is meant to catch (gross translation, 90-degree spin); a rotation about the min corner that preserves it would need the principal-axis term from Step 1.",
+            "status": "unverified",
+            "basis": "Derived from the tolerance rationale at geometry_diff.py:46-49; no adversarial re-pose fixture was constructed or run."
+          }
+        ],
+        "cost": "medium",
+        "correctness": "medium",
+        "describedChange": "Split check_frame_agreement into a size-invariant pose assertion (bbox minimum corner and principal axes) that keeps its hard raise, and a separate reported extents_diverge signal that lets the scorer continue and record 'shape-divergence' instead of zeroing under a frame label."
+      },
+      {
+        "remedyId": "R-004-verify-surfaces-frame",
+        "title": "Surface frame status in verify and stop the --allow-repose advisory downgrade",
+        "applyTarget": "cadtools/cli.py",
+        "targetClass": "code-construct",
+        "rationale": "The failure report states the agent's verify loop signed the body off, but _cmd_verify (cli.py:113-123) calls only check_validity_file and grep for 'frame' across validity.py returns nothing -- verify never had a frame opinion to give. Meanwhile the agent's round-4 note records that when the CLI diff OOM'd it re-ran the diff pipeline directly at n_samples=3000 and reported frame_check as 'flagged as disagreement ... the EXPECTED, documented false positive', converting a hard A4 assertion into advisory prose inside a report that then reached the ledger as valid with score 0.85. The bypass did not cause this miss (the assertion was itself a false positive here, and check_frame_agreement never reads n_samples), but the same downgrade path would silently absorb a real re-pose.",
+        "whyWorks": "Reporting frame status inside verify puts the check on the path the agent actually runs every round, so a genuine pose error can no longer be missed by simply not invoking diff. Making the require_frame_agreement=False path emit a machine-readable, structurally-preserved flag in the report rather than free prose means a downgraded assertion stays visible to the ledger and the scorer instead of being argued away in a narrative field. Together these keep the bypass available for its legitimate diagnostic use while removing its ability to disappear.",
+        "applyInstructions": [
+          "Step 1: In cadtools/cli.py _cmd_verify, accept an optional --reference argument; when supplied, run check_frame_agreement(reference, candidate) and include its to_dict() in the verify Result data.",
+          "Step 2: Leave verify's exit code driven by validity, but add the frame verdict as an explicit field so the agent's report carries it every round without a separate diff invocation.",
+          "Step 3: When --allow-repose is passed to diff (cli.py:126-132), stamp a machine-readable field such as frame_assertion_waived: true into the emitted report dict.",
+          "Step 4: In the round/ledger path, propagate that waiver flag into the RoundRecord so a waived assertion cannot be recorded as an unqualified valid result.",
+          "Step 5: Update the agent SOP so a waived frame assertion requires an explicit justification field rather than narrative prose in the report's note.",
+          "Step 6: STAT the SOP target before editing: run `ls -li` on the agent markdown under .claude/ and its published source to determine whether they are hardlinked (shared inode) or symlinked, since that decides whether one edit propagates to both."
+        ],
+        "assumptions": [
+          {
+            "text": "The agent obtained its round-4 frame_check line by calling diff_shapes directly with require_frame_agreement=False (or via --allow-repose); the exact invocation is not recorded in trace.jsonl, which logs only five round/emit events with no command lines.",
+            "status": "hypothesis-pending",
+            "basis": "Inferred from report.json:35 and :44, which describe re-running 'the diff pipeline directly with a reduced n_samples=3000' and report a soft 'flagged' verdict where the CLI default (cli.py:130) would have raised FrameDisagreementError; confirming it needs a command-level trace the run did not capture."
+          },
+          {
+            "text": "The link-type claim in Step 6 is unverified -- no filesystem stat was run against the SOP target within the time cap, so the propagation behaviour of an SOP edit is not established.",
+            "status": "unverified",
+            "basis": "DX-7 requires observing the real link type before asserting it; the check was not performed in this slice."
+          }
+        ],
+        "cost": "low",
+        "correctness": "medium",
+        "describedChange": "Give verify an optional --reference so it reports frame status on the agent's per-round path, and make the --allow-repose waiver a machine-readable flag propagated into the round record instead of a narrative note."
+      }
+    ],
+    "sourceTraceIds": [
+      "eval-run-001/armA/abc_0365-thicken",
+      "eval-run-001/armB/abc_0365-thicken"
+    ],
+    "referenceIds": {
+      "traceId": "eval-run-001/armA/abc_0365-thicken",
+      "sessionId": "eval-run-001",
+      "findingId": "F-001-frame-shift"
+    },
+    "assumptions": [
+      {
+        "text": "Source code for cadtools and the eval harness was directly readable in this worktree, so file:line citations are observed rather than inferred; no no-code-access caveat applies.",
+        "status": "verified",
+        "basis": "Read cadtools/geometry_diff.py, validity.py, cli.py, scoring.py, synthetic_pairs.py and manifest.py directly, and measured the three STEP bboxes with the repo's own .venv interpreter via cadtools.step_io.import_step_file."
+      },
+      {
+        "text": "The bbox measurements are exact enough to rule out a re-pose: all three bodies report an identical minimum corner and the score card's centre_delta/extent_delta reproduce to within 1e-3 from the measured sizes alone.",
+        "status": "verified",
+        "basis": "Measured sizes (145,80,165)/(145,106.25,165)/(145,80,206.25) give a GT-vs-candidate size-difference norm of 48.8938, matching the recorded extent_delta 48.89381762227994, and half of it 24.4471 matching centre_delta 24.44710987705213."
+      },
+      {
+        "text": "The evaluator's stated focus -- that the round-3 2mm overlap slab is suspect -- is disconfirmed rather than merely unsupported.",
+        "status": "verified",
+        "basis": "round-3.py:20-26 sinks the slab base to bbox.max.Z - 2.0 and raises height to amount + 2.0; the measured candidate bbox max Z is 166.25 = 125.0 + 41.25 exactly, so the overlap contributes zero bbox error."
+      },
+      {
+        "text": "The reduced sample count (agent n_samples=3000, scorer n_samples=5000 with sample_reduction true) did not weaken the frame assertion on either side.",
+        "status": "verified",
+        "basis": "check_frame_agreement (geometry_diff.py:143-186) derives every quantity from mesh_bbox and never calls sample_surface, which is invoked separately at :211-212 for the distance field only."
+      }
+    ]
+  }
+]

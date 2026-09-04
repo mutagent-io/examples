@@ -1,0 +1,55 @@
+{
+ "sample_id": "217",
+ "unhealed_failures": [
+  "BREP is not well-formed (BRepCheck_Analyzer::IsValid reported a defect)",
+  "tessellation is not closed (3F != 2E; open boundary in the mesh)"
+ ],
+ "unhealed_volume_mm3": 222144.44951042137,
+ "attempts": [
+  {
+   "strategy": "shapefix_default",
+   "valid": false,
+   "failures": [
+    "BREP is not well-formed (BRepCheck_Analyzer::IsValid reported a defect)",
+    "tessellation is not closed (3F != 2E; open boundary in the mesh)"
+   ],
+   "volume_mm3": 222144.44951042137,
+   "volume_delta_pct": 0.0,
+   "max_mesh_deviation_mm": null
+  },
+  {
+   "strategy": "sew_rebuild",
+   "valid": false,
+   "failures": [
+    "BREP is not well-formed (BRepCheck_Analyzer::IsValid reported a defect)",
+    "tessellation is not closed (3F != 2E; open boundary in the mesh)"
+   ],
+   "volume_mm3": 222144.44951042137,
+   "volume_delta_pct": 0.0,
+   "max_mesh_deviation_mm": null
+  },
+  {
+   "strategy": "shapefix_tol_0.01",
+   "valid": false,
+   "failures": [
+    "BREP is not well-formed (BRepCheck_Analyzer::IsValid reported a defect)",
+    "tessellation is not closed (3F != 2E; open boundary in the mesh)"
+   ],
+   "volume_mm3": 222144.44951042137,
+   "volume_delta_pct": 0.0,
+   "max_mesh_deviation_mm": null
+  },
+  {
+   "strategy": "unify_same_domain",
+   "valid": false,
+   "failures": [
+    "BREP is not well-formed (BRepCheck_Analyzer::IsValid reported a defect)",
+    "tessellation is not closed (3F != 2E; open boundary in the mesh)"
+   ],
+   "volume_mm3": 222144.42101258042,
+   "volume_delta_pct": 1e-05,
+   "max_mesh_deviation_mm": null
+  }
+ ],
+ "accepted": null
+}

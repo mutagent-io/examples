@@ -1,0 +1,372 @@
+[
+ {
+  "findingId": "F-005-1",
+  "actionable": "The fill-hole GT recipe selects the LARGEST-radius cylindrical face with no concavity filter, so on 20/22 cases it plugged a CONVEX outer face instead of a hole — the adjudicator's gt-mismatch quarantine is correct on 20 of 21 cases.",
+  "problem": "The fill-hole generator recipe picked a convex (outward-facing) cylindrical face as the 'hole' on 20 of 22 cases, producing ground truths that fuse a full-length rod through the part instead of filling a cavity — volume inflation up to +395% (abc_0300) and face-count collapse up to 682->5 (abc_0201); 20/22 fill-hole cases in the run-003 slice are unusable answer keys.",
+  "failureOrigin": {
+   "what": "wrong-output",
+   "why": "logic-error",
+   "where": "code-construct",
+   "evidence": "devtools/cadtools_devtools/synthetic_pairs.py:274-302 (_cylindrical_axes) and :334-360 (_fill_hole)",
+   "whatHappened": "_cylindrical_axes returns EVERY GeomAbs_Cylinder face with no concavity/orientation test; _fill_hole then takes max(axes, key=radius) and fuses a bbox-trimmed full-length cylinder of that radius. On real ABC parts the largest-radius cylinder is usually a convex outer boss or fillet arc, so the recipe fuses a rod through the part instead of plugging a cavity. Measured on all 22 slice cases: the selected face was CONVEX on 20 of the 21 quarantined cases and CONCAVE on the one gt-ok case (abc_0128, d=17.0 = stated 17.0) and on abc_0281 (d=37.0, 360-deg span) — a perfect separation between the adjudicator's verdict and measured convexity.",
+   "example": "origin, direction, radius = max(axes, key=lambda a: a[2])",
+   "confidence": "high"
+  },
+  "whyChain": [
+   {
+    "why": "21 of 22 fill-hole cases were quarantined as gt-mismatch",
+    "evidence": ".mutagent/evaluator/run-003/gt-adjudication.json",
+    "whatHappened": "the adjudicator reported 'concave-cavities-exist-but-none-match-stated-diameter' on 16 cases and 'no-concave-cylindrical-cavity-in-input' on 5",
+    "example": "\"classification\": \"gt-mismatch\", \"mismatch_detail\": \"no-concave-cylindrical-cavity-in-input\""
+   },
+   {
+    "why": "the stated diameter names a face that exists but is CONVEX, not a hole",
+    "evidence": "independent measurement, all 22 cases (BRepAdaptor_Surface + face Orientation)",
+    "whatHappened": "for every quarantined case the stated diameter equals exactly 2x the radius of a real cylindrical face in the input — but that face is convex. abc_0259: stated 46.6, measured convex d=46.6 (114.6-deg arc), concave faces present are only 36.0 and 41.8. abc_0361: stated 40.0, measured convex d=40.0 (90-deg arc), ZERO concave cylinders in the input. abc_0010: stated 5.08, measured convex d=5.08 (256-deg arc), concaves are 1.016 and 2.032. abc_0102: stated 6.0, measured convex d=6.0 (54.9-deg arc), ZERO concave cylinders.",
+    "example": "abc_0361 concave_diams=[] convex_diams=[6.8662, 30.0, 40.0], selected d=40.0 convex"
+   },
+   {
+    "why": "the recipe never tests concavity before selecting",
+    "evidence": "devtools/cadtools_devtools/synthetic_pairs.py:286-302",
+    "whatHappened": "the face loop appends (origin, direction, radius) for every cylindrical face and returns; nothing reads face.wrapped.Orientation() or a normal, so a convex outer boss is indistinguishable from a bore at selection time",
+    "isOrigin": false
+   },
+   {
+    "why": "the GT<->instruction consistency gate cannot see the defect",
+    "evidence": "devtools/cadtools_devtools/synthetic_pairs.py:457-464 RECIPE_CLAIMS",
+    "whatHappened": "RECIPE_CLAIMS['fill-hole'] asserts only {volume: +1, footprint: (0,1,2)}. The corrupted GT satisfies both — volume rises (a rod is added) and the bbox is unchanged because _fill_hole intersects the plug with the input's own bounding box before fusing. So check_pair_consistency passes a GT that fills no hole.",
+    "isOrigin": true
+   }
+  ],
+  "remedies": [
+   {
+    "remedyId": "R-005-1",
+    "title": "Filter _cylindrical_axes to concave faces and assert concavity in the fill-hole claim gate",
+    "applyTarget": "devtools/cadtools_devtools/synthetic_pairs.py",
+    "targetClass": "code-construct",
+    "rationale": "Measured on all 22 slice cases, the recipe-selected face is convex on 20 of 21 quarantined cases and concave on both cases whose GT is a real fill (abc_0128 d=17.0, abc_0281 d=37.0). A correct fill-hole recipe would select only faces whose material side faces the axis; the current max-by-radius selection has no such test, so it selects an outer boss whenever one is larger than every bore.",
+    "whyWorks": "A concavity predicate at selection time (face.wrapped.Orientation() == TopAbs_REVERSED on the cylinder, equivalently the outward normal pointing toward the axis) removes convex faces from the candidate set before max() runs, so the recipe either selects a real bore or raises the existing 'no cylindrical face to fill' error and the pair is never emitted. Adding a concavity assertion to RECIPE_CLAIMS['fill-hole'] closes the gate hole independently, so a future selection regression is caught at generation rather than at evaluation.",
+    "applyInstructions": [
+     "Step 1: in _cylindrical_axes (line 274), read face.wrapped.Orientation() per face and return concavity alongside (origin, direction, radius).",
+     "Step 2: in _fill_hole (line 334), filter axes to concave entries before max(...); keep the existing ValueError when the filtered list is empty so unfillable parts are refused, not corrupted.",
+     "Step 3: extend RECIPE_CLAIMS['fill-hole'] (line 460) with a concavity claim and assert it in check_pair_consistency, so the gate measures that a cavity disappeared rather than only that volume rose.",
+     "Step 4: regenerate the 22 fill-hole cases and re-run the adjudication; expect most inputs to be refused rather than re-emitted, which is the correct outcome."
+    ],
+    "assumptions": [
+     {
+      "text": "TopAbs_REVERSED on a cylindrical face is a sufficient concavity test for these solids; verified by independent reimplementation reproducing the adjudicator's concave-diameter lists exactly on all 22 cases (e.g. abc_0259 [36.0, 41.8], abc_0128 [3.0, 4.0, 4.9, 17.0]).",
+      "status": "verified",
+      "basis": "Independent measurement script reproduced gt-adjudication.json input_concave_cyl_diameters for every case."
+     }
+    ],
+    "cost": "medium",
+    "correctness": "high",
+    "describedChange": "Add a concavity predicate to cylindrical-face selection in the fill-hole recipe and a corresponding concavity assertion to the fill-hole entry of RECIPE_CLAIMS, so the recipe refuses parts without a real bore instead of plugging an outer boss."
+   }
+  ],
+  "sourceTraceIds": ["run-003/gt-adjudication.json", "datasets/synthetic-edit-pairs/cases/*-fill-hole"],
+  "referenceIds": {"traceId": "run-003-fill-hole", "sessionId": "run-003", "findingId": "F-005-1"},
+  "audience": "META",
+  "assumptions": [
+   {
+    "text": "Source code for the generator and evaluator was directly readable in this worktree; findings are grounded in measured geometry plus the recipe source, not inferred from trace metadata.",
+    "status": "verified",
+    "basis": "devtools/cadtools_devtools/synthetic_pairs.py read directly; all geometry measured from datasets/synthetic-edit-pairs/cases/*.step via OCP."
+   }
+  ]
+ },
+ {
+  "findingId": "F-005-2",
+  "actionable": "abc_0281-fill-hole was quarantined WRONGLY: its GT fills a real 37.0 mm concave through-hole, but the instruction drew the vague phrasing variant so stated_diameter is null and the adjudicator's diameter-match test can never pass.",
+  "problem": "The GT adjudicator's diameter-match test fails closed on cases whose instruction drew a vague render variant with no stated diameter — 4 such cases (abc_0170, abc_0254, abc_0281, abc_0349) had stated_diameter null and all 4 were classified gt-mismatch, of which abc_0281 is a measured-good GT that fills a genuine 37.0 mm concave through-hole; 1 of 21 quarantines is a false exclusion.",
+  "failureOrigin": {
+   "what": "wrong-output",
+   "why": "logic-error",
+   "where": "code-construct",
+   "evidence": ".mutagent/evaluator/run-003/gt-adjudication.json entry abc_0281-fill-hole: stated_diameter_mm=null, concave_faces_matching_stated_diameter=0, classification=gt-mismatch",
+   "whatHappened": "The adjudicator's only acceptance path is 'a concave cylindrical face matches the stated diameter'. When stated_diameter_mm is null (the 'Get rid of that big hole' / vague render variant), the match count is trivially 0 and the case is classified gt-mismatch regardless of the geometry. abc_0281's input in fact contains a concave 37.0 mm cylinder with a 360-degree span on the X axis, and the recipe selected exactly that face. The measured GT-minus-input volume is 88,167.2 mm3 against a maximum possible plug volume along X of pi*18.5^2*85.0 = 91,392.9 mm3 — 96.5% of the cylinder was void before the edit, which is what a full-depth through-hole fill looks like. This GT is good and was excluded anyway.",
+   "example": "\"stated_diameter_mm\": null, \"concave_faces_matching_stated_diameter\": 0, \"classification\": \"gt-mismatch\"",
+   "confidence": "high"
+  },
+  "whyChain": [
+   {
+    "why": "abc_0281 is in the 21-case quarantine list",
+    "evidence": ".mutagent/evaluator/run-003/aggregate.json funnel.quarantined",
+    "whatHappened": "the funnel dropped abc_0281-fill-hole from headline_n, taking the headline from 28 to 27"
+   },
+   {
+    "why": "its adjudication reports zero concave faces matching the stated diameter",
+    "evidence": "gt-adjudication.json abc_0281-fill-hole",
+    "whatHappened": "the record itself lists input_concave_cyl_diameters as [2.0, 3.5, 6.0, 10.0, 37.0] — a 37.0 mm concave cavity IS present — yet the match count is 0 because there is no stated diameter to match it against",
+    "example": "\"input_concave_cyl_diameters\": [2.0, 3.5, 6.0, 10.0, 37.0], \"stated_diameter_mm\": null"
+   },
+   {
+    "why": "direct geometric measurement confirms the GT filled that cavity",
+    "evidence": "measured: input vol 94,467.64 mm3, GT vol 182,634.86 mm3, both bbox min (-42.5,-75.0,0.0) size (85.0,150.0,50.0)",
+    "whatHappened": "the recipe-selected face reproduces as concave d=37.0, axis (-1,0,0), 360-degree span, origin (32.5,40.0,23.5); the measured volume delta of 88,167.2 mm3 is 96.5% of the 91,392.9 mm3 maximum X-axis plug, consistent with plugging a through-hole that ran nearly the full 85 mm width"
+   },
+   {
+    "why": "the adjudicator has no acceptance path that does not require a stated number",
+    "evidence": ".mutagent/evaluator/run-003/gt-adjudication.json (no adjudicator script is checked into the repo)",
+    "whatHappened": "the vague render variants ('Get rid of that big hole', 'Stick a round pad on top in the middle') deliberately omit dimensions, so a diameter-equality probe fails closed on them; the adjudicator never falls back to measuring whether a cavity disappeared between input and GT",
+    "isOrigin": true
+   }
+  ],
+  "remedies": [
+   {
+    "remedyId": "R-005-2",
+    "title": "Adjudicate fill-hole GT by measuring cavity disappearance, not by diameter string-match",
+    "applyTarget": ".mutagent/evaluator/run-003/gt-adjudication.json (and the unversioned script that produced it)",
+    "targetClass": "code-construct",
+    "rationale": "The adjudicator's acceptance test requires a stated diameter, but 4 of 22 fill-hole instructions drew a render variant that states none, and all 4 were classified gt-mismatch on that basis alone. abc_0281 measurably fills a real 37.0 mm concave through-hole (88,167.2 mm3 added, 96.5% of the maximum X-axis plug) and its own adjudication record lists that 37.0 mm cavity in input_concave_cyl_diameters — the verdict contradicts the evidence in the same record.",
+    "whyWorks": "Comparing the concave-cylinder inventory of input against ground_truth answers the actual question ('did a cavity get filled?') using only geometry, so it is independent of whether the instruction happens to quote a number. The stated diameter becomes a secondary consistency check applied only when present, which keeps the 16 genuinely-defective diameter-mismatch verdicts intact while removing the fail-closed behaviour on vague phrasings.",
+    "applyInstructions": [
+     "Step 1: commit the adjudicator as a versioned script — no script exists in the worktree, so the 21-case quarantine is currently unreproducible.",
+     "Step 2: make the primary test set-difference of concave cylindrical faces between input and ground_truth (a cavity present in input and absent in GT).",
+     "Step 3: apply the stated-diameter equality check only when stated_diameter_mm is non-null, as a secondary consistency probe.",
+     "Step 4: re-run and expect abc_0281 to reclassify gt-ok while abc_0170, abc_0254 and abc_0349 stay gt-mismatch (their selected faces measure convex)."
+    ],
+    "assumptions": [
+     {
+      "text": "The volume-delta test for abc_0281 is a strong but indirect proof of the fill; the direct boolean GT.cut(input) returned a degenerate result (2 lumps totalling the full GT volume) on this 139-face part, so OCCT boolean robustness prevented a face-level confirmation.",
+      "status": "unverified",
+      "basis": "Observed: GT.cut(input) returned vol 182,634.86 (= full GT volume) and input.cut(GT) returned 94,467.64 (= full input volume) despite identical frames; the same booleans succeeded cleanly on the control case abc_0128 (added 1 lump 12,726.55 mm3, removed EMPTY)."
+     }
+    ],
+    "cost": "low",
+    "correctness": "high",
+    "describedChange": "Replace the stated-diameter equality probe as the primary fill-hole acceptance test with a measured input-vs-GT concave-cavity set difference, demoting the diameter check to a secondary probe applied only when a diameter is stated."
+   }
+  ],
+  "sourceTraceIds": ["abc_0281-fill-hole", "abc_0170-fill-hole", "abc_0254-fill-hole", "abc_0349-fill-hole"],
+  "referenceIds": {"traceId": "abc_0281-fill-hole", "sessionId": "run-003", "findingId": "F-005-2"},
+  "audience": "META",
+  "assumptions": [
+   {
+    "text": "Source was directly readable; the adjudicator script itself is NOT in the worktree, so its exact logic is inferred from the fields it emitted rather than read.",
+    "status": "unverified",
+    "basis": "find over the worktree returned only gt-adjudication.json and unrelated skill reference docs; no producing script is checked in."
+   }
+  ]
+ },
+ {
+  "findingId": "F-005-3",
+  "actionable": "abc_0352-thicken armA loss is a real agent semantic miss: armA extruded the bounding-box cross-section instead of the +X face profile, adding 24,179.32 mm3 (+66%) of extra material, and its own verify passed because it only checked the three extents.",
+  "problem": "armA's thicken output on abc_0352 is a strict superset of ground truth by 24,179.32 mm3 (60,996.52 vs 36,817.20 mm3, +65.7%) because it extruded a full bounding-box rectangle rather than the +X face profile — and armA's self-verification reported 'intent: pass' because it compared only the three bbox extents, which match GT exactly (60.100 / 60.155 / 38.494 mm).",
+  "failureOrigin": {
+   "what": "wrong-output",
+   "why": "prompt-underspec",
+   "where": "agent-config",
+   "evidence": "runs/eval-run-003/armA/abc_0352-thicken/round-2.py and report.json",
+   "whatHappened": "The instruction says to add 12.02 mm of material ON THE +X-FACING FACE. The GT recipe _thicken does exactly that: shape.fuse(bd.extrude(face, requested)) — it extrudes the selected planar face's own profile. armB's script did the same (extrude(target_face, amount=12.02)) and its output is bit-for-bit equivalent to GT (vol 36,817.20, 31 faces, GT-minus-armB = 0.00 and armB-minus-GT = 0.00), scoring 1.0. armA instead built Box(12.02, bb.size.Y, bb.size.Z) — a full rectangular slab spanning the entire bounding-box cross-section — and fused it, giving vol 60,996.52 with GT-minus-armA = 0.00 (strict superset) and armA-minus-GT = 24,179.32 mm3. armA then ran a verify that checked X extent 48.08->60.1, Y unchanged, Z unchanged and surface-type counts, all of which a too-large slab satisfies, and reported 'intent: pass'.",
+   "example": "pad = Box(pad_dx, bb.size.Y, bb.size.Z)  # armA — vs — boss = extrude(target_face, amount=12.02)  # armB",
+   "confidence": "high"
+  },
+  "whyChain": [
+   {
+    "why": "armA scored 0.1429 on abc_0352 while armB scored 1.0 (delta -0.8571)",
+    "evidence": ".mutagent/evaluator/run-003/scores/{armA,armB}/abc_0352-thicken.json",
+    "whatHappened": "armA cad_score_proxy = 0.14285714285714288, armB = 1.0000000001110483; frame_agreement.agree is true on both and betti vectors are identical [1,5,0] across input, GT and both candidates, so this is not a pose or topology failure"
+   },
+   {
+    "why": "armA's shape similarity fell below the do-nothing baseline",
+    "evidence": "armA scorecard: shape_similarity 0.6786, baseline_shape_similarity 0.9078, shape_similarity_renormalized 0.0, volume_iou 0.6036",
+    "whatHappened": "the renormalisation clamps to 0 when the candidate is less similar to GT than the unedited input is, leaving only the topology term: 0.1 / proxy_weight_total 0.7 = 0.14285714285714288 exactly"
+   },
+   {
+    "why": "armA's added material is a bbox slab, not a face extrusion",
+    "evidence": "measured: armA vol 60,996.52 vs GT 36,817.20; boolean GT-minus-armA = 0.00, armA-minus-GT = 24,179.32",
+    "whatHappened": "armA fully contains GT and adds 24,179.32 mm3 on top — exactly the void between the +X face silhouette and its bounding rectangle, swept 12.02 mm"
+   },
+   {
+    "why": "armA's verify could not detect it",
+    "evidence": "runs/eval-run-003/armA/abc_0352-thicken/report.json verification.intent",
+    "whatHappened": "the intent check enumerated X extent 48.08->60.1, Y extent unchanged 60.154576, Z extent unchanged 38.494010 and surface-type counts. All three extents are identical between armA and GT, so an extent-only intent check is structurally incapable of catching a cross-section error; there is no volume, mass-delta or added-region-profile assertion in the loop.",
+    "isOrigin": true
+   }
+  ],
+  "remedies": [
+   {
+    "remedyId": "R-005-3",
+    "title": "Add an added-volume / added-region assertion to the armA verify loop",
+    "applyTarget": "runs/eval-run-003/armA (the armA agent's verify-loop definition)",
+    "targetClass": "local-agent-md",
+    "rationale": "armA's verify reported 'intent: pass' on an output carrying 65.7% more material than ground truth. The trace shows the check enumerated only the three extents, and armA's slab matches GT on all three (60.100 / 60.155 / 38.494 mm), so the pass was structurally guaranteed rather than earned. armB, which extruded the face profile, produced volume 36,817.20 mm3 identical to GT — showing the correct operation was available and expressible.",
+    "whyWorks": "For an 'add material on face F' instruction the added region must be the sweep of F's own profile; asserting that the added volume equals face.area * amount (within tolerance) fails immediately on a bbox slab because the bounding rectangle's area strictly exceeds the face area for any non-rectangular face. The assertion fires before export, so the wrong-cross-section class of error is caught in the agent's own loop rather than at scoring.",
+    "applyInstructions": [
+     "Step 1: in the verify step for extrude/pad operations, measure added volume as vol(result) - vol(input).",
+     "Step 2: assert added volume equals target_face.area * amount within the part's geometric tolerance; fail the round when it does not.",
+     "Step 3: prefer extrude(target_face, amount) over constructing a Box from bounding-box extents whenever the instruction names a face.",
+     "Step 4: keep the existing extent checks as a secondary assertion — they are necessary but demonstrably not sufficient."
+    ],
+    "assumptions": [
+     {
+      "text": "The armA verify loop is defined in an agent/prompt file rather than in checked-in code; the exact file was not located in this worktree, only its behaviour as recorded in report.json.",
+      "status": "hypothesis-pending",
+      "basis": "runs/eval-run-003/armA/*/report.json records the verification fields performed, but no armA agent definition was read during this analysis."
+     }
+    ],
+    "cost": "low",
+    "correctness": "high",
+    "describedChange": "Extend the armA verify loop for material-add operations with an added-volume assertion (added volume == target face area x amount) alongside the existing extent checks, and prefer face extrusion over bounding-box slab construction when the instruction names a face."
+   }
+  ],
+  "sourceTraceIds": ["abc_0352-thicken"],
+  "referenceIds": {"traceId": "abc_0352-thicken", "sessionId": "run-003", "findingId": "F-005-3"},
+  "audience": "META",
+  "assumptions": [
+   {
+    "text": "All geometry cited was measured directly from the run's own STEP artifacts in this worktree.",
+    "status": "verified",
+    "basis": "runs/eval-run-003/{armA,armB}/abc_0352-thicken/output.step and datasets/synthetic-edit-pairs/cases/abc_0352-thicken/*.step loaded via OCP; volumes from BRepGProp.VolumeProperties_s."
+   }
+  ]
+ },
+ {
+  "findingId": "F-005-4",
+  "actionable": "abc_0356-boss-union armA loss is a placement miss on a genuinely ambiguous instruction: armA centred the boss on the top-face centroid (Y=19.35) while GT uses the bbox footprint centre (Y=35.28), a 15.93 mm offset — and the vague render variant states no coordinates.",
+  "problem": "armA placed a dimensionally-perfect boss (r=12.869, h=8.97, volume identical to GT at 13,985.60 mm3, face count 53 in both) 15.93 mm off in Y from ground truth — 1.24x the boss radius, so the two discs barely overlap — because the instruction drew the vague render variant 'Stick a round pad on top in the middle', which states no X/Y while the recipe's 'middle' is the bounding-box footprint centre.",
+  "failureOrigin": {
+   "what": "wrong-output",
+   "why": "prompt-underspec",
+   "where": "system-prompt",
+   "evidence": "datasets/synthetic-edit-pairs/cases/abc_0356-boss-union/edit_description.txt and devtools/cadtools_devtools/synthetic_pairs.py:428-441",
+   "whatHappened": "_boss_union computes cx = bbox.min.X + bbox.size.X/2 and cy = bbox.min.Y + bbox.size.Y/2, giving the GT boss axis at (0.000, 35.278) — confirmed by measuring the r=12.869 cylindrical face in ground_truth.step. armB used the same bbox-centre construction and matched exactly (boss axis 0.000, 35.28; volume 13,985.60; score 1.0). armA instead identified the top planar face at z=8.128 and used its centroid (0.00006, 19.3484), producing a boss at axis (0.000, 19.35) — a 15.93 mm Y displacement. armA's boss is otherwise exact: same radius, same height, same z-base 8.128, and total volume equal to GT to two decimals. The instruction it received was the vague variant that omits the coordinates the verbose variant would have supplied ('centred at X={x} mm, Y={y} mm'), so 'in the middle' is ambiguous between the top face's centroid and the footprint centre and armA's reading is defensible.",
+   "example": "Stick a round pad on top in the middle — roughly 25.738 mm across and 8.97 mm tall.",
+   "confidence": "high"
+  },
+  "whyChain": [
+   {
+    "why": "armA scored 0.1429 on abc_0356 while armB scored 1.0 (delta -0.8571)",
+    "evidence": ".mutagent/evaluator/run-003/scores/{armA,armB}/abc_0356-boss-union.json",
+    "whatHappened": "armA cad_score_proxy 0.14285714285714288 with shape_similarity 0.6924 below baseline_shape_similarity 0.7571, so shape_similarity_renormalized clamped to 0.0 and only the topology term survived; frame_agreement.agree true, betti [1,0,0] identical across input, GT and both candidates"
+   },
+   {
+    "why": "armA's boss is the right size in the wrong place",
+    "evidence": "measured r=12.869 cylindrical face: GT origin (0.0, 35.28, 8.13), armA origin (0.0, 19.35, 8.13), armB origin (0.0, 35.28, 8.13)",
+    "whatHappened": "all three bosses have identical radius 12.869, identical 360-degree span and identical z-base 8.13; only the Y coordinate differs, by 15.93 mm. Total volumes are 13,985.60 mm3 for GT, armA and armB alike, and all three have 53 faces — the error is a pure translation."
+   },
+   {
+    "why": "a translated boss scores below the do-nothing baseline",
+    "evidence": "armA shape_similarity 0.6924 vs baseline_shape_similarity 0.7571",
+    "whatHappened": "the 15.93 mm offset exceeds the 12.869 mm radius, so armA's boss occupies material where GT has none and omits material where GT has some — a double penalty, whereas the unedited input is merely missing the boss once. The score is a correct ordering, not a scorer bug."
+   },
+   {
+    "why": "the instruction the case shipped states no coordinates",
+    "evidence": "devtools/cadtools_devtools/synthetic_pairs.py:649-655 _render variants",
+    "whatHappened": "the boss-union recipe renders three phrasings; the verbose one states 'centred at X={x} mm, Y={y} mm' from the same params dict the GT was built from, but abc_0356 drew the vague variant 'Stick a round pad on top in the middle', which drops the x and y the answer key depends on. The recipe defines 'middle' as the bbox footprint centre; nothing in the shipped sentence says so.",
+    "isOrigin": true
+   }
+  ],
+  "remedies": [
+   {
+    "remedyId": "R-005-4",
+    "title": "Restrict vague render variants to recipes whose answer key does not depend on the dropped parameter",
+    "applyTarget": "devtools/cadtools_devtools/synthetic_pairs.py",
+    "targetClass": "code-construct",
+    "rationale": "abc_0356's ground truth is uniquely determined by an X/Y the shipped sentence never states. armA produced a boss identical to GT in radius (12.869), height (8.97), z-base (8.128) and total volume (13,985.60 mm3) and differed only in Y placement — it satisfied every constraint the instruction actually expressed, and still scored the floor. The same recipe's verbose variant does state 'centred at X={x} mm, Y={y} mm', so the information exists and was discarded at render time.",
+    "whyWorks": "Gating the vague variants on whether the recipe's claim table marks any rendered parameter as answer-key-determining means a case can only ship a phrasing that is sufficient to reconstruct its own ground truth. The ambiguity is removed at generation, so no scoring or agent change is needed and the vague phrasings remain available for recipes (such as through-hole) whose GT is fully determined by the geometry.",
+    "applyInstructions": [
+     "Step 1: mark, per recipe in RECIPE_CLAIMS (line 457), which rendered params are answer-key-determining — for boss-union that is x and y as well as diameter and height.",
+     "Step 2: in _render, reject a phrasing variant that omits any answer-key-determining param for that recipe.",
+     "Step 3: alternatively, keep the vague variants and define 'in the middle' in the recipe description so the placement convention is stated once and consistently.",
+     "Step 4: audit the other vague-variant cases in the slice for the same class of dropped-parameter ambiguity."
+    ],
+    "assumptions": [
+     {
+      "text": "The boss at the bbox footprint centre and the boss at the top-face centroid both rest fully on material, so neither reading is geometrically invalid — confirmed for GT by its added volume of 4,666.94 mm3 forming a single lump equal to the full cylinder.",
+      "status": "verified",
+      "basis": "Measured GT.cut(input) = 1 lump, 4,666.94 mm3 = pi * 12.869^2 * 8.97; armA's report.json records changed_bbox_size [25.736, 25.733, 8.97] and is_localized_to true."
+     }
+    ],
+    "cost": "medium",
+    "correctness": "medium",
+    "describedChange": "Mark answer-key-determining parameters per recipe and forbid render variants that omit them, or state the placement convention in the recipe description so 'in the middle' resolves unambiguously to the bounding-box footprint centre."
+   }
+  ],
+  "sourceTraceIds": ["abc_0356-boss-union"],
+  "referenceIds": {"traceId": "abc_0356-boss-union", "sessionId": "run-003", "findingId": "F-005-4"},
+  "audience": "META",
+  "assumptions": [
+   {
+    "text": "The armA-vs-GT boolean difference was degenerate on this part (both directions returned the full volume), so the displacement was established from the measured boss cylinder axis rather than from a boolean.",
+    "status": "verified",
+    "basis": "armA.cut(GT) and GT.cut(armA) each returned 13,985.60 mm3; the r=12.869 cylindrical face axis was read directly from each STEP via BRepAdaptor_Surface."
+   }
+  ]
+ },
+ {
+  "findingId": "F-005-5",
+  "actionable": "The n=27 headline is not honest as stated: it silently drops 20 of 22 fill-hole cases for a generator defect, wrongly excludes 1 good case, and reports a rubric where 30% of the weight (interface) was unavailable on 48/48 samples.",
+  "problem": "The run-003 headline reports mean 0.782 (armA) / 0.806 (armB) over n=27 without stating that the surviving set retains only 1 of 22 fill-hole cases — the slice's largest recipe class, 46% of the designed samples — so the headline measures a different benchmark than the one designed; additionally abc_0281 was excluded in error and interface_available is false on 48/48 scorecards, leaving 30% of the rubric weight unevaluated across the entire run.",
+  "failureOrigin": {
+   "what": "wrong-output",
+   "why": "missing-context",
+   "where": "agent-config",
+   "evidence": ".mutagent/evaluator/run-003/aggregate.json funnel and per_sample_headline",
+   "whatHappened": "The designed slice was 48 stable samples with recipe mix fill-hole 22, thicken 14, boss-union 5, through-hole 4, hole-pattern 3. After quarantine the headline n=27 has mix thicken 14, boss-union 5, through-hole 4, hole-pattern 3, fill-hole 1. The feature-removal capability the fill-hole class was there to measure is represented by a single sample (abc_0128), on which both arms score near the floor (armA 0.1307, armB 0.1312). Separately, every one of the 96 scorecards reports interface_available false and convention 'cad-score-proxy/v1:interface-null-renormalized-0.7', so the interface term worth 0.3 of the rubric was never computed and scores are renormalised over 0.7.",
+   "example": "\"headline_n\": 27, \"quarantined_n\": 21",
+   "confidence": "high"
+  },
+  "whyChain": [
+   {
+    "why": "the headline excludes 21 of 48 stable samples",
+    "evidence": "aggregate.json funnel.quarantined",
+    "whatHappened": "all 21 quarantined samples are fill-hole; 20 of them are measurably defective GT (F-005-1) and 1 (abc_0281) is a measurably good GT excluded by an adjudicator bug (F-005-2)"
+   },
+   {
+    "why": "restoring the wrongly-excluded case moves both means",
+    "evidence": "already-computed scores: armA abc_0281 0.1616, armB abc_0281 0.1445",
+    "whatHappened": "arithmetic on the run's own scores: armA (0.7820*27 + 0.1616)/28 = 0.7598; armB (0.8059*27 + 0.1445)/28 = 0.7823. The A-vs-B ordering is unchanged (armB still ahead by ~0.023), but both headline means drop by ~0.022."
+   },
+   {
+    "why": "the surviving set no longer covers feature-removal",
+    "evidence": "measured recipe mix: designed fill-hole 22/48 (46%), headline fill-hole 1/27 (4%)",
+    "whatHappened": "the quarantine removed the single largest recipe class almost entirely, so a mean over the survivors is a mean over thicken/boss-union/through-hole/hole-pattern, not over the benchmark that was designed"
+   },
+   {
+    "why": "30% of the rubric weight was never evaluated",
+    "evidence": "all 96 scorecards: interface_available false, proxy_weight_total 0.7",
+    "whatHappened": "the interface term (weight 0.3) is null on every sample in both arms, so cad_score_proxy is renormalised over 0.7 and the floor for any sub-baseline output is exactly 0.1/0.7 = 0.14285714285714288 — which 7 armA and 5 armB samples hit exactly",
+    "isOrigin": true
+   }
+  ],
+  "remedies": [
+   {
+    "remedyId": "R-005-5",
+    "title": "Report n=28 as an explicitly re-scoped result and mark fill-hole capability incomplete-pending-dataset-repair",
+    "applyTarget": ".mutagent/evaluator/run-003/aggregate.json",
+    "targetClass": "code-construct",
+    "rationale": "Of the three candidate headlines, n=27-as-computed is wrong on the evidence (abc_0281 is a good GT, measured 88,167.2 mm3 filling a real 37.0 mm concave through-hole) and incomplete-pending-dataset-repair overstates the damage (27 samples across four recipe classes are sound and their GT was never in question). The corrected n=28 is the defensible number, but it cannot be reported bare: fill-hole coverage falls from 22 designed samples to 2, so the mean answers a narrower question than the slice was built to ask.",
+    "whyWorks": "Publishing the corrected n=28 with the recipe-mix delta and the interface-unavailability stated inline makes the scope of the claim explicit at the point of reading, so a reader cannot mistake a four-recipe mean for the five-recipe benchmark. Splitting the fill-hole verdict out as incomplete-pending-dataset-repair confines the unmeasured capability to its own line rather than letting a 1-sample class silently ride inside an aggregate mean.",
+    "applyInstructions": [
+     "Step 1: restore abc_0281-fill-hole to the headline set, giving n=28 (armA 0.7598, armB 0.7823 by arithmetic on the run's existing scores — no rescoring required).",
+     "Step 2: state alongside the headline that 20 fill-hole samples were excluded for a root-caused generator defect (F-005-1), not for a scoring judgement.",
+     "Step 3: report fill-hole capability separately as incomplete-pending-dataset-repair — n=2 (abc_0128, abc_0281) is not a capability measurement.",
+     "Step 4: state on the headline that interface_available is false on 48/48 samples and that scores are renormalised over 0.7, so 30% of the rubric is unevaluated.",
+     "Step 5: note that 7 armA and 5 armB samples sit exactly on the 0.1/0.7 floor, so sub-baseline outputs are compressed to a single value and per-sample deltas of -0.8571 are not proportional to error severity."
+    ],
+    "assumptions": [
+     {
+      "text": "Restoring abc_0281 is arithmetic over scores the run already computed and stored, not a rescoring; no geometry was re-evaluated to produce the n=28 means.",
+      "status": "verified",
+      "basis": ".mutagent/evaluator/run-003/scores/{armA,armB}/abc_0281-fill-hole.json contain cad_score_proxy 0.1616 and 0.1445 respectively, produced by the run itself in the quarantine bucket."
+     }
+    ],
+    "cost": "low",
+    "correctness": "high",
+    "describedChange": "Publish the corrected n=28 headline (armA 0.7598, armB 0.7823) labelled as a re-scoped four-recipe result, with the 20-case generator-defect exclusion, the 2-sample fill-hole coverage, the 48/48 interface-unavailable renormalisation and the 0.1/0.7 score floor stated inline; report fill-hole capability separately as incomplete-pending-dataset-repair."
+   }
+  ],
+  "sourceTraceIds": ["run-003"],
+  "referenceIds": {"traceId": "run-003-aggregate", "sessionId": "run-003", "findingId": "F-005-5"},
+  "audience": "META",
+  "assumptions": [
+   {
+    "text": "The A-vs-B comparison itself is unaffected by the quarantine correction: both arms were scored on the identical sample set at every stage.",
+    "status": "verified",
+    "basis": "aggregate.json shows identical headline n, quarantine n and validity_rate 1.0 for both arms, with no missing_outputs or score_failures in either."
+   }
+  ]
+ }
+]

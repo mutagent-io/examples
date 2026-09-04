@@ -1,0 +1,316 @@
+{
+  "source_dataset": "HuggingAI4Engineering/cadgenbench-submissions",
+  "extracted_at": "2026-08-25",
+  "entries": [
+    {
+      "name": "Claude Fable 5",
+      "submission_name": "Claude Fable 5 HF Baseline with Build123d",
+      "submission_id": "huggingface_claude-fable-5-hf-baseline-with-build123_20260610-121958",
+      "validation_status": "validated",
+      "submitted_at": "2026-06-10T12:20:01Z",
+      "report_path": "reports/huggingface_claude-fable-5-hf-baseline-with-build123_20260610-121958.json",
+      "aggregate_score": 0.4514,
+      "overall_validity_rate": 0.963,
+      "generation_mean": 0.3728,
+      "editing_mean": 0.5718,
+      "per_task": {
+        "generation": {
+          "score": 0.3728,
+          "validity_rate": 1.0,
+          "n_samples": 49,
+          "n_valid": 49,
+          "n_invalid": 0,
+          "n_missing": 0
+        },
+        "editing": {
+          "score": 0.5718,
+          "validity_rate": 0.9062,
+          "n_samples": 32,
+          "n_valid": 29,
+          "n_invalid": 3,
+          "n_missing": 0
+        }
+      },
+      "source_agreement": "results.jsonl matches report"
+    },
+    {
+      "name": "GPT-5.5 Pro",
+      "submission_name": "GPT-5.5 Pro HF Baseline with Build123d",
+      "submission_id": "huggingface_gpt-5-5-pro-hf-baseline-with-build123d_20260605-232717",
+      "validation_status": "validated",
+      "submitted_at": "2026-06-05T23:27:19Z",
+      "report_path": "reports/huggingface_gpt-5-5-pro-hf-baseline-with-build123d_20260605-232717.json",
+      "aggregate_score": 0.3871,
+      "overall_validity_rate": 0.8765,
+      "generation_mean": 0.3208,
+      "editing_mean": 0.4886,
+      "per_task": {
+        "generation": {
+          "score": 0.3208,
+          "validity_rate": 0.9184,
+          "n_samples": 49,
+          "n_valid": 45,
+          "n_invalid": 1,
+          "n_missing": 3
+        },
+        "editing": {
+          "score": 0.4886,
+          "validity_rate": 0.8125,
+          "n_samples": 32,
+          "n_valid": 26,
+          "n_invalid": 5,
+          "n_missing": 1
+        }
+      },
+      "source_agreement": "results.jsonl matches report"
+    },
+    {
+      "name": "Claude Opus 4.7",
+      "submission_name": "Claude Opus 4.7 HF Baseline with Build123d",
+      "submission_id": "huggingface_claude-opus-4-7-hf-baseline-with-build12_20260605-135748",
+      "validation_status": "validated",
+      "submitted_at": "2026-06-05T13:57:49Z",
+      "report_path": "reports/huggingface_claude-opus-4-7-hf-baseline-with-build12_20260605-135748.json",
+      "aggregate_score": 0.3691,
+      "overall_validity_rate": 0.9383,
+      "generation_mean": 0.2987,
+      "editing_mean": 0.4768,
+      "per_task": {
+        "generation": {
+          "score": 0.2987,
+          "validity_rate": 1.0,
+          "n_samples": 49,
+          "n_valid": 49,
+          "n_invalid": 0,
+          "n_missing": 0
+        },
+        "editing": {
+          "score": 0.4768,
+          "validity_rate": 0.8438,
+          "n_samples": 32,
+          "n_valid": 27,
+          "n_invalid": 2,
+          "n_missing": 3
+        }
+      },
+      "source_agreement": "results.jsonl matches report"
+    },
+    {
+      "name": "GPT-5.5",
+      "submission_name": "GPT-5.5 HF Baseline with Build123d",
+      "submission_id": "huggingface_gpt-5-5-hf-baseline-with-build123d_20260605-140819",
+      "validation_status": "validated",
+      "submitted_at": "2026-06-05T14:08:21Z",
+      "report_path": "reports/huggingface_gpt-5-5-hf-baseline-with-build123d_20260605-140819.json",
+      "aggregate_score": 0.3596,
+      "overall_validity_rate": 0.8765,
+      "generation_mean": 0.2971,
+      "editing_mean": 0.4553,
+      "per_task": {
+        "generation": {
+          "score": 0.2971,
+          "validity_rate": 0.9184,
+          "n_samples": 49,
+          "n_valid": 45,
+          "n_invalid": 1,
+          "n_missing": 3
+        },
+        "editing": {
+          "score": 0.4553,
+          "validity_rate": 0.8125,
+          "n_samples": 32,
+          "n_valid": 26,
+          "n_invalid": 4,
+          "n_missing": 2
+        }
+      },
+      "source_agreement": "results.jsonl matches report"
+    },
+    {
+      "name": "Claude Opus 4.8",
+      "submission_name": "Claude Opus 4.8 HF Baseline with Build123d",
+      "submission_id": "huggingface_claude-opus-4-8-hf-baseline-with-build12_20260605-134714",
+      "validation_status": "validated",
+      "submitted_at": "2026-06-05T13:47:15Z",
+      "report_path": "reports/huggingface_claude-opus-4-8-hf-baseline-with-build12_20260605-134714.json",
+      "aggregate_score": 0.3451,
+      "overall_validity_rate": 0.963,
+      "generation_mean": 0.2738,
+      "editing_mean": 0.4543,
+      "per_task": {
+        "generation": {
+          "score": 0.2738,
+          "validity_rate": 1.0,
+          "n_samples": 49,
+          "n_valid": 49,
+          "n_invalid": 0,
+          "n_missing": 0
+        },
+        "editing": {
+          "score": 0.4543,
+          "validity_rate": 0.9062,
+          "n_samples": 32,
+          "n_valid": 29,
+          "n_invalid": 3,
+          "n_missing": 0
+        }
+      },
+      "source_agreement": "results.jsonl matches report"
+    },
+    {
+      "name": "Gemini 3.1 Pro",
+      "submission_name": "Gemini 3.1 Pro HF Baseline with Build123d",
+      "submission_id": "huggingface_gemini-3-1-pro-hf-baseline-with-build123_20260610-125236",
+      "validation_status": "validated",
+      "submitted_at": "2026-06-10T12:52:39Z",
+      "report_path": "reports/huggingface_gemini-3-1-pro-hf-baseline-with-build123_20260610-125236.json",
+      "aggregate_score": 0.3106,
+      "overall_validity_rate": 0.7778,
+      "generation_mean": 0.2115,
+      "editing_mean": 0.4624,
+      "per_task": {
+        "generation": {
+          "score": 0.2115,
+          "validity_rate": 0.7551,
+          "n_samples": 49,
+          "n_valid": 37,
+          "n_invalid": 8,
+          "n_missing": 4
+        },
+        "editing": {
+          "score": 0.4624,
+          "validity_rate": 0.8125,
+          "n_samples": 32,
+          "n_valid": 26,
+          "n_invalid": 6,
+          "n_missing": 0
+        }
+      },
+      "source_agreement": "results.jsonl matches report"
+    },
+    {
+      "name": "Claude Opus 4.6",
+      "submission_name": "Claude Opus 4.6 HF Baseline with Build123d",
+      "submission_id": "huggingface_claude-opus-4-6-hf-baseline-with-build12_20260605-152108",
+      "validation_status": "validated",
+      "submitted_at": "2026-06-05T15:21:10Z",
+      "report_path": "reports/huggingface_claude-opus-4-6-hf-baseline-with-build12_20260605-152108.json",
+      "aggregate_score": 0.3092,
+      "overall_validity_rate": 0.8889,
+      "generation_mean": 0.2357,
+      "editing_mean": 0.4219,
+      "per_task": {
+        "generation": {
+          "score": 0.2357,
+          "validity_rate": 0.9184,
+          "n_samples": 49,
+          "n_valid": 45,
+          "n_invalid": 4,
+          "n_missing": 0
+        },
+        "editing": {
+          "score": 0.4219,
+          "validity_rate": 0.8438,
+          "n_samples": 32,
+          "n_valid": 27,
+          "n_invalid": 5,
+          "n_missing": 0
+        }
+      },
+      "source_agreement": "results.jsonl matches report"
+    },
+    {
+      "name": "Claude Sonnet 4.6",
+      "submission_name": "Claude Sonnet 4.6 HF Baseline with Build123d",
+      "submission_id": "huggingface_claude-sonnet-4-6-hf-baseline-with-build_20260607-203829",
+      "validation_status": "validated",
+      "submitted_at": "2026-06-07T20:38:31Z",
+      "report_path": "reports/huggingface_claude-sonnet-4-6-hf-baseline-with-build_20260607-203829.json",
+      "aggregate_score": 0.283,
+      "overall_validity_rate": 0.8395,
+      "generation_mean": 0.2207,
+      "editing_mean": 0.3784,
+      "per_task": {
+        "generation": {
+          "score": 0.2207,
+          "validity_rate": 0.8776,
+          "n_samples": 49,
+          "n_valid": 43,
+          "n_invalid": 5,
+          "n_missing": 1
+        },
+        "editing": {
+          "score": 0.3784,
+          "validity_rate": 0.7812,
+          "n_samples": 32,
+          "n_valid": 25,
+          "n_invalid": 5,
+          "n_missing": 2
+        }
+      },
+      "source_agreement": "results.jsonl matches report"
+    },
+    {
+      "name": "Gemini 3.1 Flash-Lite",
+      "submission_name": "Gemini 3.1 Flash-Lite HF Baseline with Build123d",
+      "submission_id": "huggingface_gemini-3-1-flash-lite-hf-baseline-with-b_20260606-114452",
+      "validation_status": "validated",
+      "submitted_at": "2026-06-06T11:44:54Z",
+      "report_path": "reports/huggingface_gemini-3-1-flash-lite-hf-baseline-with-b_20260606-114452.json",
+      "aggregate_score": 0.2489,
+      "overall_validity_rate": 0.9259,
+      "generation_mean": 0.2238,
+      "editing_mean": 0.2872,
+      "per_task": {
+        "generation": {
+          "score": 0.2238,
+          "validity_rate": 0.9592,
+          "n_samples": 49,
+          "n_valid": 47,
+          "n_invalid": 1,
+          "n_missing": 1
+        },
+        "editing": {
+          "score": 0.2872,
+          "validity_rate": 0.875,
+          "n_samples": 32,
+          "n_valid": 28,
+          "n_invalid": 3,
+          "n_missing": 1
+        }
+      },
+      "source_agreement": "results.jsonl matches report"
+    },
+    {
+      "name": "GLM-4.6V",
+      "submission_name": "GLM-4.6V HF Baseline with Build123d",
+      "submission_id": "huggingface_glm-4-6v-hf-baseline-with-build123d_20260606-112954",
+      "validation_status": "validated",
+      "submitted_at": "2026-06-06T11:29:57Z",
+      "report_path": "reports/huggingface_glm-4-6v-hf-baseline-with-build123d_20260606-112954.json",
+      "aggregate_score": 0.1831,
+      "overall_validity_rate": 0.8889,
+      "generation_mean": 0.1638,
+      "editing_mean": 0.2127,
+      "per_task": {
+        "generation": {
+          "score": 0.1638,
+          "validity_rate": 0.9592,
+          "n_samples": 49,
+          "n_valid": 47,
+          "n_invalid": 0,
+          "n_missing": 2
+        },
+        "editing": {
+          "score": 0.2127,
+          "validity_rate": 0.7812,
+          "n_samples": 32,
+          "n_valid": 25,
+          "n_invalid": 3,
+          "n_missing": 4
+        }
+      },
+      "source_agreement": "results.jsonl matches report"
+    }
+  ]
+}

@@ -1,0 +1,234 @@
+{
+  "calculate_charging_soc_by_time": {
+    "result": {
+      "soc_in_percent_after_charging_for_time_minutes": "70 percent"
+    },
+    "status": "SUCCESS"
+  },
+  "calculate_charging_time_by_soc": {
+    "result": {
+      "time_from_start_state_of_charge_until_100_percent_soc": "15min",
+      "time_from_start_state_of_charge_until_80_percent_soc": "15min",
+      "time_from_start_state_of_charge_until_target_state_of_charge_percent_soc": "15min"
+    },
+    "status": "SUCCESS"
+  },
+  "convert_route_distance_and_time": {
+    "result": {
+      "distance_km": 15.5,
+      "time_minutes": 20.0
+    },
+    "status": "SUCCESS"
+  },
+  "get_ambient_light_status_and_color": {
+    "result": {
+      "ambient_light": "BLUE"
+    },
+    "status": "SUCCESS"
+  },
+  "get_car_color": {
+    "result": {
+      "car_color": "blue"
+    },
+    "status": "SUCCESS"
+  },
+  "get_charging_specs_and_status": {
+    "result": {
+      "battery_capacity_kwh": 75.0,
+      "max_charging_power_ac": 11.0,
+      "max_charging_power_dc": 150.0,
+      "remaining_range": "300 km",
+      "state_of_charge": 80
+    },
+    "status": "SUCCESS"
+  },
+  "get_climate_settings": {
+    "result": {
+      "air_circulation": "AUTO",
+      "air_conditioning": true,
+      "fan_airflow_direction": "FEET",
+      "fan_speed": 3,
+      "window_front_defrost": false,
+      "window_rear_defrost": false
+    },
+    "status": "SUCCESS"
+  },
+  "get_contact_id_by_contact_name": {
+    "result": {
+      "id": "con_1001",
+      "matches": {},
+      "name": "John Smith"
+    },
+    "status": "SUCCESS"
+  },
+  "get_contact_information": {
+    "result": {
+      "result": {}
+    },
+    "status": "SUCCESS"
+  },
+  "get_current_navigation_state": {
+    "result": {
+      "details": {
+        "routes": [],
+        "waypoints": []
+      },
+      "navigation_active": true,
+      "routes_to_final_destination_id": [
+        "rll_mun_erf_9149",
+        "rll_erf_ham_4348"
+      ],
+      "waypoints_id": [
+        "loc_mun_9995",
+        "loc_erf_4101",
+        "loc_ham_6805"
+      ]
+    },
+    "status": "SUCCESS"
+  },
+  "get_distance_by_soc": {
+    "result": {
+      "distance_km_for_initial_until_final_percent_soc": "150 km"
+    },
+    "status": "SUCCESS"
+  },
+  "get_entries_from_calendar": {
+    "result": {
+      "date": {
+        "day": 14,
+        "month": 2,
+        "year": 2025
+      },
+      "meetings": [
+        {
+          "attendees": [
+            "con_5791",
+            "con_3673",
+            "con_4352",
+            "con_2885"
+          ],
+          "duration": "30min",
+          "location": "Pforzheim",
+          "start": {
+            "hour": "13",
+            "minute": "30"
+          },
+          "topic": "Strategy Planning"
+        },
+        {
+          "attendees": [
+            "con_8073",
+            "con_2923",
+            "con_5525",
+            "con_5532"
+          ],
+          "duration": 30,
+          "location": "Hannover",
+          "start": {
+            "hour": "17",
+            "minute": "30"
+          },
+          "topic": "Brand Positioning"
+        }
+      ]
+    },
+    "status": "SUCCESS"
+  },
+  "get_exterior_lights_status": {
+    "result": {
+      "fog_lights": true,
+      "head_lights_high_beams": false,
+      "head_lights_low_beams": false
+    },
+    "status": "SUCCESS"
+  },
+  "get_location_id_by_location_name": {
+    "result": {
+      "id": "loc_mun_1234"
+    },
+    "status": "SUCCESS"
+  },
+  "get_reading_lights_status": {
+    "result": {
+      "reading_light_driver": true,
+      "reading_light_driver_rear": false,
+      "reading_light_passenger": false,
+      "reading_light_passenger_rear": false
+    },
+    "status": "SUCCESS"
+  },
+  "get_routes_from_start_to_destination": {
+    "result": {
+      "routes": []
+    },
+    "status": "SUCCESS"
+  },
+  "get_seat_heating_level": {
+    "result": {
+      "seat_heating_driver": 1,
+      "seat_heating_passenger": 1
+    },
+    "status": "SUCCESS"
+  },
+  "get_seats_occupancy": {
+    "result": {
+      "seats_occupied": {
+        "driver": true,
+        "driver_rear": false,
+        "passenger": false,
+        "passenger_rear": false
+      }
+    },
+    "status": "SUCCESS"
+  },
+  "get_steering_wheel_heating_level": {
+    "result": {
+      "steering_wheel_heating": 2
+    },
+    "status": "SUCCESS"
+  },
+  "get_sunroof_and_sunshade_position": {
+    "result": {
+      "description": "Current positions of sunroof and sunshade",
+      "sunroof_position": 50,
+      "sunshade_position": 30
+    },
+    "status": "SUCCESS"
+  },
+  "get_temperature_inside_car": {
+    "result": {
+      "climate_temperature_driver": 20,
+      "climate_temperature_passenger": 20,
+      "temperature_unit": "Celsius"
+    },
+    "status": "SUCCESS"
+  },
+  "get_trunk_door_position": {
+    "result": {
+      "trunk_door_position": "closed"
+    },
+    "status": "SUCCESS"
+  },
+  "get_vehicle_window_positions": {
+    "result": {
+      "description": "0 = closed, 100=open.",
+      "window_driver_position": 0,
+      "window_driver_rear_position": 0,
+      "window_passenger_position": 0,
+      "window_passenger_rear_position": 0
+    },
+    "status": "SUCCESS"
+  },
+  "search_poi_along_the_route": {
+    "result": {
+      "pois_found_along_route": []
+    },
+    "status": "SUCCESS"
+  },
+  "search_poi_at_location": {
+    "result": {
+      "pois_found": []
+    },
+    "status": "SUCCESS"
+  }
+}

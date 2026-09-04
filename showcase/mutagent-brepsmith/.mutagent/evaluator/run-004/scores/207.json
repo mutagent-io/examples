@@ -1,0 +1,50 @@
+{
+ "sample_id": "207",
+ "validity": {
+  "official_aligned_gate": "fail",
+  "verify_exit_code": 2,
+  "verify_payload": {
+   "ok": false,
+   "command": "verify",
+   "data": {
+    "is_valid": false,
+    "brep_well_formed": true,
+    "shells_closed": true,
+    "mesh_manifold": false,
+    "mesh_closed": false,
+    "orientation_consistent": false,
+    "n_naked_edges": 0,
+    "n_non_manifold_edges": 6,
+    "n_faces": 260,
+    "n_mesh_triangles": 181829,
+    "mesh_deflection_divisor": 32,
+    "strict_mesh_closed": false,
+    "min_face_area": 0.26735396188294297,
+    "max_aspect_ratio": 496667665.3958582,
+    "max_brep_tolerance": 0.019477881044121296,
+    "failures": [
+     "tessellation is non-manifold: 6 edge(s) shared by >2 triangles",
+     "tessellation is not closed (3F != 2E; open boundary in the mesh)",
+     "tessellation has inconsistent triangle orientation"
+    ],
+    "advisories": [
+     "advisory: maximum face aspect ratio 496667665.4 exceeds 1000 \u2014 not a validity failure"
+    ],
+    "strictness": []
+   },
+   "error": "tessellation is non-manifold: 6 edge(s) shared by >2 triangles; tessellation is not closed (3F != 2E; open boundary in the mesh); tessellation has inconsistent triangle orientation"
+  },
+  "reported_in_report": "fail"
+ },
+ "rounds_used": 1,
+ "checks_normalized": {
+  "validity": "fail",
+  "locality": "documented",
+  "intent": "fail"
+ },
+ "checks_passed_claimed": null,
+ "waivers": [],
+ "locality": "documented",
+ "interpretation_documented": true,
+ "score_source": "check-results (validity fail, unwaived -- recorded honestly per pre-existing source defect)"
+}

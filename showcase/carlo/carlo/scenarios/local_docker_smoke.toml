@@ -1,0 +1,21 @@
+# Local Docker smoke: the OFFICIAL evaluator image + a locally built CARlo image.
+# EVALUATE-stage; never run by a BUILD gate.
+#
+#   docker build --platform linux/amd64 -t carlo:local .
+#   uv run python generate_compose.py --scenario scenarios/local_docker_smoke.toml
+
+[evaluator]
+image = "ghcr.io/car-bench/car-bench-evaluator:latest"
+env = { GEMINI_API_KEY = "${GEMINI_API_KEY:?Set GEMINI_API_KEY in .env}", LOGURU_LEVEL = "${LOGURU_LEVEL:-INFO}" }
+
+[agent_under_test]
+build = { context = ".", dockerfile = "Dockerfile" }
+env = { CARLO_MODEL = "${CARLO_MODEL:-gemini-3.5-flash}", CARLO_TEMPERATURE = "${CARLO_TEMPERATURE:-0}", CARLO_THINKING_BUDGET = "${CARLO_THINKING_BUDGET:-0}", CARLO_MAX_TURNS = "${CARLO_MAX_TURNS:-50}", GOOGLE_CLOUD_PROJECT = "${GOOGLE_CLOUD_PROJECT:?Set GOOGLE_CLOUD_PROJECT in .env}", GOOGLE_CLOUD_LOCATION = "${GOOGLE_CLOUD_LOCATION:-global}", GOOGLE_GENAI_USE_VERTEXAI = "${GOOGLE_GENAI_USE_VERTEXAI:-true}", GOOGLE_APPLICATION_CREDENTIALS = "${GOOGLE_APPLICATION_CREDENTIALS:-}", LOGURU_LEVEL = "${LOGURU_LEVEL:-INFO}" }
+
+[config]
+num_trials = 1
+task_split = "train"
+tasks_base_num_tasks = 1
+tasks_hallucination_num_tasks = 1
+tasks_disambiguation_num_tasks = 1
+max_steps = 50

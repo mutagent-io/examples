@@ -1,0 +1,78 @@
+{
+ "sample_id": "242",
+ "unhealed_failures": [
+  "tessellation is not closed (3F != 2E; open boundary in the mesh)"
+ ],
+ "unhealed_volume_mm3": 427420.08871820656,
+ "attempts": [
+  {
+   "strategy": "shapefix_default",
+   "valid": false,
+   "failures": [
+    "tessellation is not closed (3F != 2E; open boundary in the mesh)"
+   ],
+   "volume_mm3": 427420.08871820656,
+   "volume_delta_pct": 0.0,
+   "max_mesh_deviation_mm": null
+  },
+  {
+   "strategy": "sew_rebuild",
+   "valid": false,
+   "failures": [
+    "tessellation is not closed (3F != 2E; open boundary in the mesh)"
+   ],
+   "volume_mm3": 427420.08871820656,
+   "volume_delta_pct": 0.0,
+   "max_mesh_deviation_mm": null
+  },
+  {
+   "strategy": "shapefix_tol_0.01",
+   "valid": false,
+   "failures": [
+    "tessellation is not closed (3F != 2E; open boundary in the mesh)"
+   ],
+   "volume_mm3": 427420.08871820656,
+   "volume_delta_pct": 0.0,
+   "max_mesh_deviation_mm": null
+  },
+  {
+   "strategy": "unify_same_domain",
+   "valid": false,
+   "failures": [
+    "BREP is not well-formed (BRepCheck_Analyzer::IsValid reported a defect)",
+    "tessellation is not closed (3F != 2E; open boundary in the mesh)"
+   ],
+   "volume_mm3": 427420.4806192811,
+   "volume_delta_pct": 9e-05,
+   "max_mesh_deviation_mm": null
+  },
+  {
+   "strategy": "fix_small_face_tol_0.0001",
+   "valid": false,
+   "failures": [
+    "tessellation is not closed (3F != 2E; open boundary in the mesh)"
+   ],
+   "volume_mm3": 427420.11999966233,
+   "volume_delta_pct": 7e-06
+  },
+  {
+   "strategy": "fix_small_face_tol_0.001",
+   "valid": false,
+   "failures": [
+    "tessellation is not closed (3F != 2E; open boundary in the mesh)"
+   ],
+   "volume_mm3": 427420.11999966233,
+   "volume_delta_pct": 7e-06
+  },
+  {
+   "strategy": "fix_small_face_tol_0.01",
+   "valid": false,
+   "failures": [
+    "tessellation is not closed (3F != 2E; open boundary in the mesh)"
+   ],
+   "volume_mm3": 427420.11999966233,
+   "volume_delta_pct": 7e-06
+  }
+ ],
+ "accepted": null
+}

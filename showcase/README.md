@@ -70,3 +70,5 @@ real inputs.
 | Agent | What it does | Stages covered | Last verified |
 |---|---|---|---|
 | [`freecad-engineer`](./freecad-engineer/) | Self-verifying mechanical-CAD agent (Claude Code + Opus 5, single-file definition) that writes parametric FreeCAD PartDesign scripts from natural-language part specs | SPEC · BUILD (verify) · EVALUATE · DIAGNOSE | 2026-08-19 |
+| [`carlo`](./carlo/) | In-car voice-assistant agent for CAR-bench Track 1 (gemini-3.5-flash on Vertex AI, TypeScript/bun, A2A 1.0 server): schema-validated tool calls with in-turn retry; Pass^3 0.605 vs 0.566 raw-model baseline on the 129-task train split | SPEC · BUILD · EVALUATE · DIAGNOSE · OPTIMIZE (1 cycle) | 2026-08-26 |
+| [`mutagent-brepsmith`](./mutagent-brepsmith/) | CAD STEP-editing agent (Claude Code + Sonnet-5/Opus-5, deterministic geometry verification loop) evaluated on the CadGenBench editing task: 0.6669 editing mean, 32/32 valid | SPEC · BUILD · EVALUATE · DIAGNOSE · OPTIMIZE (1 cycle) | 2026-08-28 |

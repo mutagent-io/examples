@@ -1,0 +1,54 @@
+{
+ "sample_id": "240",
+ "validity": {
+  "official_aligned_gate": "fail",
+  "verify_exit_code": 2,
+  "verify_payload": {
+   "ok": false,
+   "command": "verify",
+   "data": {
+    "is_valid": false,
+    "brep_well_formed": false,
+    "shells_closed": true,
+    "mesh_manifold": true,
+    "mesh_closed": true,
+    "orientation_consistent": true,
+    "n_naked_edges": 0,
+    "n_non_manifold_edges": 0,
+    "n_faces": 1069,
+    "n_mesh_triangles": 678026,
+    "mesh_deflection_divisor": 4,
+    "strict_mesh_closed": false,
+    "min_face_area": -0.003990805781046113,
+    "max_aspect_ratio": 375891502.88227767,
+    "max_brep_tolerance": 0.04658236992019006,
+    "failures": [
+     "BREP is not well-formed (BRepCheck_Analyzer::IsValid reported a defect)"
+    ],
+    "advisories": [
+     "advisory: minimum face area -3.991e-03 mm^2 is below 1e-03 mm^2 (sliver face) \u2014 not a validity failure",
+     "advisory: maximum face aspect ratio 375891502.9 exceeds 1000 \u2014 not a validity failure"
+    ],
+    "strictness": [
+     "stricter-than-official: at the requested deflection (0.161462 mm) the tessellation was NOT a closed manifold (0 open edge(s), 594346 triangles); it closed at deflection/4 (678026 triangles), which is the official convention (DEFLECTION_LADDER=(1, 4, 16, 32)), so the VERDICT follows the grader and this is a report only"
+    ]
+   },
+   "error": "BREP is not well-formed (BRepCheck_Analyzer::IsValid reported a defect)"
+  },
+  "reported_in_report": "fail-waived"
+ },
+ "rounds_used": 3,
+ "checks_normalized": {
+  "locality": "pass",
+  "surface_type_conservation": "pass",
+  "intent_volume": "pass",
+  "validity": "fail-waived"
+ },
+ "checks_passed_claimed": null,
+ "waivers": [
+  "validity"
+ ],
+ "locality": "pass",
+ "interpretation_documented": true,
+ "score_source": null
+}

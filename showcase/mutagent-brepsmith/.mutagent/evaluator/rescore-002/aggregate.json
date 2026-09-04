@@ -1,0 +1,258 @@
+{
+ "rescore_id": "rescore-002",
+ "source_run": "eval-run-001",
+ "convention": "cad-score-proxy/v1:interface-null-renormalized-0.7",
+ "scorer": "cadtools (upgraded: status labels {ok, shape-divergence, invalid}, size-invariant pose test, chunked diff)",
+ "exclusions": {
+  "unsatisfiable_gt": [
+   "abc_0011-thicken",
+   "abc_0232-thicken",
+   "abc_0365-thicken"
+  ],
+  "contaminated_armA": [
+   "abc_0123-fill-hole",
+   "abc_0128-fill-hole",
+   "abc_0067-fill-hole",
+   "abc_0098-thicken",
+   "abc_0011-thicken"
+  ],
+  "union_n": 7
+ },
+ "clean_set": [
+  "abc_0003-boss-union",
+  "abc_0228-boss-union",
+  "abc_0054-boss-union",
+  "abc_0285-hole-pattern",
+  "abc_0262-hole-pattern",
+  "abc_0152-through-hole",
+  "abc_0294-through-hole",
+  "abc_0368-fill-hole",
+  "abc_0374-through-hole",
+  "abc_0380-boss-union",
+  "abc_0382-hole-pattern",
+  "abc_0396-corner-fillet",
+  "abc_0397-thicken"
+ ],
+ "n_clean": 13,
+ "arms": {
+  "armA": {
+   "n": 13,
+   "mean_cad_score_proxy": 0.7749971929991815,
+   "median_cad_score_proxy": 0.9999999995323892,
+   "per_sample": {
+    "abc_0003-boss-union": 1.0000042305166703,
+    "abc_0228-boss-union": 0.9999999995323892,
+    "abc_0054-boss-union": 0.9999999999686681,
+    "abc_0285-hole-pattern": 0.05142857142857143,
+    "abc_0262-hole-pattern": 0.9999997073438358,
+    "abc_0152-through-hole": 0.9999999995711232,
+    "abc_0294-through-hole": 0.9998323261176421,
+    "abc_0368-fill-hole": 0.9999999995753515,
+    "abc_0374-through-hole": 1.0000000002855218,
+    "abc_0380-boss-union": 0.7651272460781573,
+    "abc_0382-hole-pattern": 0.11571428571428574,
+    "abc_0396-corner-fillet": 1.0,
+    "abc_0397-thicken": 0.14285714285714288
+   },
+   "per_sample_status": {
+    "abc_0003-boss-union": "ok",
+    "abc_0228-boss-union": "ok",
+    "abc_0054-boss-union": "ok",
+    "abc_0285-hole-pattern": "ok",
+    "abc_0262-hole-pattern": "ok",
+    "abc_0152-through-hole": "ok",
+    "abc_0294-through-hole": "ok",
+    "abc_0368-fill-hole": "ok",
+    "abc_0374-through-hole": "ok",
+    "abc_0380-boss-union": "ok",
+    "abc_0382-hole-pattern": "ok",
+    "abc_0396-corner-fillet": "ok",
+    "abc_0397-thicken": "ok"
+   }
+  },
+  "armB": {
+   "n": 13,
+   "mean_cad_score_proxy": 0.6581768373531205,
+   "median_cad_score_proxy": 0.9998323427468369,
+   "per_sample": {
+    "abc_0003-boss-union": 1.0000042305166703,
+    "abc_0228-boss-union": 0.9999999995323892,
+    "abc_0054-boss-union": 0.9999999999686681,
+    "abc_0285-hole-pattern": 0.14285714285714288,
+    "abc_0262-hole-pattern": 0.10495626822157433,
+    "abc_0152-through-hole": 0.022857142857142864,
+    "abc_0294-through-hole": 0.9998323427468369,
+    "abc_0368-fill-hole": 0.16577286162950333,
+    "abc_0374-through-hole": 0.9771617561393873,
+    "abc_0380-boss-union": 0.9999999982641082,
+    "abc_0382-hole-pattern": 0.14285714285714288,
+    "abc_0396-corner-fillet": 1.0,
+    "abc_0397-thicken": 1.0
+   },
+   "per_sample_status": {
+    "abc_0003-boss-union": "ok",
+    "abc_0228-boss-union": "ok",
+    "abc_0054-boss-union": "ok",
+    "abc_0285-hole-pattern": "ok",
+    "abc_0262-hole-pattern": "ok",
+    "abc_0152-through-hole": "ok",
+    "abc_0294-through-hole": "ok",
+    "abc_0368-fill-hole": "ok",
+    "abc_0374-through-hole": "ok",
+    "abc_0380-boss-union": "ok",
+    "abc_0382-hole-pattern": "ok",
+    "abc_0396-corner-fillet": "ok",
+    "abc_0397-thicken": "ok"
+   }
+  }
+ },
+ "status_counts": {
+  "armA": {
+   "ok": 13
+  },
+  "armB": {
+   "ok": 13
+  }
+ },
+ "delta_vs_run001_clean": {
+  "armA": {
+   "run001_mean_same_clean_set": 0.7749971929991323,
+   "run001_median_same_clean_set": 0.9999999995323892,
+   "rescore_mean": 0.7749971929991815,
+   "rescore_median": 0.9999999995323892,
+   "delta_mean": 4.9182879990894435e-14,
+   "delta_median": 0.0,
+   "per_sample_delta": {
+    "abc_0003-boss-union": 0.0,
+    "abc_0228-boss-union": 0.0,
+    "abc_0054-boss-union": 6.390443729742401e-13,
+    "abc_0285-hole-pattern": 0.0,
+    "abc_0262-hole-pattern": 0.0,
+    "abc_0152-through-hole": 0.0,
+    "abc_0294-through-hole": 0.0,
+    "abc_0368-fill-hole": 0.0,
+    "abc_0374-through-hole": 0.0,
+    "abc_0380-boss-union": 0.0,
+    "abc_0382-hole-pattern": 0.0,
+    "abc_0396-corner-fillet": 0.0,
+    "abc_0397-thicken": 0.0
+   }
+  },
+  "armB": {
+   "run001_mean_same_clean_set": 0.6581768373530713,
+   "run001_median_same_clean_set": 0.9998323427468369,
+   "rescore_mean": 0.6581768373531205,
+   "rescore_median": 0.9998323427468369,
+   "delta_mean": 4.9182879990894435e-14,
+   "delta_median": 0.0,
+   "per_sample_delta": {
+    "abc_0003-boss-union": 0.0,
+    "abc_0228-boss-union": 0.0,
+    "abc_0054-boss-union": 6.390443729742401e-13,
+    "abc_0285-hole-pattern": 0.0,
+    "abc_0262-hole-pattern": 0.0,
+    "abc_0152-through-hole": 0.0,
+    "abc_0294-through-hole": 0.0,
+    "abc_0368-fill-hole": 0.0,
+    "abc_0374-through-hole": 0.0,
+    "abc_0380-boss-union": 0.0,
+    "abc_0382-hole-pattern": 0.0,
+    "abc_0396-corner-fillet": 0.0,
+    "abc_0397-thicken": 0.0
+   }
+  }
+ },
+ "scoring_events": [
+  {
+   "arm": "armA",
+   "id": "abc_0054-boss-union",
+   "event": "OOM at default 20000 samples; python-API fallback"
+  },
+  {
+   "arm": "armA",
+   "id": "abc_0054-boss-union",
+   "event": "scored at n_samples=5000"
+  },
+  {
+   "arm": "armB",
+   "id": "abc_0054-boss-union",
+   "event": "OOM at default 20000 samples; python-API fallback"
+  },
+  {
+   "arm": "armB",
+   "id": "abc_0054-boss-union",
+   "event": "scored at n_samples=5000"
+  },
+  {
+   "arm": "armA",
+   "id": "abc_0368-fill-hole",
+   "event": "OOM at default 20000 samples; python-API fallback"
+  },
+  {
+   "arm": "armA",
+   "id": "abc_0368-fill-hole",
+   "event": "scored at n_samples=5000"
+  },
+  {
+   "arm": "armB",
+   "id": "abc_0368-fill-hole",
+   "event": "OOM at default 20000 samples; python-API fallback"
+  },
+  {
+   "arm": "armB",
+   "id": "abc_0368-fill-hole",
+   "event": "scored at n_samples=5000"
+  }
+ ],
+ "compare_arms": {
+  "harness_arm": "armA",
+  "baseline_arm": "armB",
+  "harness_mean": 0.7749971929991815,
+  "baseline_mean": 0.6581768373531205,
+  "delta": 0.11682035564606097,
+  "beats_baseline": true,
+  "n_samples": 13,
+  "run001_delta_same_clean_set": 0.11682035564606097
+ },
+ "for_the_record": {
+  "armB/abc_0067-fill-hole": {
+   "excluded_from_clean_set": true,
+   "reason_excluded": "armA twin contaminated (denied-import _fill_hole)",
+   "new_status": "invalid",
+   "new_cad_score_proxy": 0.0,
+   "run001_score": 0.0,
+   "run001_note": "zeroed as frame disagreement in run-001",
+   "false_positive_zero": false,
+   "pose_flag_false_positive": true,
+   "pose_note": "new size-invariant pose test: agree=true, pose_delta=0.0 \u2014 run-001 frame-disagreement zero was a false positive AS A POSE FINDING; candidate is independently invalid (open tessellation, 3F != 2E) with shape_divergence=true (extent_delta 11.73 mm), so cad_score_proxy stays 0.0 under status=invalid"
+  }
+ },
+ "scoring_notes": {
+  "sample_reductions": [
+   {
+    "arm": "armA",
+    "id": "abc_0054-boss-union",
+    "n_samples": 5000,
+    "reason": "OOM (exit 137) at default 20000 samples despite chunked-diff upgrade; scored via python API at 5000"
+   },
+   {
+    "arm": "armA",
+    "id": "abc_0368-fill-hole",
+    "n_samples": 5000,
+    "reason": "OOM (exit 137) at default 20000 samples despite chunked-diff upgrade; scored via python API at 5000"
+   },
+   {
+    "arm": "armB",
+    "id": "abc_0054-boss-union",
+    "n_samples": 5000,
+    "reason": "OOM (exit 137) at default 20000 samples despite chunked-diff upgrade; scored via python API at 5000"
+   },
+   {
+    "arm": "armB",
+    "id": "abc_0368-fill-hole",
+    "n_samples": 5000,
+    "reason": "OOM (exit 137) at default 20000 samples despite chunked-diff upgrade; scored via python API at 5000"
+   }
+  ]
+ }
+}

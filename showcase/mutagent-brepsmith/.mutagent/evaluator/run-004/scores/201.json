@@ -1,0 +1,50 @@
+{
+ "sample_id": "201",
+ "validity": {
+  "official_aligned_gate": "pass",
+  "verify_exit_code": 0,
+  "verify_payload": {
+   "ok": true,
+   "command": "verify",
+   "data": {
+    "is_valid": true,
+    "brep_well_formed": true,
+    "shells_closed": true,
+    "mesh_manifold": true,
+    "mesh_closed": true,
+    "orientation_consistent": true,
+    "n_naked_edges": 0,
+    "n_non_manifold_edges": 0,
+    "n_faces": 435,
+    "n_mesh_triangles": 302344,
+    "mesh_deflection_divisor": 4,
+    "strict_mesh_closed": false,
+    "min_face_area": 0.1602830396821695,
+    "max_aspect_ratio": 214177558.22315288,
+    "max_brep_tolerance": 0.037874423789164176,
+    "failures": [],
+    "advisories": [
+     "advisory: maximum face aspect ratio 214177558.2 exceeds 1000 \u2014 not a validity failure"
+    ],
+    "strictness": [
+     "stricter-than-official: at the requested deflection (0.513593 mm) the tessellation was NOT a closed manifold (0 open edge(s), 279316 triangles); it closed at deflection/4 (302344 triangles), which is the official convention (DEFLECTION_LADDER=(1, 4, 16, 32)), so the VERDICT follows the grader and this is a report only"
+    ]
+   },
+   "error": ""
+  },
+  "reported_in_report": "documented"
+ },
+ "rounds_used": 1,
+ "checks_normalized": {
+  "validity": "documented",
+  "locality": "documented",
+  "intent": "fail-waived"
+ },
+ "checks_passed_claimed": null,
+ "waivers": [
+  "intent"
+ ],
+ "locality": "documented",
+ "interpretation_documented": true,
+ "score_source": "check-results (waived intent)"
+}

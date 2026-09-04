@@ -1,0 +1,299 @@
+{
+ "211": {
+  "exit_code": 0,
+  "expected_volume_delta_mm3": 55231.93563634219,
+  "diff": {
+   "ok": true,
+   "command": "diff",
+   "data": {
+    "max_distance": 9.999999999994003,
+    "mean_distance": 0.08855223704884697,
+    "change_tolerance": 3.4031041644432265,
+    "changed_fraction": 0.0105,
+    "changed_bbox_min": [
+     -59.281498427634936,
+     -47.521261120572376,
+     90.463614479276
+    ],
+    "changed_bbox_max": [
+     80.69585790878475,
+     72.36662240162738,
+     100.46361447927
+    ],
+    "volume_ref": 3044917.32413168,
+    "volume_cand": 3100141.2959686466,
+    "volume_delta": 55223.97183696646,
+    "volume_delta_fraction": 0.018136443771166987,
+    "betti_ref": [
+     1,
+     9,
+     0
+    ],
+    "betti_cand": [
+     1,
+     9,
+     0
+    ],
+    "betti_delta": [
+     0,
+     0,
+     0
+    ],
+    "frame_agreement": {
+     "agree": true,
+     "centre_delta": 4.9999999999970015,
+     "extent_delta": 9.999999999994003,
+     "pose_delta": 0.0,
+     "sorted_extent_delta": 9.999999999994003,
+     "axis_permutation": false,
+     "shape_divergence": false,
+     "tolerance": 68.06208328886453,
+     "reference_diagonal": 680.6208328886453,
+     "message": "bodies are posed in the same frame"
+    },
+    "surface_types_ref": {
+     "BSPLINE": 239,
+     "CONE": 4,
+     "CYLINDER": 103,
+     "EXTRUSION": 56,
+     "PLANE": 84,
+     "REVOLUTION": 4,
+     "SPHERE": 52,
+     "TORUS": 18
+    },
+    "surface_types_cand": {
+     "BSPLINE": 239,
+     "CONE": 4,
+     "CYLINDER": 103,
+     "EXTRUSION": 56,
+     "PLANE": 81,
+     "REVOLUTION": 4,
+     "SPHERE": 52,
+     "TORUS": 18
+    },
+    "surface_types_destroyed": {
+     "PLANE": 3
+    },
+    "surface_type_allowance": {
+     "PLANE": 1
+    },
+    "operation_class_ok": false,
+    "surface_types_available": true,
+    "n_samples": 20000,
+    "locality": {
+     "region_min": [
+      -59.281498427634936,
+      -47.521261120572376,
+      90.463614479276
+     ],
+     "region_max": [
+      80.69585790878475,
+      72.36662240162738,
+      100.46361447927
+     ],
+     "region_source": "measured-changed-bbox",
+     "max_distance_outside": 0.0739826932391524,
+     "is_localized_to": true,
+     "tolerance": 3.4031041644432265
+    },
+    "waivers": [],
+    "volume_intent": null,
+    "cross_section": {
+     "axis": "z",
+     "axis_source": "inferred-thinnest-changed-extent",
+     "depth": 9.999999999994003,
+     "implied_area": 5522.397183699958,
+     "footprint_area": 10488.493120128835,
+     "bounding_rect_area": 16781.588992206132,
+     "fill_ratio": 0.6250000000000001,
+     "grid": 8,
+     "changed_samples": 420,
+     "target_face_area": null,
+     "area_ratio": null,
+     "tolerance": 0.02,
+     "preserved": null,
+     "message": "changed region is 10.0000 mm deep along z; it sweeps 5522.3972 mm^2 of cross-section (sampled footprint 10488.4931 mm^2, 62.50% of its own bounding rectangle). Pass the target face area to gate this"
+    },
+    "checks_passed": true,
+    "failures": []
+   },
+   "error": ""
+  }
+ },
+ "214": {
+  "exit_code": 0,
+  "expected_volume_delta_mm3": 40015.517806894386,
+  "diff": {
+   "ok": true,
+   "command": "diff",
+   "data": {
+    "max_distance": 2.5142536857847815,
+    "mean_distance": 0.15993578925176508,
+    "change_tolerance": 2.728611454730987,
+    "changed_fraction": 0.0,
+    "changed_bbox_min": null,
+    "changed_bbox_max": null,
+    "volume_ref": 1849860.2513583861,
+    "volume_cand": 1889853.8205733837,
+    "volume_delta": 39993.56921499758,
+    "volume_delta_fraction": 0.02161977867551323,
+    "betti_ref": [
+     1,
+     8,
+     0
+    ],
+    "betti_cand": [
+     1,
+     8,
+     0
+    ],
+    "betti_delta": [
+     0,
+     0,
+     0
+    ],
+    "frame_agreement": {
+     "agree": true,
+     "centre_delta": 0.003285534191486954,
+     "extent_delta": 0.006571068382973908,
+     "pose_delta": 0.0,
+     "sorted_extent_delta": 0.006571068382973908,
+     "axis_permutation": false,
+     "shape_divergence": false,
+     "tolerance": 54.57222909461974,
+     "reference_diagonal": 545.7222909461974,
+     "message": "bodies are posed in the same frame"
+    },
+    "surface_types_ref": {
+     "BSPLINE": 67,
+     "CONE": 4,
+     "CYLINDER": 167,
+     "PLANE": 42,
+     "SPHERE": 25,
+     "TORUS": 125
+    },
+    "surface_types_cand": {
+     "BSPLINE": 67,
+     "CONE": 2,
+     "CYLINDER": 140,
+     "PLANE": 43,
+     "SPHERE": 22,
+     "TORUS": 96
+    },
+    "surface_types_destroyed": {
+     "CONE": 2,
+     "CYLINDER": 27,
+     "SPHERE": 3,
+     "TORUS": 29
+    },
+    "surface_type_allowance": {
+     "CONE": 1,
+     "CYLINDER": 1,
+     "SPHERE": 1,
+     "TORUS": 1
+    },
+    "operation_class_ok": false,
+    "surface_types_available": true,
+    "n_samples": 20000,
+    "locality": {
+     "region_min": null,
+     "region_max": null,
+     "region_source": "measured-changed-bbox",
+     "max_distance_outside": 0.0,
+     "is_localized_to": true,
+     "tolerance": 2.728611454730987
+    },
+    "waivers": [],
+    "volume_intent": null,
+    "cross_section": null,
+    "checks_passed": true,
+    "failures": []
+   },
+   "error": ""
+  }
+ },
+ "218": {
+  "exit_code": 0,
+  "expected_volume_delta_mm3": 257.46,
+  "diff": {
+   "ok": true,
+   "command": "diff",
+   "data": {
+    "max_distance": 0.3515267018343238,
+    "mean_distance": 0.0013947262248153727,
+    "change_tolerance": 3.363045587426313,
+    "changed_fraction": 0.0,
+    "changed_bbox_min": null,
+    "changed_bbox_max": null,
+    "volume_ref": 3416809.6321269427,
+    "volume_cand": 3417067.092398066,
+    "volume_delta": 257.46027112333104,
+    "volume_delta_fraction": 7.535107273830284e-05,
+    "betti_ref": [
+     1,
+     9,
+     0
+    ],
+    "betti_cand": [
+     1,
+     9,
+     0
+    ],
+    "betti_delta": [
+     0,
+     0,
+     0
+    ],
+    "frame_agreement": {
+     "agree": true,
+     "centre_delta": 0.031081799918382558,
+     "extent_delta": 0.06216359983682196,
+     "pose_delta": 0.0,
+     "sorted_extent_delta": 0.06216359983682196,
+     "axis_permutation": false,
+     "shape_divergence": false,
+     "tolerance": 67.26091174852625,
+     "reference_diagonal": 672.6091174852626,
+     "message": "bodies are posed in the same frame"
+    },
+    "surface_types_ref": {
+     "CONE": 35,
+     "CYLINDER": 35,
+     "PLANE": 12,
+     "TORUS": 11
+    },
+    "surface_types_cand": {
+     "CONE": 31,
+     "CYLINDER": 25,
+     "PLANE": 12,
+     "TORUS": 11
+    },
+    "surface_types_destroyed": {
+     "CONE": 4,
+     "CYLINDER": 10
+    },
+    "surface_type_allowance": {
+     "CONE": 1,
+     "CYLINDER": 1
+    },
+    "operation_class_ok": false,
+    "surface_types_available": true,
+    "n_samples": 20000,
+    "locality": {
+     "region_min": null,
+     "region_max": null,
+     "region_source": "measured-changed-bbox",
+     "max_distance_outside": 0.0,
+     "is_localized_to": true,
+     "tolerance": 3.363045587426313
+    },
+    "waivers": [],
+    "volume_intent": null,
+    "cross_section": null,
+    "checks_passed": true,
+    "failures": []
+   },
+   "error": ""
+  }
+ }
+}

@@ -1,0 +1,52 @@
+{
+ "sample_id": "250",
+ "validity": {
+  "official_aligned_gate": "fail",
+  "verify_exit_code": 2,
+  "verify_payload": {
+   "ok": false,
+   "command": "verify",
+   "data": {
+    "is_valid": false,
+    "brep_well_formed": true,
+    "shells_closed": true,
+    "mesh_manifold": false,
+    "mesh_closed": false,
+    "orientation_consistent": false,
+    "n_naked_edges": 0,
+    "n_non_manifold_edges": 2,
+    "n_faces": 644,
+    "n_mesh_triangles": 345324,
+    "mesh_deflection_divisor": 32,
+    "strict_mesh_closed": false,
+    "min_face_area": 2.5999157110766494e-05,
+    "max_aspect_ratio": 6905714695458.709,
+    "max_brep_tolerance": 0.04570216837022106,
+    "failures": [
+     "tessellation is non-manifold: 2 edge(s) shared by >2 triangles",
+     "tessellation is not closed (3F != 2E; open boundary in the mesh)",
+     "tessellation has inconsistent triangle orientation"
+    ],
+    "advisories": [
+     "advisory: minimum face area 2.600e-05 mm^2 is below 1e-03 mm^2 (sliver face) \u2014 not a validity failure",
+     "advisory: maximum face aspect ratio 6905714695458.7 exceeds 1000 \u2014 not a validity failure"
+    ],
+    "strictness": []
+   },
+   "error": "tessellation is non-manifold: 2 edge(s) shared by >2 triangles; tessellation is not closed (3F != 2E; open boundary in the mesh); tessellation has inconsistent triangle orientation"
+  },
+  "reported_in_report": "fail"
+ },
+ "rounds_used": 1,
+ "checks_normalized": {
+  "validity": "fail",
+  "locality": "pass",
+  "surface_types": "documented",
+  "intent_volume": "documented"
+ },
+ "checks_passed_claimed": null,
+ "waivers": [],
+ "locality": "pass",
+ "interpretation_documented": true,
+ "score_source": "check-results (validity waived, documented as inherited defect; round 1 candidate emitted as least-broken)"
+}

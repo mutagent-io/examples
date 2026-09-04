@@ -1,0 +1,228 @@
+{
+ "217": {
+  "sample_id": "217",
+  "unhealed_failures": [
+   "BREP is not well-formed (BRepCheck_Analyzer::IsValid reported a defect)",
+   "tessellation is not closed (3F != 2E; open boundary in the mesh)"
+  ],
+  "unhealed_volume_mm3": 222144.44951042137,
+  "attempts": [
+   {
+    "strategy": "shapefix_default",
+    "valid": false,
+    "failures": [
+     "BREP is not well-formed (BRepCheck_Analyzer::IsValid reported a defect)",
+     "tessellation is not closed (3F != 2E; open boundary in the mesh)"
+    ],
+    "volume_mm3": 222144.44951042137,
+    "volume_delta_pct": 0.0,
+    "max_mesh_deviation_mm": null
+   },
+   {
+    "strategy": "sew_rebuild",
+    "valid": false,
+    "failures": [
+     "BREP is not well-formed (BRepCheck_Analyzer::IsValid reported a defect)",
+     "tessellation is not closed (3F != 2E; open boundary in the mesh)"
+    ],
+    "volume_mm3": 222144.44951042137,
+    "volume_delta_pct": 0.0,
+    "max_mesh_deviation_mm": null
+   },
+   {
+    "strategy": "shapefix_tol_0.01",
+    "valid": false,
+    "failures": [
+     "BREP is not well-formed (BRepCheck_Analyzer::IsValid reported a defect)",
+     "tessellation is not closed (3F != 2E; open boundary in the mesh)"
+    ],
+    "volume_mm3": 222144.44951042137,
+    "volume_delta_pct": 0.0,
+    "max_mesh_deviation_mm": null
+   },
+   {
+    "strategy": "unify_same_domain",
+    "valid": false,
+    "failures": [
+     "BREP is not well-formed (BRepCheck_Analyzer::IsValid reported a defect)",
+     "tessellation is not closed (3F != 2E; open boundary in the mesh)"
+    ],
+    "volume_mm3": 222144.42101258042,
+    "volume_delta_pct": 1e-05,
+    "max_mesh_deviation_mm": null
+   }
+  ],
+  "accepted": null
+ },
+ "242": {
+  "sample_id": "242",
+  "unhealed_failures": [
+   "tessellation is not closed (3F != 2E; open boundary in the mesh)"
+  ],
+  "unhealed_volume_mm3": 427420.08871820656,
+  "attempts": [
+   {
+    "strategy": "shapefix_default",
+    "valid": false,
+    "failures": [
+     "tessellation is not closed (3F != 2E; open boundary in the mesh)"
+    ],
+    "volume_mm3": 427420.08871820656,
+    "volume_delta_pct": 0.0,
+    "max_mesh_deviation_mm": null
+   },
+   {
+    "strategy": "sew_rebuild",
+    "valid": false,
+    "failures": [
+     "tessellation is not closed (3F != 2E; open boundary in the mesh)"
+    ],
+    "volume_mm3": 427420.08871820656,
+    "volume_delta_pct": 0.0,
+    "max_mesh_deviation_mm": null
+   },
+   {
+    "strategy": "shapefix_tol_0.01",
+    "valid": false,
+    "failures": [
+     "tessellation is not closed (3F != 2E; open boundary in the mesh)"
+    ],
+    "volume_mm3": 427420.08871820656,
+    "volume_delta_pct": 0.0,
+    "max_mesh_deviation_mm": null
+   },
+   {
+    "strategy": "unify_same_domain",
+    "valid": false,
+    "failures": [
+     "BREP is not well-formed (BRepCheck_Analyzer::IsValid reported a defect)",
+     "tessellation is not closed (3F != 2E; open boundary in the mesh)"
+    ],
+    "volume_mm3": 427420.4806192811,
+    "volume_delta_pct": 9e-05,
+    "max_mesh_deviation_mm": null
+   },
+   {
+    "strategy": "fix_small_face_tol_0.0001",
+    "valid": false,
+    "failures": [
+     "tessellation is not closed (3F != 2E; open boundary in the mesh)"
+    ],
+    "volume_mm3": 427420.11999966233,
+    "volume_delta_pct": 7e-06
+   },
+   {
+    "strategy": "fix_small_face_tol_0.001",
+    "valid": false,
+    "failures": [
+     "tessellation is not closed (3F != 2E; open boundary in the mesh)"
+    ],
+    "volume_mm3": 427420.11999966233,
+    "volume_delta_pct": 7e-06
+   },
+   {
+    "strategy": "fix_small_face_tol_0.01",
+    "valid": false,
+    "failures": [
+     "tessellation is not closed (3F != 2E; open boundary in the mesh)"
+    ],
+    "volume_mm3": 427420.11999966233,
+    "volume_delta_pct": 7e-06
+   }
+  ],
+  "accepted": null
+ },
+ "250": {
+  "sample_id": "250",
+  "unhealed_failures": [
+   "tessellation is non-manifold: 2 edge(s) shared by >2 triangles",
+   "tessellation is not closed (3F != 2E; open boundary in the mesh)",
+   "tessellation has inconsistent triangle orientation"
+  ],
+  "unhealed_volume_mm3": 636549.6079958484,
+  "attempts": [
+   {
+    "strategy": "shapefix_default",
+    "valid": false,
+    "failures": [
+     "tessellation is non-manifold: 2 edge(s) shared by >2 triangles",
+     "tessellation is not closed (3F != 2E; open boundary in the mesh)",
+     "tessellation has inconsistent triangle orientation"
+    ],
+    "volume_mm3": 636549.6079958484,
+    "volume_delta_pct": 0.0,
+    "max_mesh_deviation_mm": null
+   },
+   {
+    "strategy": "sew_rebuild",
+    "valid": false,
+    "failures": [
+     "tessellation is non-manifold: 2 edge(s) shared by >2 triangles",
+     "tessellation is not closed (3F != 2E; open boundary in the mesh)",
+     "tessellation has inconsistent triangle orientation"
+    ],
+    "volume_mm3": 636549.6079958484,
+    "volume_delta_pct": 0.0,
+    "max_mesh_deviation_mm": null
+   },
+   {
+    "strategy": "shapefix_tol_0.01",
+    "valid": false,
+    "failures": [
+     "tessellation is non-manifold: 2 edge(s) shared by >2 triangles",
+     "tessellation is not closed (3F != 2E; open boundary in the mesh)",
+     "tessellation has inconsistent triangle orientation"
+    ],
+    "volume_mm3": 636549.6079958484,
+    "volume_delta_pct": 0.0,
+    "max_mesh_deviation_mm": null
+   },
+   {
+    "strategy": "unify_same_domain",
+    "valid": false,
+    "failures": [
+     "tessellation is non-manifold: 3 edge(s) shared by >2 triangles",
+     "tessellation is not closed (3F != 2E; open boundary in the mesh)",
+     "tessellation has inconsistent triangle orientation"
+    ],
+    "volume_mm3": 636543.8119967895,
+    "volume_delta_pct": 0.00091,
+    "max_mesh_deviation_mm": null
+   },
+   {
+    "strategy": "fix_small_face_tol_0.0001",
+    "valid": false,
+    "failures": [
+     "tessellation is non-manifold: 2 edge(s) shared by >2 triangles",
+     "tessellation is not closed (3F != 2E; open boundary in the mesh)",
+     "tessellation has inconsistent triangle orientation"
+    ],
+    "volume_mm3": 636549.6079958484,
+    "volume_delta_pct": 0.0
+   },
+   {
+    "strategy": "fix_small_face_tol_0.001",
+    "valid": false,
+    "failures": [
+     "tessellation is non-manifold: 2 edge(s) shared by >2 triangles",
+     "tessellation is not closed (3F != 2E; open boundary in the mesh)",
+     "tessellation has inconsistent triangle orientation"
+    ],
+    "volume_mm3": 636549.6079958484,
+    "volume_delta_pct": 0.0
+   },
+   {
+    "strategy": "fix_small_face_tol_0.01",
+    "valid": false,
+    "failures": [
+     "tessellation is non-manifold: 2 edge(s) shared by >2 triangles",
+     "tessellation is not closed (3F != 2E; open boundary in the mesh)",
+     "tessellation has inconsistent triangle orientation"
+    ],
+    "volume_mm3": 636546.8773149223,
+    "volume_delta_pct": 0.000429
+   }
+  ],
+  "accepted": null
+ }
+}

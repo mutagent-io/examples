@@ -1,0 +1,50 @@
+{
+ "sample_id": "242",
+ "validity": {
+  "official_aligned_gate": "fail",
+  "verify_exit_code": 2,
+  "verify_payload": {
+   "ok": false,
+   "command": "verify",
+   "data": {
+    "is_valid": false,
+    "brep_well_formed": true,
+    "shells_closed": true,
+    "mesh_manifold": true,
+    "mesh_closed": false,
+    "orientation_consistent": true,
+    "n_naked_edges": 0,
+    "n_non_manifold_edges": 0,
+    "n_faces": 911,
+    "n_mesh_triangles": 159822,
+    "mesh_deflection_divisor": 32,
+    "strict_mesh_closed": false,
+    "min_face_area": 5.908447598406675e-10,
+    "max_aspect_ratio": 400000024.7472669,
+    "max_brep_tolerance": 0.02113956218203244,
+    "failures": [
+     "tessellation is not closed (3F != 2E; open boundary in the mesh)"
+    ],
+    "advisories": [
+     "advisory: minimum face area 5.908e-10 mm^2 is below 1e-03 mm^2 (sliver face) \u2014 not a validity failure",
+     "advisory: maximum face aspect ratio 400000024.7 exceeds 1000 \u2014 not a validity failure"
+    ],
+    "strictness": []
+   },
+   "error": "tessellation is not closed (3F != 2E; open boundary in the mesh)"
+  },
+  "reported_in_report": "fail"
+ },
+ "rounds_used": 3,
+ "checks_normalized": {
+  "validity": "fail",
+  "locality": "pass",
+  "surface_types": "documented",
+  "intent_volume": "documented"
+ },
+ "checks_passed_claimed": null,
+ "waivers": [],
+ "locality": "pass",
+ "interpretation_documented": true,
+ "score_source": "check-results (validity waived, documented as inherited defect; round 1 candidate emitted as least-broken)"
+}

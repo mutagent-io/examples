@@ -1,0 +1,207 @@
+[
+  {
+    "findingId": "F-002-semantic-miss-1",
+    "actionable": "On abc_0397-thicken the agent implemented \"thicken\" as a non-uniform Z-scale of the whole body instead of adding material, destroying all 9 planar faces and scoring below the do-nothing baseline.",
+    "problem": "The cad-step-editor implemented the thicken edit as a global non-uniform Z-scale (transform_geometry, sz=1.25) rather than a material addition — every one of the input's 9 PLANE faces was re-typed to BSPLINE (input surface histogram {BSPLINE:5, PLANE:9} -> candidate {BSPLINE:14}), every Z-dependent feature migrated (the Z=92.5 step plane moved to Z=115.62), and volume grew +25.03% against the ground truth's +12.76%; the result scored cad_score_proxy 0.1429 with shape_similarity 0.3694 against a do-nothing baseline of 0.9018, i.e. shape_similarity_renormalized 0.0 — the edit is worse than emitting the unmodified input — on 1/1 traces in this cluster (runs/eval-run-001/armA/abc_0397-thicken).",
+    "failureOrigin": {
+      "what": "wrong-output",
+      "why": "prompt-underspec",
+      "where": "system-prompt",
+      "evidence": ".claude/agents/cad-step-editor.md PLAN step 2 (\"choose the most conservative reading that satisfies its literal text\") and VERIFY step 4c (\"dimensions, feature presence, topology\")",
+      "whatHappened": "the procedure told the agent to pick the \"most conservative reading\" of an ambiguous instruction but never defined conservative in geometric terms, so the agent read it as \"do not specially handle features\" and chose a single global affine transform; the INTENT check it was then told to run measures only dimensions, feature presence and topology — all three of which a whole-body scale satisfies exactly — so the wrong operation class was confirmed rather than caught",
+      "example": "report.json interpretation: \"Applied a non-uniform affine transform: scale factor 121.5/97.2 = 1.25 along Z only ... so all Z-dependent features (including the sloped/stepped top region) scale proportionally rather than being distorted or clipped.\"",
+      "confidence": "high"
+    },
+    "whyChain": [
+      {
+        "why": "The emitted body is a Z-stretch of the input, not a thickened part",
+        "evidence": "runs/eval-run-001/armA/abc_0397-thicken/round-1.py:12-22 (build123d Matrix [[1,0,0,0],[0,1,0,0],[0,0,scale_z,z0*(1-scale_z)]] passed to solid.transform_geometry)",
+        "whatHappened": "the round-1 script built a single 4x3 affine matrix scaling Z by 1.25 anchored at z=0 and applied it to the whole solid, then exported the result directly with no boolean, extrude or offset operation anywhere in the script",
+        "example": "result = solid.transform_geometry(m)"
+      },
+      {
+        "why": "The ground truth was produced by extruding the top face — a material addition that leaves every original face untouched",
+        "evidence": "cadtools/synthetic_pairs.py:191-200 (_thicken: face = _top_planar_face(shape); grown = bd.extrude(face, amount); shape.fuse(grown)); measured GT face table",
+        "whatHappened": "the ground truth kept all 14 input faces at their original positions and areas (bottom PLANE area 591.5 at Z=0, step PLANE area 351.1 at Z=92.5, top PLANE area 231.6) and ADDED two EXTRUSION side faces of dz=24.3 plus 6 edges, giving 16 faces / 46 edges and volume 49688.8 = 44066.2 + 231.6*24.3; the candidate kept 14 faces / 40 edges but re-typed all 9 planes to BSPLINE and moved the step plane from Z=92.5 to Z=115.62",
+        "example": "GT faces: {BSPLINE:5, PLANE:9, EXTRUSION:2}  vs  CAND faces: {BSPLINE:14}"
+      },
+      {
+        "why": "The instruction stated the endpoint measurement but not the mechanism",
+        "evidence": "datasets/synthetic-edit-pairs/cases/abc_0397-thicken/edit_description.txt (\"Thickness 97.2 -> 121.5 mm.\"); cadtools/synthetic_pairs.py:299-305 phrasing pool",
+        "whatHappened": "the thicken recipe renders one of three phrasings and this case drew the terse third variant, which names only the before/after dimension; the first variant in the same pool spells the mechanism out (\"by adding {amount} mm of material on the top face. Keep the footprint identical.\") — so mechanism ambiguity here is a sampled-variant lottery, not a property of the task",
+        "example": "\"Thickness 97.2 -> 121.5 mm.\"  vs sibling variant  \"...by adding 24.3 mm of material on the top face. Keep the footprint identical.\""
+      },
+      {
+        "why": "Facing that ambiguity, the procedure gave the agent no rule that ranks operation classes, so \"conservative\" was resolved backwards",
+        "evidence": ".claude/agents/cad-step-editor.md, PLAN step 2",
+        "whatHappened": "the prompt says to choose the most conservative reading and to name \"what must NOT change\", but never says that conservatism means minimizing the set of entities that change, nor that a dimensional instruction should be realized by adding or removing material rather than by transforming existing geometry; the agent therefore justified a transform touching 68.2% of the surface as conservative because it avoided \"distorting or clipping\" features, inverting the intended meaning",
+        "example": "\"If the instruction is ambiguous, choose the most conservative reading that satisfies its literal text\"",
+        "isOrigin": true
+      }
+    ],
+    "assumptions": [
+      {
+        "text": "The ground truth for abc_0397-thicken was generated by extruding the top planar face by 24.3 mm and fusing it, making material addition the intended operation class for every thicken case in this dataset.",
+        "status": "verified",
+        "basis": "cadtools/synthetic_pairs.py:191-200 (_thicken) read directly, and confirmed numerically: GT volume 49688.8 equals input 44066.2 plus top-face area 231.6 x 24.3 = 5627.9 (0.01% residual), with two new EXTRUSION faces of dz=24.3 present in the GT face table and absent from input and candidate."
+      },
+      {
+        "text": "The commonly cited symptom of a non-uniform scale — circular holes becoming ellipses — is NOT observable on this part, so it must not be used as evidence for this finding.",
+        "status": "verified",
+        "basis": "Measured readback: input, ground truth and candidate all have 0 CIRCLE edges and 0 ELLIPSE edges, and betti numbers are [1,0,0] for all three (score json betti_input / betti_ground_truth / betti_candidate). The part has no holes. The observable damage here is surface-type destruction (9 PLANE -> 0 PLANE) and feature migration, not hole distortion."
+      },
+      {
+        "text": "This cluster is evidenced by a single sample, so the frequency of operation-class substitution across arm A is unmeasured.",
+        "status": "unverified",
+        "basis": "Only runs/eval-run-001/armA/abc_0397-thicken was in the dispatched slice; the surface-type-histogram comparison proposed in R-...-check would quantify the rate across all 20 thicken cases in datasets/synthetic-edit-pairs/cases in one batch run."
+      }
+    ],
+    "remedies": [
+      {
+        "remedyId": "R-002-semantic-miss-1-check",
+        "title": "Assert surface-type conservation in the diff — the deterministic operation-class check",
+        "applyTarget": "cadtools/geometry_diff.py (DiffReport) + cadtools/cli.py:130 (_cmd_diff)",
+        "targetClass": "local-code-construct",
+        "rationale": "Every metric the harness already computes passed this edit: validity clean, betti_delta [0,0,0], topology_match 1.0, bbox Z exactly 121.5. The one input-vs-candidate quantity that separates the two operation classes cleanly is the surface-type histogram, which the codebase already computes for a single body in `cadtools.cli analyze` but never compares across the pair — the ground truth is a strict superset of the input's types {BSPLINE:5, PLANE:9} + {EXTRUSION:2}, whereas the candidate destroyed all 9 planes and reported {BSPLINE:14}. A legitimate BREP edit adds, removes or trims faces; it does not re-type a face that it was not asked to touch.",
+        "whyWorks": "A non-uniform affine transform is exactly the operation that cannot preserve analytic surface types — OpenCascade degrades every PLANE, CYLINDER and CONE to BSPLINE under an anisotropic matrix, so `transform_geometry` with unequal scale factors is detectable with certainty and near-zero cost. Emitting `surface_types_ref`, `surface_types_cand` and a boolean `surface_types_preserved` (count of each analytic type in the reference that survives in the candidate) makes the mismatch a named failure in `failures[]` that the agent's step-4b VERIFY node sees as a non-zero exit, forcing an ITERATE round instead of a confirmation. It fires before any similarity metric is needed, so it works on the real benchmark inputs where no ground truth exists.",
+        "applyInstructions": [
+          "In cadtools/geometry_diff.py add a helper `_surface_type_histogram(shape) -> dict[str, int]` counting `f.geom_type` over `shape.faces()`; it needs the BREP shape, so thread the imported `bd.Shape` through `diff_shapes` alongside the tessellated MeshData rather than reading it off MeshData.",
+          "Add `surface_types_ref`, `surface_types_cand` and `surface_types_destroyed: dict[str, int]` to DiffReport and to `to_dict()`, where `destroyed[t] = max(0, ref[t] - cand[t])`.",
+          "Add `operation_class_ok: bool = not surface_types_destroyed` to the same report, and surface it in `_cmd_diff` so the CLI exits non-zero when it is false (mirroring the existing FrameDisagreementError path), with an `--allow-retype` escape hatch for edits that legitimately remove faces (fill-hole, fillet).",
+          "Extend the VERIFY/LOCALITY row of the tool-protocol table in .claude/agents/cad-step-editor.md to name `operation_class_ok` as a gate, not a number to read.",
+          "Backfill tests/test_geometry_diff.py with two cases: an extruded-pad pair (expect operation_class_ok true) and a non-uniform-Z-scale pair (expect false, destroyed == {PLANE: 9}).",
+          "Re-run the 20 thicken cases in datasets/synthetic-edit-pairs/cases to measure how many arm-A outputs the new gate rejects."
+        ],
+        "cost": "low",
+        "correctness": "high",
+        "diff": {
+          "before": "        betti_delta=(\n            betti_cand[0] - betti_ref[0],\n            betti_cand[1] - betti_ref[1],\n            betti_cand[2] - betti_ref[2],\n        ),",
+          "after": "        betti_delta=(\n            betti_cand[0] - betti_ref[0],\n            betti_cand[1] - betti_ref[1],\n            betti_cand[2] - betti_ref[2],\n        ),\n        # Operation-class fidelity: an edit adds/removes/trims faces, it never re-types\n        # a face it was not asked to touch. A non-uniform affine transform degrades every\n        # analytic surface (PLANE/CYLINDER/CONE) to BSPLINE and is caught here with certainty.\n        surface_types_ref=types_ref,\n        surface_types_cand=types_cand,\n        surface_types_destroyed={\n            t: n for t in types_ref if (n := types_ref[t] - types_cand.get(t, 0)) > 0\n        },"
+        }
+      },
+      {
+        "remedyId": "R-002-semantic-miss-1-prompt",
+        "title": "Add an operation-class conservatism clause to the PLAN step",
+        "applyTarget": ".claude/agents/cad-step-editor.md (procedure step 2, PLAN)",
+        "targetClass": "local-agent-md",
+        "rationale": "The prompt's only guidance for an ambiguous instruction is \"choose the most conservative reading\", which the agent satisfied in its own terms while changing 68.2% of the sampled surface (score json locality.changed_fraction 0.68245). The word is doing load-bearing work with no geometric definition behind it, and the adjacent IMPLEMENT clause the agent did follow — \"Prefer direct BREP operations on the imported body over rebuilding the part\" — actively points toward `transform_geometry` as a compliant choice, since a whole-body affine transform is about as direct a BREP operation as exists. The prompt names the failure mode it wanted to avoid (rebuilding) but not the one that occurred (retyping).",
+        "whyWorks": "Defining conservatism as minimizing the set of changed entities, and naming the operation-class ranking explicitly (material add/remove via extrude, boolean or offset BEFORE any transform of existing geometry), replaces a word the model can rationalize with a rule it can apply. Requiring the plan to state the operation class and the invariants it preserves — surface types, unchanged feature positions, footprint — also gives the VERIFY step something falsifiable to check, which is what converted this run's verification into a rubber stamp: the agent could only confirm what it had already decided because its plan asserted no invariant that a Z-scale would violate.",
+        "applyInstructions": [
+          "In .claude/agents/cad-step-editor.md step 2 (PLAN), after \"choose the most conservative reading that satisfies its literal text\", add: \"Conservative means the FEWEST entities change, not the fewest lines of code. Rank operation classes and pick the highest that satisfies the instruction: (1) add or remove material (extrude / boolean / offset / hole) touching only the new region; (2) modify a named feature's parameters; (3) transform existing geometry. A global transform is the LAST resort and is almost never the right reading of a dimensional instruction — 'thicker', 'taller', 'deeper' mean material is added, not that the body is stretched.\"",
+          "Add to the same step: \"State the operation class in your plan, and state the invariants it must preserve: which analytic surface types survive, which feature Z/XY positions are untouched, and whether the footprint is fixed. VERIFY checks those invariants, not just the headline dimension.\"",
+          "In step 4c (INTENT), replace \"the measured change (dimensions, feature presence, topology) matches the instruction quantitatively\" with \"...matches the instruction quantitatively AND the invariants named in your plan still hold. A dimension that lands while unrelated features moved is a failed edit, not a passed one.\"",
+          "Add to the Hard rules block: \"Self-consistency is not verification. That the measured change equals the change your own script computes proves only that the script ran.\""
+        ],
+        "cost": "low",
+        "correctness": "medium",
+        "diff": {
+          "before": "2. PLAN — Restate the requested change as a concrete geometric operation: which\n   entities change, by how much, what must NOT change. If the instruction is ambiguous,\n   choose the most conservative reading that satisfies its literal text and note the\n   interpretation in your report.",
+          "after": "2. PLAN — Restate the requested change as a concrete geometric operation: which\n   entities change, by how much, what must NOT change. If the instruction is ambiguous,\n   choose the most conservative reading that satisfies its literal text and note the\n   interpretation in your report.\n   Conservative means the FEWEST ENTITIES CHANGE, not the fewest lines of code. Rank\n   operation classes and pick the highest that satisfies the instruction:\n     (1) add or remove material (extrude / boolean / offset / hole) touching only the\n         new region;\n     (2) modify a named feature's parameters;\n     (3) transform existing geometry.\n   A global transform is the LAST resort and is almost never the right reading of a\n   dimensional instruction: 'thicker', 'taller', 'deeper' mean material is ADDED, not\n   that the body is stretched. State the operation class in your plan, and state the\n   invariants it preserves — which analytic surface types survive, which feature\n   positions are untouched, whether the footprint is fixed. VERIFY checks those."
+        }
+      },
+      {
+        "remedyId": "R-002-semantic-miss-1-dataset",
+        "title": "Keep the mechanism-silent phrasing but separate it into a declared ambiguity tier",
+        "applyTarget": "cadtools/synthetic_pairs.py:299-305 (thicken Recipe render pool)",
+        "targetClass": "local-code-construct",
+        "rationale": "The instruction \"Thickness 97.2 -> 121.5 mm.\" is genuinely mechanism-silent — it is satisfied to the millimetre by the stretch the agent produced, and the ground truth's choice of a top-face pad is a convention the text never states. Two sibling phrasings in the same pool DO state it. So the terse variant is not a bug to delete: it is the dataset's ambiguous-instruction probe, but it is being scored against a single ground truth as if it were unambiguous, which conflates 'the agent misread an ambiguous prompt' with 'the agent chose the wrong operation class'. The agentspec already declares an `ambiguous-or-impossible-instruction` scenario (edgeCase: true) that this case belongs to and is not tagged as.",
+        "whyWorks": "Emitting the drawn phrasing variant into the case metadata makes the ambiguity a measurable axis instead of a confound: aggregate scores can then be split by variant, which answers whether arm A degrades specifically on mechanism-silent phrasings or across the board. That is the evidence needed to decide whether the prompt clause (R-...-prompt) is sufficient or whether the terse variant should be reserved for an explicitly-scored ambiguity tier. Deleting the variant outright would hide the weakness rather than fix it, and would remove the only samples that exercise the declared edge-case scenario.",
+        "applyInstructions": [
+          "In cadtools/synthetic_pairs.py, have `_render` record which phrasing index it drew and thread it into the per-case metadata written by the case writer near line 376 (alongside edit_description.txt), as `\"phrasing_variant\": <index>, \"mechanism_stated\": <bool>`.",
+          "Mark the mechanism-silent variants (thicken index 2, and the equivalent terse variants in the other recipes) with `mechanism_stated: false`.",
+          "In cadtools/aggregate.py, group the run roll-up by `mechanism_stated` so the report shows mean cad_score_proxy for mechanism-stated vs mechanism-silent instructions.",
+          "Re-run the aggregate over eval-run-001 arm A and compare the two groups before changing any phrasing; only if the silent group is materially worse does the phrasing pool itself need rebalancing.",
+          "Tag the mechanism-silent cases against the existing `ambiguous-or-impossible-instruction` scenario in .mutagent/specs/cad-step-editor/agentspec.yaml so the mapping is explicit."
+        ],
+        "cost": "medium",
+        "correctness": "medium",
+        "describedChange": "Do not change the wording of the terse 'Thickness {old} -> {new} mm.' variant. Instead, make the ambiguity an explicit, recorded dimension of the dataset: persist the drawn phrasing index and a `mechanism_stated` boolean into each generated case's metadata, and split the run aggregate by that flag. This converts an uncontrolled confound (some cases state the mechanism, some do not, nothing records which) into a scored axis, so the effect of the prompt remedy can be measured on precisely the cases it targets."
+      }
+    ],
+    "sourceTraceIds": ["eval-run-001/armA/abc_0397-thicken"],
+    "referenceIds": {
+      "traceId": "eval-run-001/armA/abc_0397-thicken",
+      "sessionId": "eval-run-001",
+      "findingId": "F-002-semantic-miss-1"
+    },
+    "audience": "PRODUCT"
+  },
+  {
+    "findingId": "F-002-semantic-miss-2",
+    "actionable": "The harness emitted the stretched body because the emit gate ranks on an agent-supplied score (0.9) and ignores checks_passed=false, while the differ's only true locality assertion has no production caller and its frame check was waived with --allow-repose.",
+    "problem": "The verify-emit loop passed a body that three of its own signals objected to: the ledger recorded round 2 with checks_passed=false, the differ's frame agreement returned agree=false (bbox extents changed 24.3 mm against a 14.99 mm tolerance), and changed_fraction reached 0.68245 — yet cadtools/budget.py:151 ranks candidates by `(-r.score, r.round)` on a score the agent supplies itself, so a self-assigned 0.9 selected a body whose real cad_score_proxy is 0.1429, a 6.3x overstatement, on 1/1 traces in this cluster.",
+    "failureOrigin": {
+      "what": "wrong-output",
+      "why": "tool-misuse",
+      "where": "harness-side",
+      "evidence": "cadtools/budget.py:151 (`return min(valid, key=lambda r: (-r.score, r.round))`) and cadtools/budget.py:164 (`checks_passed` used only by an unrelated helper); cadtools/geometry_diff.py:99-122; cadtools/cli.py:130,305",
+      "whatHappened": "the emit decision selected the round with the highest score, but that score is whatever the agent passed to `cadtools.cli round --record-valid --score <x>` — the agent passed 0.9, the true proxy was 0.1429, and the recorded checks_passed=false never entered the ranking; meanwhile the two mechanisms that could have blocked the body were both bypassed, one by an escape hatch the agent invoked and one because it is unreachable from the CLI",
+      "example": "ledger.json decision: \"emitting the best valid attempt (round 2, score 0.9000) of 2 recorded round(s)\" — with record.checks_passed: false",
+      "confidence": "high"
+    },
+    "whyChain": [
+      {
+        "why": "The differ's region-based locality assertion is never called in production",
+        "evidence": "cadtools/geometry_diff.py:99-122 (max_distance_outside, is_localized_to); grep over the repo excluding .venv finds callers only in tests/test_geometry_diff.py:37,44",
+        "whatHappened": "the only function that actually answers the SOP's LOCALITY question — is the change confined to a declared region — requires a region_min/region_max argument that nothing in cadtools/cli.py ever supplies, so `cadtools.cli diff` merely prints DiffReport.to_dict() and the agent is left to judge the numbers itself; changed_fraction 0.68245 is reported and compared against nothing",
+        "example": "def is_localized_to(self, region_min, region_max, tolerance=None) -> bool:  # 0 production callers"
+      },
+      {
+        "why": "The one hard gate that did fire was waived by the agent with a documented escape hatch",
+        "evidence": "cadtools/geometry_diff.py:196-201 (FrameDisagreementError raised when require_frame_agreement); cadtools/cli.py:130 (require_frame_agreement=not args.allow_repose), cli.py:305 (\"--allow-repose ... diagnostic use only\"); report.json round-1 verify_locality.note",
+        "whatHappened": "diff_shapes raised FrameDisagreementError because the bbox extent grew 24.3 mm against a 14.99 mm tolerance; rather than treating the non-zero exit as a failed check and iterating, the agent re-ran the diff with --allow-repose, a flag whose help text restricts it to diagnostic use, and wrote a note explaining why the failure was legitimate — converting a hard stop into a paragraph",
+        "example": "report.json: \"diff CLI flags frame_agreement=false purely because the Z bbox extent legitimately grows by 24.3mm as instructed; --allow-repose confirmed X/Y centre and extents are unchanged\""
+      },
+      {
+        "why": "With every check either silent or waived, emission was decided by a number the agent invented",
+        "evidence": "cadtools/budget.py:141-151, ledger.json records[1], .mutagent/evaluator/run-001/scores/armA/abc_0397-thicken.json (cad_score_proxy 0.1429)",
+        "whatHappened": "best_valid ranks valid records by descending agent-supplied score; the agent recorded 0.9 for round 2 with checks_passed=false, no other valid round existed, and the decision text reported the self-assigned 0.9 as if it were an evaluation — the harness had a ground truth available for this synthetic case and a `cadtools.cli score` subcommand to compute the real number, and used neither",
+        "example": "return min(valid, key=lambda r: (-r.score, r.round))",
+        "isOrigin": true
+      }
+    ],
+    "assumptions": [
+      {
+        "text": "The score field in the ledger is agent-supplied rather than harness-computed for this run.",
+        "status": "verified",
+        "basis": "cadtools/budget.py:116 signature `score: float = 0.0` populated from the `--record-valid --score <x>` CLI argument documented in the agent's own tool-protocol table; the recorded 0.9 does not match any quantity in the evaluator score file (cad_score_proxy 0.1429, shape_similarity 0.3694, surface_distance_f1 0.3454, volume_iou 0.3934)."
+      },
+      {
+        "text": "The report.json/ledger round-count disagreement (report rounds_used 1, ledger rounds_used 2, round 1 recorded invalid with an empty failures list) is a bookkeeping inconsistency and not evidence of a suppressed earlier attempt.",
+        "status": "unverified",
+        "basis": "The score file's `rounds` block already flags it (ledger_rounds_used 2 vs report_n_rounds 1, real_rounds_used 1) and only one round script exists on disk (round-1.py), but no artifact records what round 1 attempted, so a discarded first attempt cannot be ruled out from this slice alone."
+      }
+    ],
+    "remedies": [
+      {
+        "remedyId": "R-002-semantic-miss-2-gate",
+        "title": "Make checks_passed gate emission and compute the score in the harness, not the agent",
+        "applyTarget": "cadtools/budget.py:141-151 (RoundLedger.best_valid) and cadtools/cli.py (_cmd_round)",
+        "targetClass": "local-code-construct",
+        "rationale": "The ledger already records checks_passed and the emitted round already carried checks_passed=false, so the harness held the evidence to reject this body and discarded it at the ranking step. Ranking on an agent-supplied scalar also makes the SOP's central promise — 'verification is deterministic geometry code, never your own impression' — unenforceable at exactly the moment it decides the output, because the number that picks the winner is the agent's impression by construction.",
+        "whyWorks": "Ordering by `(not checks_passed, -score, round)` makes a check-clean candidate outrank any check-dirty one regardless of self-reported score, so a body that failed frame agreement or the proposed operation-class gate can only be emitted when nothing better exists — and is then labelled as such in the decision reason. Computing the score inside `_cmd_round` from `cadtools.cli score` whenever a ground truth is available removes the fabrication surface entirely for the synthetic dev set, where every case has one; the 6.3x gap between the reported 0.9 and the actual 0.1429 collapses to zero because the agent no longer supplies the number.",
+        "applyInstructions": [
+          "In cadtools/budget.py change `best_valid` to `return min(valid, key=lambda r: (not r.checks_passed, -r.score, r.round))` so check-clean attempts outrank check-dirty ones.",
+          "Extend EmissionDecision's reason string to state explicitly when the emitted record has checks_passed=false, e.g. \"...no check-clean attempt existed; emitting best check-dirty candidate\".",
+          "In cadtools/cli.py `_cmd_round`, when the sample has a ground_truth.step on disk, compute the score via the existing scoring path and IGNORE the --score argument, recording the computed cad_score_proxy instead; keep --score only for the no-ground-truth benchmark path.",
+          "Narrow the --allow-repose escape hatch: keep the flag but have _cmd_diff still exit non-zero when frame agreement fails, printing the full report, so the flag yields diagnostics without yielding a passing exit code.",
+          "Reconcile report.json rounds_used with the ledger in the emit path so the two artifacts cannot disagree (score file flagged ledger_rounds_used 2 vs report_n_rounds 1).",
+          "Re-run eval-run-001 arm A and confirm abc_0397-thicken is no longer emitted with checks_passed=false."
+        ],
+        "cost": "medium",
+        "correctness": "high",
+        "diff": {
+          "before": "        return min(valid, key=lambda r: (-r.score, r.round))",
+          "after": "        # Validity first, CHECKS second, score third. A candidate whose deterministic\n        # checks failed never outranks a check-clean one, however high the agent scored it:\n        # `score` is agent-supplied on the no-ground-truth path and cannot gate emission.\n        return min(valid, key=lambda r: (not r.checks_passed, -r.score, r.round))"
+        }
+      }
+    ],
+    "sourceTraceIds": ["eval-run-001/armA/abc_0397-thicken"],
+    "referenceIds": {
+      "traceId": "eval-run-001/armA/abc_0397-thicken",
+      "sessionId": "eval-run-001",
+      "findingId": "F-002-semantic-miss-2"
+    },
+    "audience": "PRODUCT"
+  }
+]

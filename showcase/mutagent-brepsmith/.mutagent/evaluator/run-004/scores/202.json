@@ -1,0 +1,49 @@
+{
+ "sample_id": "202",
+ "validity": {
+  "official_aligned_gate": "fail",
+  "verify_exit_code": 2,
+  "verify_payload": {
+   "ok": false,
+   "command": "verify",
+   "data": {
+    "is_valid": false,
+    "brep_well_formed": false,
+    "shells_closed": true,
+    "mesh_manifold": true,
+    "mesh_closed": false,
+    "orientation_consistent": true,
+    "n_naked_edges": 0,
+    "n_non_manifold_edges": 0,
+    "n_faces": 2173,
+    "n_mesh_triangles": 1027879,
+    "mesh_deflection_divisor": 32,
+    "strict_mesh_closed": false,
+    "min_face_area": 0.006730731004679774,
+    "max_aspect_ratio": 1050000063.3365886,
+    "max_brep_tolerance": 0.08849960421497508,
+    "failures": [
+     "BREP is not well-formed (BRepCheck_Analyzer::IsValid reported a defect)",
+     "tessellation is not closed (3F != 2E; open boundary in the mesh)"
+    ],
+    "advisories": [
+     "advisory: maximum face aspect ratio 1050000063.3 exceeds 1000 \u2014 not a validity failure"
+    ],
+    "strictness": []
+   },
+   "error": "BREP is not well-formed (BRepCheck_Analyzer::IsValid reported a defect); tessellation is not closed (3F != 2E; open boundary in the mesh)"
+  },
+  "reported_in_report": "fail"
+ },
+ "rounds_used": 1,
+ "checks_normalized": {
+  "validity": "fail",
+  "locality": "documented",
+  "intent": "documented"
+ },
+ "checks_passed_claimed": null,
+ "waivers": [],
+ "locality": "documented",
+ "interpretation_documented": true,
+ "score_source": "check-results (validity fail, unwaived -- recorded honestly per pre-existing source defect)"
+}

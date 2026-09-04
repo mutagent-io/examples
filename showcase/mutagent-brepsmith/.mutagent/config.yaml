@@ -1,0 +1,33 @@
+config_version: "0.3.0"
+
+global:
+  providers:
+    - name: anthropic
+      credentials_ref: ANTHROPIC_API_KEY
+
+  workspace:
+    repo: cad-agents/stl-agent
+    path: .
+
+  models:
+    default: claude-sonnet-5
+    judge_model: claude-fable-5
+
+  sources:
+    - name: stl-agent-sessions
+      platform: claude-code
+      format: claude-code
+
+  targets:
+    - name: stl-agent-local
+      platform: local-claude
+      subject: agent
+      artifact_format: markdown
+      mode: local
+      root: .
+      apply:
+        kind: markdown
+
+lifecycle:
+  agentspec:
+    spec_dir: .mutagent/specs

@@ -1,0 +1,449 @@
+{
+ "submission_id": "bruno-mutagent_mutagent-brepsmith-sonnet-5-agentic-harn_20260827-080517",
+ "status": "completed",
+ "failure_reason": null,
+ "submitter_name": "bruno-mutagent",
+ "submission_name": "mutagent-brepsmith \u2014 Sonnet-5 agentic harness (editing-only) r3",
+ "agent_url": "",
+ "notes": "Resubmission of 20260826-154802 (Space shard backstop failure; STEP content unchanged; r3 adds the 49 generation folders as explicit not-attempted placeholders). mutagent-brepsmith: a CAD-editing agent (MutagenT ADL), evaluated on the editing task; generation is phase 2. Claude Code harness on claude-sonnet-5 with deterministic verification (validity, locality, volumetric intent), up to 5 rounds. Samples 202/217/240 inherit validity defects from the unmodified benchmark inputs.",
+ "submitted_at": "2026-08-27T08:05:19Z",
+ "cadgenbench_version": "0.1.0",
+ "cadgenbench_data_revision": "f76f96558581",
+ "validity_rate": 0.358,
+ "aggregate_score": 0.1999,
+ "score_by_task_type": {
+  "generation": 0.0,
+  "editing": 0.5059
+ },
+ "per_task_scores": {
+  "generation": {
+   "score": 0.0,
+   "validity_rate": 0.0,
+   "n_samples": 49,
+   "n_valid": 0,
+   "n_invalid": 0,
+   "n_missing": 49
+  },
+  "editing": {
+   "score": 0.5059,
+   "validity_rate": 0.9062,
+   "n_samples": 32,
+   "n_valid": 29,
+   "n_invalid": 3,
+   "n_missing": 0
+  }
+ },
+ "per_sample_scores": {
+  "101": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "102": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "103": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "104": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "105": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "106": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "107": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "108": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "109": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "110": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "111": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "112": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "113": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "114": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "115": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "116": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "117": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "118": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "119": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "120": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "121": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "122": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "123": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "124": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "125": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "126": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "127": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "128": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "129": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "130": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "131": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "132": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "133": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "134": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "135": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "136": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "137": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "138": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "139": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "140": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "141": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "142": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "143": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "145": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "146": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "147": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "148": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "149": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "150": {
+   "status": "missing",
+   "cad_score": 0.0,
+   "task_type": "generation"
+  },
+  "201": {
+   "status": "valid",
+   "cad_score": 0.3256,
+   "task_type": "editing"
+  },
+  "202": {
+   "status": "invalid",
+   "cad_score": 0.0,
+   "task_type": "editing"
+  },
+  "203": {
+   "status": "valid",
+   "cad_score": 0.1843,
+   "task_type": "editing"
+  },
+  "204": {
+   "status": "valid",
+   "cad_score": 0.4243,
+   "task_type": "editing"
+  },
+  "205": {
+   "status": "valid",
+   "cad_score": 0.3857,
+   "task_type": "editing"
+  },
+  "206": {
+   "status": "valid",
+   "cad_score": 0.4977,
+   "task_type": "editing"
+  },
+  "207": {
+   "status": "valid",
+   "cad_score": 0.3605,
+   "task_type": "editing"
+  },
+  "208": {
+   "status": "valid",
+   "cad_score": 0.3969,
+   "task_type": "editing"
+  },
+  "209": {
+   "status": "valid",
+   "cad_score": 0.7454,
+   "task_type": "editing"
+  },
+  "211": {
+   "status": "valid",
+   "cad_score": 0.6766,
+   "task_type": "editing"
+  },
+  "212": {
+   "status": "valid",
+   "cad_score": 0.9728,
+   "task_type": "editing"
+  },
+  "214": {
+   "status": "valid",
+   "cad_score": 0.862,
+   "task_type": "editing"
+  },
+  "215": {
+   "status": "valid",
+   "cad_score": 0.9264,
+   "task_type": "editing"
+  },
+  "217": {
+   "status": "invalid",
+   "cad_score": 0.0,
+   "task_type": "editing"
+  },
+  "218": {
+   "status": "valid",
+   "cad_score": 0.3975,
+   "task_type": "editing"
+  },
+  "224": {
+   "status": "valid",
+   "cad_score": 0.8376,
+   "task_type": "editing"
+  },
+  "225": {
+   "status": "valid",
+   "cad_score": 0.826,
+   "task_type": "editing"
+  },
+  "229": {
+   "status": "valid",
+   "cad_score": 0.3711,
+   "task_type": "editing"
+  },
+  "230": {
+   "status": "valid",
+   "cad_score": 0.5657,
+   "task_type": "editing"
+  },
+  "231": {
+   "status": "valid",
+   "cad_score": 0.6688,
+   "task_type": "editing"
+  },
+  "238": {
+   "status": "valid",
+   "cad_score": 0.7772,
+   "task_type": "editing"
+  },
+  "240": {
+   "status": "invalid",
+   "cad_score": 0.0,
+   "task_type": "editing"
+  },
+  "241": {
+   "status": "valid",
+   "cad_score": 0.2165,
+   "task_type": "editing"
+  },
+  "242": {
+   "status": "valid",
+   "cad_score": 0.8835,
+   "task_type": "editing"
+  },
+  "243": {
+   "status": "valid",
+   "cad_score": 0.4,
+   "task_type": "editing"
+  },
+  "244": {
+   "status": "valid",
+   "cad_score": 0.3726,
+   "task_type": "editing"
+  },
+  "245": {
+   "status": "valid",
+   "cad_score": 0.2335,
+   "task_type": "editing"
+  },
+  "246": {
+   "status": "valid",
+   "cad_score": 0.4,
+   "task_type": "editing"
+  },
+  "247": {
+   "status": "valid",
+   "cad_score": 0.7997,
+   "task_type": "editing"
+  },
+  "248": {
+   "status": "valid",
+   "cad_score": 0.4,
+   "task_type": "editing"
+  },
+  "249": {
+   "status": "valid",
+   "cad_score": 0.4777,
+   "task_type": "editing"
+  },
+  "250": {
+   "status": "valid",
+   "cad_score": 0.8044,
+   "task_type": "editing"
+  }
+ },
+ "per_sample_breakdown": null,
+ "submission_blob_url": "https://huggingface.co/datasets/HuggingAI4Engineering/cadgenbench-submissions/resolve/main/submissions/bruno-mutagent_mutagent-brepsmith-sonnet-5-agentic-harn_20260827-080517.zip",
+ "submission_sha256": "80539b4905561c5224750ec96bd7330eca583083e33f4bbc1fc1ea65dc243b8a",
+ "validation_status": "unvalidated",
+ "validation_method": null,
+ "hf_username": "bruno-mutagent"
+}

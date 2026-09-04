@@ -1,0 +1,60 @@
+{
+  "sample_id": "abc_0374-through-hole",
+  "arm": "armB",
+  "ok": true,
+  "scorecard": {
+    "convention": "cad-score-proxy/v1:interface-null-renormalized-0.7",
+    "valid": true,
+    "status": "ok",
+    "validity_failures": [],
+    "surface_distance_f1": 1.0,
+    "volume_iou": 1.0000000000355767,
+    "shape_similarity": 1.0000000000177884,
+    "baseline_shape_similarity": 0.9465986929670679,
+    "shape_similarity_renormalized": 1.0000000003331087,
+    "topology_match": 1.0,
+    "interface": null,
+    "interface_available": false,
+    "betti_ground_truth": [
+      1,
+      1,
+      0
+    ],
+    "betti_candidate": [
+      1,
+      1,
+      0
+    ],
+    "betti_input": [
+      1,
+      0,
+      0
+    ],
+    "cad_score_proxy": 1.0000000002855218,
+    "proxy_weight_total": 0.7,
+    "weights": {
+      "shape": 0.6,
+      "interface": 0.3,
+      "topology": 0.1
+    },
+    "raw_components": {
+      "shape_renormalized": 0.6000000001998652,
+      "interface": null,
+      "topology_match": 0.1
+    },
+    "frame_agreement": {
+      "agree": true,
+      "centre_delta": 0.0,
+      "extent_delta": 0.0,
+      "pose_delta": 0.0,
+      "sorted_extent_delta": 0.0,
+      "axis_permutation": false,
+      "shape_divergence": false,
+      "tolerance": 49.700354111056676,
+      "reference_diagonal": 497.00354111056674,
+      "message": "bodies are posed in the same frame"
+    },
+    "n_samples": 20000
+  },
+  "elapsed_s": 15.1
+}

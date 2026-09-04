@@ -1,0 +1,60 @@
+{
+  "sample_id": "abc_0219-fill-hole",
+  "arm": "armB",
+  "ok": true,
+  "scorecard": {
+    "convention": "cad-score-proxy/v1:interface-null-renormalized-0.7",
+    "valid": true,
+    "status": "shape-divergence",
+    "validity_failures": [],
+    "surface_distance_f1": 0.5008495591999241,
+    "volume_iou": 0.5306887002862132,
+    "shape_similarity": 0.5157691297430687,
+    "baseline_shape_similarity": 0.5643122746679747,
+    "shape_similarity_renormalized": 0.0,
+    "topology_match": 1.0,
+    "interface": null,
+    "interface_available": false,
+    "betti_ground_truth": [
+      1,
+      0,
+      0
+    ],
+    "betti_candidate": [
+      1,
+      0,
+      0
+    ],
+    "betti_input": [
+      1,
+      5,
+      0
+    ],
+    "cad_score_proxy": 0.14285714285714288,
+    "proxy_weight_total": 0.7,
+    "weights": {
+      "shape": 0.6,
+      "interface": 0.3,
+      "topology": 0.1
+    },
+    "raw_components": {
+      "shape_renormalized": 0.0,
+      "interface": null,
+      "topology_match": 0.1
+    },
+    "frame_agreement": {
+      "agree": true,
+      "centre_delta": 3.3211149217369984,
+      "extent_delta": 6.642229843473997,
+      "pose_delta": 0.0,
+      "sorted_extent_delta": 6.642229843473997,
+      "axis_permutation": false,
+      "shape_divergence": true,
+      "tolerance": 4.21052404456692,
+      "reference_diagonal": 42.1052404456692,
+      "message": "bodies are posed in the same frame; their SIZES differ by 6.6422 mm, which is a shape finding, not a pose one"
+    },
+    "n_samples": 20000
+  },
+  "elapsed_s": 14.1
+}

@@ -1,0 +1,389 @@
+{
+ "run": "eval-run-004",
+ "arm": "armA",
+ "n": 32,
+ "samples": {
+  "201": {
+   "source_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/armA/201/output.step",
+   "staged_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/submission-staging/201/output.step",
+   "sha256": "07441b9091f7bb766e569d558fc6f2329c31383a870d79642e5123034d9a5c4c",
+   "size_bytes": 2804353,
+   "healed": false,
+   "validity": "pass",
+   "rounds_used": 1,
+   "flags": [
+    "waived:intent"
+   ]
+  },
+  "202": {
+   "source_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/armA/202/output.step",
+   "staged_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/submission-staging/202/output.step",
+   "sha256": "2bfbcea8c7a3cc06a3d9f978006fd5551f16a249c292ae36cff55a19c47ed049",
+   "size_bytes": 19218873,
+   "healed": false,
+   "validity": "fail",
+   "rounds_used": 1,
+   "flags": [
+    "validity-fail"
+   ]
+  },
+  "203": {
+   "source_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/armA/203/output.step",
+   "staged_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/submission-staging/203/output.step",
+   "sha256": "ff959b48cceadf79fdcd231e6f9d1824e17385fe07e320555e6067f701308ef4",
+   "size_bytes": 3539180,
+   "healed": false,
+   "validity": "pass",
+   "rounds_used": 1,
+   "flags": [
+    "waived:operation_class"
+   ]
+  },
+  "204": {
+   "source_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/armA/204/output.step",
+   "staged_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/submission-staging/204/output.step",
+   "sha256": "2dd167c98dc7f380f76d783b6f2274a47d0a4b3618cc5574d4e6991ce97f78e2",
+   "size_bytes": 1484587,
+   "healed": false,
+   "validity": "pass",
+   "rounds_used": 1,
+   "flags": []
+  },
+  "205": {
+   "source_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/armA/205/output.step",
+   "staged_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/submission-staging/205/output.step",
+   "sha256": "70a82ac7dcd8364191daf4c5a786a8c0354b0fde863285f739b3dcded1c0147e",
+   "size_bytes": 1140233,
+   "healed": false,
+   "validity": "pass",
+   "rounds_used": 1,
+   "flags": []
+  },
+  "206": {
+   "source_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/armA/206/output.step",
+   "staged_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/submission-staging/206/output.step",
+   "sha256": "e39b1a7e59bc705c843e6e42a1163b235fa047b3131d72fe902cbf96fddd65f6",
+   "size_bytes": 5416260,
+   "healed": false,
+   "validity": "pass",
+   "rounds_used": 1,
+   "flags": [
+    "waived:operation_class"
+   ]
+  },
+  "207": {
+   "source_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/armA/207/output.step",
+   "staged_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/submission-staging/207/output.step",
+   "sha256": "944dc18217d28e14c0a47eafa083859161825959cf171db8d4fb49218a2726b9",
+   "size_bytes": 2236755,
+   "healed": false,
+   "validity": "fail",
+   "rounds_used": 1,
+   "flags": [
+    "validity-fail"
+   ]
+  },
+  "208": {
+   "source_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/armA/208/output.step",
+   "staged_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/submission-staging/208/output.step",
+   "sha256": "d7e0bb0999621f3a4da2a5c31d3289bd7efed565f673445458cfb22292e1ecd2",
+   "size_bytes": 4961129,
+   "healed": false,
+   "validity": "pass",
+   "rounds_used": 1,
+   "flags": []
+  },
+  "209": {
+   "source_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/armA/209/output.step",
+   "staged_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/submission-staging/209/output.step",
+   "sha256": "ba4ca7ec4f7dc87120828c4fd8db333448f692d7ace64988647dbca984f60ef8",
+   "size_bytes": 662090,
+   "healed": false,
+   "validity": "pass",
+   "rounds_used": 1,
+   "flags": []
+  },
+  "211": {
+   "source_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/armA/211/output.step",
+   "staged_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/submission-staging/211/output.step",
+   "sha256": "3e4fa14563c6b76c46f9b5ccf80c1b00564ec3dfa125384d12214e3ffe39bfba",
+   "size_bytes": 10304094,
+   "healed": false,
+   "validity": "pass",
+   "rounds_used": 3,
+   "flags": [
+    "fuse-waiver:false-positive",
+    "waived:surface_type_conservation"
+   ]
+  },
+  "212": {
+   "source_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/armA/212/output.step",
+   "staged_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/submission-staging/212/output.step",
+   "sha256": "351e8aa0a8015b47415411deeda3d4eb3cd1b24ece5715866f0714481d830a05",
+   "size_bytes": 3295775,
+   "healed": false,
+   "validity": "pass",
+   "rounds_used": 1,
+   "flags": []
+  },
+  "214": {
+   "source_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/armA/214/output.step",
+   "staged_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/submission-staging/214/output.step",
+   "sha256": "0afc245dd8c8da115657b7932fbd71d1bc5d920c3ba4a741e9870efed34fd746",
+   "size_bytes": 2768223,
+   "healed": false,
+   "validity": "pass",
+   "rounds_used": 5,
+   "flags": [
+    "fuse-waiver:false-positive",
+    "waived:surface_type_conservation"
+   ]
+  },
+  "215": {
+   "source_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/armA/215/output.step",
+   "staged_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/submission-staging/215/output.step",
+   "sha256": "aee8d6f72112596aac1ea15b07a798046fa872183712e41cda888dfff215bf1f",
+   "size_bytes": 1846545,
+   "healed": false,
+   "validity": "pass",
+   "rounds_used": 1,
+   "flags": []
+  },
+  "217": {
+   "source_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/armA/217/output.step",
+   "staged_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/submission-staging/217/output.step",
+   "sha256": "d8adf7494bc59af49dc3bee87af4718808e2b3713e1161c7fa900791b13fdf53",
+   "size_bytes": 2436574,
+   "healed": false,
+   "validity": "fail",
+   "rounds_used": 5,
+   "flags": [
+    "validity-fail",
+    "inherited-defect-unhealed"
+   ]
+  },
+  "218": {
+   "source_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/armA/218/output.step",
+   "staged_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/submission-staging/218/output.step",
+   "sha256": "6057b9416bebb960f5102c3805bae3ca7a77526689b5b38071d09d8dc126edac",
+   "size_bytes": 268237,
+   "healed": false,
+   "validity": "pass",
+   "rounds_used": 2,
+   "flags": [
+    "fuse-waiver:false-positive",
+    "waived:surface_type_conservation"
+   ]
+  },
+  "224": {
+   "source_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/armA/224/output.step",
+   "staged_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/submission-staging/224/output.step",
+   "sha256": "4cc6dcca16777a5a84d87d1287efc90ddc8d2de75badc392982710d720a64c8b",
+   "size_bytes": 768900,
+   "healed": false,
+   "validity": "pass",
+   "rounds_used": 1,
+   "flags": []
+  },
+  "225": {
+   "source_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/armA/225/output.step",
+   "staged_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/submission-staging/225/output.step",
+   "sha256": "959a9d913549d023afe5f0dd114f7793efba42bc77faf4f7f1b60e15ab63a8f4",
+   "size_bytes": 2158234,
+   "healed": false,
+   "validity": "pass",
+   "rounds_used": 1,
+   "flags": []
+  },
+  "229": {
+   "source_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/armA/229/output.step",
+   "staged_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/submission-staging/229/output.step",
+   "sha256": "6326d89cbc4afb40aa98d36bff51dc8e9ad9916f726e173f31227cf5d86fd31c",
+   "size_bytes": 1101198,
+   "healed": false,
+   "validity": "pass",
+   "rounds_used": 1,
+   "flags": []
+  },
+  "230": {
+   "source_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/armA/230/output.step",
+   "staged_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/submission-staging/230/output.step",
+   "sha256": "a17fe5a9e9bf975522de8219e847150e36e0d45d1a49b4891b1602670eabd494",
+   "size_bytes": 1379000,
+   "healed": false,
+   "validity": "pass",
+   "rounds_used": 1,
+   "flags": []
+  },
+  "231": {
+   "source_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/armA/231/output.step",
+   "staged_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/submission-staging/231/output.step",
+   "sha256": "f29cd3beed16c8a54c65152f2d7a96de32b6ed860f8e794576cf10cfa8a76105",
+   "size_bytes": 471117,
+   "healed": false,
+   "validity": "pass",
+   "rounds_used": 1,
+   "flags": []
+  },
+  "238": {
+   "source_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/armA/238/output.step",
+   "staged_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/submission-staging/238/output.step",
+   "sha256": "6286787b8ffc3749f4edb52b9ff004b9f4060d1baf6c282860a3fafad6856103",
+   "size_bytes": 4927763,
+   "healed": false,
+   "validity": "pass",
+   "rounds_used": 2,
+   "flags": [
+    "waived:surface_type_conservation"
+   ]
+  },
+  "240": {
+   "source_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/armA/240/output.step",
+   "staged_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/submission-staging/240/output.step",
+   "sha256": "7934a2ef26901b8fa78f713c7afae3dc2af148698191491ca7f9ee3d8a8e5ff7",
+   "size_bytes": 7259618,
+   "healed": false,
+   "validity": "fail",
+   "rounds_used": 3,
+   "flags": [
+    "validity-fail",
+    "waived:validity"
+   ]
+  },
+  "241": {
+   "source_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/armA/241/output.step",
+   "staged_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/submission-staging/241/output.step",
+   "sha256": "b1bc5a522477c7b5ba1d45a9ff014b73a210d7e9d33faaaf2c808eb14ef4b29b",
+   "size_bytes": 2159981,
+   "healed": false,
+   "validity": "pass",
+   "rounds_used": 1,
+   "flags": []
+  },
+  "242": {
+   "source_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/armA/242/output.step",
+   "staged_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/submission-staging/242/output.step",
+   "sha256": "7fe38b97b09a28efb0810d92d4740e010b5d26ffbbab0b7d709e869065a1e2b5",
+   "size_bytes": 6845415,
+   "healed": false,
+   "validity": "fail",
+   "rounds_used": 3,
+   "flags": [
+    "validity-fail",
+    "inherited-defect-unhealed"
+   ]
+  },
+  "243": {
+   "source_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/armA/243/output.step",
+   "staged_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/submission-staging/243/output.step",
+   "sha256": "817d9427682dc3f29ffcf9049364a58efee5e2c3c7d61e0b638d2dab444da493",
+   "size_bytes": 5161001,
+   "healed": false,
+   "validity": "pass",
+   "rounds_used": 1,
+   "flags": []
+  },
+  "244": {
+   "source_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/armA/244/output.step",
+   "staged_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/submission-staging/244/output.step",
+   "sha256": "19a103d98bb54c4041c4308083bbdb0ddcbfc76ffa7f286176219151683c6985",
+   "size_bytes": 1580201,
+   "healed": false,
+   "validity": "pass",
+   "rounds_used": 1,
+   "flags": []
+  },
+  "245": {
+   "source_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/armA/245/output.step",
+   "staged_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/submission-staging/245/output.step",
+   "sha256": "9d24916436a9c2a94ed4d49c026a01d4e80dbe08d59e255d0be13855a86ac766",
+   "size_bytes": 1734221,
+   "healed": false,
+   "validity": "pass",
+   "rounds_used": 1,
+   "flags": []
+  },
+  "246": {
+   "source_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/armA/246/output.step",
+   "staged_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/submission-staging/246/output.step",
+   "sha256": "386e46872b798ec37ef6375bef3eb4f3acd9cdce0784804b8874fc449e028abb",
+   "size_bytes": 3146672,
+   "healed": false,
+   "validity": "pass",
+   "rounds_used": 1,
+   "flags": []
+  },
+  "247": {
+   "source_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/armA/247/output.step",
+   "staged_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/submission-staging/247/output.step",
+   "sha256": "8ddf46097a7b076e2c4c045a0002437b3b32024e68161a02b12548274dfdcf98",
+   "size_bytes": 7864085,
+   "healed": false,
+   "validity": "pass",
+   "rounds_used": 1,
+   "flags": []
+  },
+  "248": {
+   "source_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/armA/248/output.step",
+   "staged_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/submission-staging/248/output.step",
+   "sha256": "d3ead312097b25eba0aa59a4dcd1a536c79c3bcf7c066405a70589f27c68d0ba",
+   "size_bytes": 13411331,
+   "healed": false,
+   "validity": "pass",
+   "rounds_used": 1,
+   "flags": []
+  },
+  "249": {
+   "source_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/armA/249/output.step",
+   "staged_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/submission-staging/249/output.step",
+   "sha256": "4f019bba4d9782be74aa6af905eb761dc0b6109c5382299d4941c402c2cd60e4",
+   "size_bytes": 3598891,
+   "healed": false,
+   "validity": "pass",
+   "rounds_used": 1,
+   "flags": []
+  },
+  "250": {
+   "source_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/armA/250/output.step.healed-official",
+   "staged_path": "/home/bruno/dev/mutagent/playground/cad-agents/stl-agent/runs/eval-run-004/submission-staging/250/output.step",
+   "sha256": "b87f4b5229370cb37f98b6986231db61e7f81af072d0ef13e09f4814a86505da",
+   "size_bytes": 5307163,
+   "healed": true,
+   "validity": "official-valid (healed); cadtools strict gate report-only fail",
+   "rounds_used": 1,
+   "flags": [
+    "validity-fail",
+    "inherited-defect-unhealed"
+   ],
+   "heal_strategy": "ShapeUpgrade_UnifySameDomain (official-gate acceptance, volume delta 9.1e-06)"
+  }
+ },
+ "validity_rate": 0.8125,
+ "invalid": [
+  "202",
+  "207",
+  "217",
+  "240",
+  "242",
+  "250"
+ ],
+ "healed_accepted": [
+  "250"
+ ],
+ "healing_failed_ship_unhealed": [
+  "202",
+  "217",
+  "240"
+ ],
+ "official_validity": {
+  "gate": "cadgenbench.common.validity.analyze_step (official package, .venv-cadgenbench)",
+  "valid": 29,
+  "n": 32,
+  "invalid": [
+   "202",
+   "217",
+   "240"
+  ],
+  "notes": "All officially-invalid samples inherit their defects from the unmodified benchmark input.step (verified: inputs fail the same gate). 207 and 242 fail only the stricter internal cadtools gate but PASS the official gate. 250 healed via UnifySameDomain."
+ }
+}

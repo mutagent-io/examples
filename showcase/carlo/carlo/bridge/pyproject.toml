@@ -1,0 +1,21 @@
+[project]
+name = "carlo-bridge"
+version = "0.1.0"
+description = "Minimal Python bridge: CAR-bench run.py custom-agent factory -> HTTP -> the CARlo A2A server."
+requires-python = ">=3.11"
+dependencies = [
+    # The genuine A2A serializer. Used to GENERATE the golden wire fixtures and to STRICT-PARSE the
+    # TypeScript server's responses exactly as the evaluator does (ParseDict without
+    # ignore_unknown_fields) — see tests/wire.test.ts and test_bridge.py.
+    "a2a-sdk>=1.0.0",
+    "httpx>=0.28.1",
+]
+
+[project.optional-dependencies]
+# The real harness, pinned by commit in ../third_party/car-bench (decision D11). Needed for the
+# target smoke and for every EVALUATE-stage run; NOT part of the submission image.
+harness = ["car-bench"]
+dev = ["pytest>=8.0"]
+
+[tool.uv.sources]
+car-bench = { path = "../third_party/car-bench" }

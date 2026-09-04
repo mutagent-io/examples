@@ -64,10 +64,15 @@ claude   →   *mutagent
 
 ## Status
 
-`showcase/` has its first entry — [`freecad-engineer`](showcase/freecad-engineer/), a
-self-verifying FreeCAD CAD agent, published with the spec it was built from, its build report,
-its evaluation runs and scorecard, and its diagnostics reports. `cookbooks/` is still a
-scaffold; recipes land there next.
+`showcase/` has three entries, each published with the spec it was built from, its build
+report, its evaluation runs and verdicts, and its diagnostics reports:
+
+- [`freecad-engineer`](showcase/freecad-engineer/) — a self-verifying FreeCAD CAD agent.
+- [`carlo`](showcase/carlo/) — an in-car voice-assistant agent for CAR-bench Track 1.
+- [`mutagent-brepsmith`](showcase/mutagent-brepsmith/) — a STEP CAD-editing agent with a
+  deterministic geometry verification loop, evaluated on CadGenBench.
+
+`cookbooks/` is still a scaffold; recipes land there next.
 
 ## Requirements
 

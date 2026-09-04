@@ -1,0 +1,86 @@
+{
+ "sample_id": "abc_0123-fill-hole",
+ "arm": "armA",
+ "n_samples": 20000,
+ "sample_reduction": false,
+ "output_present": true,
+ "score": {
+  "convention": "cad-score-proxy/v1:interface-null-renormalized-0.7",
+  "valid": true,
+  "validity_failures": [],
+  "surface_distance_f1": 0.9999749993749844,
+  "volume_iou": 0.9999905165526527,
+  "shape_similarity": 0.9999827579638185,
+  "baseline_shape_similarity": 0.9998868472208426,
+  "shape_similarity_renormalized": 0.8476216288289514,
+  "topology_match": 1.0,
+  "betti_ground_truth": [
+   1,
+   0,
+   0
+  ],
+  "betti_candidate": [
+   1,
+   0,
+   0
+  ],
+  "betti_input": [
+   1,
+   0,
+   0
+  ],
+  "interface": null,
+  "interface_available": false,
+  "cad_score_proxy": 0.8693899675676726,
+  "proxy_weight_total": 0.7,
+  "status": "ok",
+  "frame_agreement": {
+   "agree": true,
+   "centre_delta": 0.0,
+   "extent_delta": 0.0,
+   "tolerance": 30.7801902628735,
+   "reference_diagonal": 307.801902628735,
+   "message": "bodies are posed in the same frame"
+  }
+ },
+ "locality": {
+  "max_distance": 0.5000001000100003,
+  "mean_distance": 0.00021417531156571687,
+  "changed_fraction": 0.0,
+  "change_tolerance": 1.5390095131355528,
+  "volume_delta_fraction": 0.00013742753463923482,
+  "betti_delta": [
+   0,
+   0,
+   0
+  ],
+  "frame_agreement": {
+   "agree": true,
+   "centre_delta": 5.000000014021566e-08,
+   "extent_delta": 1.0000000028043132e-07,
+   "tolerance": 30.78019026271106,
+   "reference_diagonal": 307.80190262711056,
+   "message": "bodies are posed in the same frame"
+  }
+ },
+ "contamination": {
+  "recipe_reuse": true,
+  "script_evidence": [
+   "round-1.py:3: Uses the repo's own deterministic fill-hole recipe logic (cadtools.synthetic_pairs._fill_hole)",
+   "round-1.py:10: from cadtools.synthetic_pairs import _fill_hole"
+  ],
+  "report_evidence": [
+   "report.json:4:   \"interpretation\": \"The part has 8 cylindrical faces, all radius 2.5mm (diameter 5.0mm) -- tied for 'largest'. Applied the repository's deterministic fill-hole recipe (cadtools.synthetic_pairs._fill_hole), which selects the first cylindrical axis encountered in OCCT face-iteration order when radii ",
+   "report.json:9:       \"action\": \"Imported input.step, applied cadtools.synthetic_pairs._fill_hole (plug largest/first cylindrical hole, radius 2.5mm), exported output.step.\","
+  ]
+ },
+ "rounds": {
+  "ledger_rounds_used": 2,
+  "ledger_n_records": 2,
+  "report_n_rounds": 1,
+  "report_rounds_used_field": 2,
+  "note_on_rounds": "A ledger-usage slip caused round 1 to be recorded with default valid=false before its real outcome was known, consuming an extra round; the actual implementation and verification above is a single successful iteration and was recorded/emitted as round 2 (valid, score 0.9).",
+  "n_round_scripts": 1,
+  "real_rounds_used": 1
+ }
+}

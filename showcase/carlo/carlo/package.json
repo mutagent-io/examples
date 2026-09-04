@@ -1,0 +1,25 @@
+{
+  "name": "carlo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "CARlo — harnessed gemini-3.5-flash agent for CAR-bench (IJCAI-ECAI 2026 Track 1). Implements spec_id: carlo.",
+  "module": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check src tests",
+    "lint:fix": "biome check --write src tests",
+    "test": "bun test",
+    "build": "bun build src/a2a/server.ts --target=bun --outdir=dist",
+    "serve": "bun run src/a2a/server.ts",
+    "cost": "bun scripts/cost-report.ts"
+  },
+  "dependencies": {
+    "@google/genai": ">=2.18.0 <3.0.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.0.0",
+    "@types/bun": "latest",
+    "typescript": "^5.6.0"
+  }
+}

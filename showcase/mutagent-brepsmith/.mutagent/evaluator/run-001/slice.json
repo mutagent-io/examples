@@ -1,0 +1,187 @@
+{
+ "slice": [
+  {
+   "id": "abc_0123-fill-hole",
+   "case": {
+    "complexity": "high",
+    "editType": "feature-remove",
+    "instructionStyle": "terse"
+   },
+   "scenarioRef": null
+  },
+  {
+   "id": "abc_0128-fill-hole",
+   "case": {
+    "complexity": "high",
+    "editType": "feature-remove",
+    "instructionStyle": "precise-quantitative"
+   },
+   "scenarioRef": null
+  },
+  {
+   "id": "abc_0067-fill-hole",
+   "case": {
+    "complexity": "high",
+    "editType": "feature-remove",
+    "instructionStyle": "terse"
+   },
+   "scenarioRef": null
+  },
+  {
+   "id": "abc_0098-thicken",
+   "case": {
+    "complexity": "high",
+    "editType": "dimension-change",
+    "instructionStyle": "terse"
+   },
+   "scenarioRef": null
+  },
+  {
+   "id": "abc_0011-thicken",
+   "case": {
+    "complexity": "high",
+    "editType": "dimension-change",
+    "instructionStyle": "terse"
+   },
+   "scenarioRef": null
+  },
+  {
+   "id": "abc_0232-thicken",
+   "case": {
+    "complexity": "high",
+    "editType": "dimension-change",
+    "instructionStyle": "colloquial"
+   },
+   "scenarioRef": null
+  },
+  {
+   "id": "abc_0003-boss-union",
+   "case": {
+    "complexity": "high",
+    "editType": "boolean-combine",
+    "instructionStyle": "terse"
+   },
+   "scenarioRef": null
+  },
+  {
+   "id": "abc_0228-boss-union",
+   "case": {
+    "complexity": "high",
+    "editType": "boolean-combine",
+    "instructionStyle": "precise-quantitative"
+   },
+   "scenarioRef": null
+  },
+  {
+   "id": "abc_0054-boss-union",
+   "case": {
+    "complexity": "high",
+    "editType": "boolean-combine",
+    "instructionStyle": "terse"
+   },
+   "scenarioRef": null
+  },
+  {
+   "id": "abc_0285-hole-pattern",
+   "case": {
+    "complexity": "high",
+    "editType": "pattern-change",
+    "instructionStyle": "terse"
+   },
+   "scenarioRef": null
+  },
+  {
+   "id": "abc_0262-hole-pattern",
+   "case": {
+    "complexity": "high",
+    "editType": "pattern-change",
+    "instructionStyle": "terse"
+   },
+   "scenarioRef": null
+  },
+  {
+   "id": "abc_0152-through-hole",
+   "case": {
+    "complexity": "high",
+    "editType": "feature-add",
+    "instructionStyle": "terse"
+   },
+   "scenarioRef": null
+  },
+  {
+   "id": "abc_0294-through-hole",
+   "case": {
+    "complexity": "high",
+    "editType": "feature-add",
+    "instructionStyle": "precise-quantitative"
+   },
+   "scenarioRef": null
+  },
+  {
+   "id": "abc_0368-fill-hole",
+   "case": {
+    "complexity": "mid",
+    "editType": "feature-remove",
+    "instructionStyle": "precise-quantitative"
+   },
+   "scenarioRef": null
+  },
+  {
+   "id": "abc_0365-thicken",
+   "case": {
+    "complexity": "mid",
+    "editType": "dimension-change",
+    "instructionStyle": "precise-quantitative"
+   },
+   "scenarioRef": null
+  },
+  {
+   "id": "abc_0374-through-hole",
+   "case": {
+    "complexity": "mid",
+    "editType": "feature-add",
+    "instructionStyle": "terse"
+   },
+   "scenarioRef": null
+  },
+  {
+   "id": "abc_0380-boss-union",
+   "case": {
+    "complexity": "mid",
+    "editType": "boolean-combine",
+    "instructionStyle": "terse"
+   },
+   "scenarioRef": null
+  },
+  {
+   "id": "abc_0382-hole-pattern",
+   "case": {
+    "complexity": "mid",
+    "editType": "pattern-change",
+    "instructionStyle": "terse"
+   },
+   "scenarioRef": null
+  },
+  {
+   "id": "abc_0396-corner-fillet",
+   "case": {
+    "complexity": "low",
+    "editType": "feature-add",
+    "instructionStyle": "terse"
+   },
+   "scenarioRef": null
+  },
+  {
+   "id": "abc_0397-thicken",
+   "case": {
+    "complexity": "low",
+    "editType": "dimension-change",
+    "instructionStyle": "terse"
+   },
+   "scenarioRef": null
+  }
+ ],
+ "seed": 42,
+ "from": "datasets/synthetic-edit-pairs/manifest.yaml",
+ "total_pool": 86
+}

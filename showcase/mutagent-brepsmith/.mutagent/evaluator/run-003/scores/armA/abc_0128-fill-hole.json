@@ -1,0 +1,60 @@
+{
+  "sample_id": "abc_0128-fill-hole",
+  "arm": "armA",
+  "ok": true,
+  "scorecard": {
+    "convention": "cad-score-proxy/v1:interface-null-renormalized-0.7",
+    "valid": true,
+    "status": "ok",
+    "validity_failures": [],
+    "surface_distance_f1": 0.8858544233807267,
+    "volume_iou": 0.8430123338115676,
+    "shape_similarity": 0.8644333785961471,
+    "baseline_shape_similarity": 0.9149585848082478,
+    "shape_similarity_renormalized": 0.0,
+    "topology_match": 0.9149338374291116,
+    "interface": null,
+    "interface_available": false,
+    "betti_ground_truth": [
+      1,
+      22,
+      0
+    ],
+    "betti_candidate": [
+      1,
+      21,
+      0
+    ],
+    "betti_input": [
+      1,
+      21,
+      0
+    ],
+    "cad_score_proxy": 0.13070483391844454,
+    "proxy_weight_total": 0.7,
+    "weights": {
+      "shape": 0.6,
+      "interface": 0.3,
+      "topology": 0.1
+    },
+    "raw_components": {
+      "shape_renormalized": 0.0,
+      "interface": null,
+      "topology_match": 0.09149338374291116
+    },
+    "frame_agreement": {
+      "agree": true,
+      "centre_delta": 0.24999994999999942,
+      "extent_delta": 0.49999989999999883,
+      "pose_delta": 0.0,
+      "sorted_extent_delta": 0.49999989999999883,
+      "axis_permutation": false,
+      "shape_divergence": false,
+      "tolerance": 16.759760868603365,
+      "reference_diagonal": 167.59760868603365,
+      "message": "bodies are posed in the same frame"
+    },
+    "n_samples": 20000
+  },
+  "elapsed_s": 33.0
+}

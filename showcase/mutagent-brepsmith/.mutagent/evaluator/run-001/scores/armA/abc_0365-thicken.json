@@ -1,0 +1,66 @@
+{
+ "sample_id": "abc_0365-thicken",
+ "arm": "armA",
+ "n_samples": 5000,
+ "sample_reduction": true,
+ "output_present": true,
+ "score": {
+  "convention": "cad-score-proxy/v1:interface-null-renormalized-0.7",
+  "valid": false,
+  "validity_failures": [
+   "frame-disagreement"
+  ],
+  "surface_distance_f1": 0.0,
+  "volume_iou": 0.0,
+  "shape_similarity": 0.0,
+  "shape_similarity_renormalized": 0.0,
+  "topology_match": 0.0,
+  "interface": null,
+  "interface_available": false,
+  "cad_score_proxy": 0.0,
+  "proxy_weight_total": 0.7,
+  "status": "frame-disagreement",
+  "frame_agreement": {
+   "agree": false,
+   "centre_delta": 24.44710987705213,
+   "extent_delta": 48.89381762227994,
+   "tolerance": 24.399313407255274,
+   "reference_diagonal": 243.99313407255272,
+   "message": "frame disagreement: bbox centre moved 24.4471 mm (> 24.3993 mm tolerance); bbox extents changed by 48.8938 mm (> 24.3993 mm tolerance)"
+  }
+ },
+ "locality": {
+  "max_distance": 86.4921721797439,
+  "mean_distance": 8.275349987643787,
+  "changed_fraction": 0.1998,
+  "change_tolerance": 1.1687979585347943,
+  "volume_delta_fraction": 1.1904400374649668,
+  "betti_delta": [
+   0,
+   0,
+   0
+  ],
+  "frame_agreement": {
+   "agree": false,
+   "centre_delta": 20.62500041593874,
+   "extent_delta": 41.25000083871739,
+   "tolerance": 23.37595917069589,
+   "reference_diagonal": 233.75959170695887,
+   "message": "frame disagreement: bbox extents changed by 41.2500 mm (> 23.3760 mm tolerance)"
+  }
+ },
+ "contamination": {
+  "recipe_reuse": false,
+  "script_evidence": [],
+  "report_evidence": []
+ },
+ "rounds": {
+  "ledger_rounds_used": 4,
+  "ledger_n_records": 4,
+  "report_n_rounds": 3,
+  "report_rounds_used_field": null,
+  "note_on_rounds": null,
+  "n_round_scripts": 3,
+  "real_rounds_used": 3
+ }
+}

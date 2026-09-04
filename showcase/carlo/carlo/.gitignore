@@ -1,0 +1,9 @@
+node_modules/
+dist/
+traces/
+results/
+third_party/
+bridge/.venv/
+bridge/__pycache__/
+.env
+*.log

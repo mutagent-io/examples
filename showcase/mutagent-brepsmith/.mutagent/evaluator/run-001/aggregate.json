@@ -1,0 +1,400 @@
+{
+ "run_id": "eval-run-001",
+ "convention": "cad-score-proxy/v1:interface-null-renormalized-0.7",
+ "n_samples": 20,
+ "sample_ids": [
+  "abc_0123-fill-hole",
+  "abc_0128-fill-hole",
+  "abc_0067-fill-hole",
+  "abc_0098-thicken",
+  "abc_0011-thicken",
+  "abc_0232-thicken",
+  "abc_0003-boss-union",
+  "abc_0228-boss-union",
+  "abc_0054-boss-union",
+  "abc_0285-hole-pattern",
+  "abc_0262-hole-pattern",
+  "abc_0152-through-hole",
+  "abc_0294-through-hole",
+  "abc_0368-fill-hole",
+  "abc_0365-thicken",
+  "abc_0374-through-hole",
+  "abc_0380-boss-union",
+  "abc_0382-hole-pattern",
+  "abc_0396-corner-fillet",
+  "abc_0397-thicken"
+ ],
+ "arms": {
+  "armA": {
+   "n": 20,
+   "mean_cad_score_proxy": 0.7115033875129956,
+   "median_cad_score_proxy": 0.9999998469088436,
+   "validity_rate": 0.95,
+   "n_valid": 19,
+   "n_missing": 0,
+   "per_tier": {
+    "high": {
+     "n": 13,
+     "mean_cad_score_proxy": 0.7851053135191887,
+     "median_cad_score_proxy": 0.9999999864738514,
+     "validity_rate": 1.0,
+     "n_valid": 13,
+     "n_missing": 0
+    },
+    "low": {
+     "n": 2,
+     "mean_cad_score_proxy": 0.5714285714285714,
+     "median_cad_score_proxy": 0.5714285714285714,
+     "validity_rate": 1.0,
+     "n_valid": 2,
+     "n_missing": 0
+    },
+    "mid": {
+     "n": 5,
+     "mean_cad_score_proxy": 0.5761683063306633,
+     "median_cad_score_proxy": 0.7651272460781573,
+     "validity_rate": 0.8,
+     "n_valid": 4,
+     "n_missing": 0
+    }
+   },
+   "per_editType": {
+    "boolean-combine": {
+     "n": 4,
+     "mean_cad_score_proxy": 0.9412828690238114,
+     "median_cad_score_proxy": 0.9999999997502091,
+     "validity_rate": 1.0,
+     "n_valid": 4,
+     "n_missing": 0
+    },
+    "dimension-change": {
+     "n": 5,
+     "mean_cad_score_proxy": 0.28571428602224075,
+     "median_cad_score_proxy": 0.14285714285714288,
+     "validity_rate": 0.8,
+     "n_valid": 4,
+     "n_missing": 0
+    },
+    "feature-add": {
+     "n": 4,
+     "mean_cad_score_proxy": 0.9999580814935718,
+     "median_cad_score_proxy": 0.9999999997855615,
+     "validity_rate": 1.0,
+     "n_valid": 4,
+     "n_missing": 0
+    },
+    "feature-remove": {
+     "n": 4,
+     "mean_cad_score_proxy": 0.9673474883981206,
+     "median_cad_score_proxy": 0.9999999930246014,
+     "validity_rate": 1.0,
+     "n_valid": 4,
+     "n_missing": 0
+    },
+    "pattern-change": {
+     "n": 3,
+     "mean_cad_score_proxy": 0.3890475214955643,
+     "median_cad_score_proxy": 0.11571428571428574,
+     "validity_rate": 1.0,
+     "n_valid": 3,
+     "n_missing": 0
+    }
+   }
+  },
+  "armB": {
+   "n": 20,
+   "mean_cad_score_proxy": 0.45080517840582407,
+   "median_cad_score_proxy": 0.15431500224332312,
+   "validity_rate": 0.8,
+   "n_valid": 16,
+   "n_missing": 2,
+   "per_tier": {
+    "high": {
+     "n": 13,
+     "mean_cad_score_proxy": 0.36387013917125693,
+     "median_cad_score_proxy": 0.14285714285714288,
+     "validity_rate": 0.7692307692307693,
+     "n_valid": 10,
+     "n_missing": 2
+    },
+    "low": {
+     "n": 2,
+     "mean_cad_score_proxy": 1.0,
+     "median_cad_score_proxy": 1.0,
+     "validity_rate": 1.0,
+     "n_valid": 2,
+     "n_missing": 0
+    },
+    "mid": {
+     "n": 5,
+     "mean_cad_score_proxy": 0.4571583517780283,
+     "median_cad_score_proxy": 0.16577286162950333,
+     "validity_rate": 0.8,
+     "n_valid": 4,
+     "n_missing": 0
+    }
+   },
+   "per_editType": {
+    "boolean-combine": {
+     "n": 4,
+     "mean_cad_score_proxy": 1.0000010570702993,
+     "median_cad_score_proxy": 0.9999999997502091,
+     "validity_rate": 1.0,
+     "n_valid": 4,
+     "n_missing": 0
+    },
+    "dimension-change": {
+     "n": 5,
+     "mean_cad_score_proxy": 0.2372485411501934,
+     "median_cad_score_proxy": 0.0,
+     "validity_rate": 0.4,
+     "n_valid": 2,
+     "n_missing": 2
+    },
+    "feature-add": {
+     "n": 4,
+     "mean_cad_score_proxy": 0.7499628104358418,
+     "median_cad_score_proxy": 0.988497049443112,
+     "validity_rate": 1.0,
+     "n_valid": 4,
+     "n_missing": 0
+    },
+    "feature-remove": {
+     "n": 4,
+     "mean_cad_score_proxy": 0.10983370960127269,
+     "median_cad_score_proxy": 0.1367809883877937,
+     "validity_rate": 0.75,
+     "n_valid": 3,
+     "n_missing": 0
+    },
+    "pattern-change": {
+     "n": 3,
+     "mean_cad_score_proxy": 0.13022351797862003,
+     "median_cad_score_proxy": 0.14285714285714288,
+     "validity_rate": 1.0,
+     "n_valid": 3,
+     "n_missing": 0
+    }
+   }
+  }
+ },
+ "run_summaries": {
+  "armA": {
+   "arm": "harness",
+   "convention": "cad-score-proxy/v1:interface-null-renormalized-0.7",
+   "n_samples": 20,
+   "n_valid": 19,
+   "n_invalid": 1,
+   "n_missing": 0,
+   "validity_rate": 0.95,
+   "aggregate_score": 0.7115033875129956,
+   "mean_rounds_used": 1.15,
+   "per_sample_scores": {
+    "abc_0123-fill-hole": 0.8693899675676726,
+    "abc_0128-fill-hole": 0.9999999864738514,
+    "abc_0067-fill-hole": 0.9999999999756068,
+    "abc_0098-thicken": 1.0000000015397752,
+    "abc_0011-thicken": 0.14285714285714288,
+    "abc_0232-thicken": 0.14285714285714288,
+    "abc_0003-boss-union": 1.0000042305166703,
+    "abc_0228-boss-union": 0.9999999995323892,
+    "abc_0054-boss-union": 0.999999999968029,
+    "abc_0285-hole-pattern": 0.05142857142857143,
+    "abc_0262-hole-pattern": 0.9999997073438358,
+    "abc_0152-through-hole": 0.9999999995711232,
+    "abc_0294-through-hole": 0.9998323261176421,
+    "abc_0368-fill-hole": 0.9999999995753515,
+    "abc_0365-thicken": 0.0,
+    "abc_0374-through-hole": 1.0000000002855218,
+    "abc_0380-boss-union": 0.7651272460781573,
+    "abc_0382-hole-pattern": 0.11571428571428574,
+    "abc_0396-corner-fillet": 1.0,
+    "abc_0397-thicken": 0.14285714285714288
+   },
+   "per_sample_status": {
+    "abc_0123-fill-hole": "ok",
+    "abc_0128-fill-hole": "ok",
+    "abc_0067-fill-hole": "ok",
+    "abc_0098-thicken": "ok",
+    "abc_0011-thicken": "ok",
+    "abc_0232-thicken": "ok",
+    "abc_0003-boss-union": "ok",
+    "abc_0228-boss-union": "ok",
+    "abc_0054-boss-union": "ok",
+    "abc_0285-hole-pattern": "ok",
+    "abc_0262-hole-pattern": "ok",
+    "abc_0152-through-hole": "ok",
+    "abc_0294-through-hole": "ok",
+    "abc_0368-fill-hole": "ok",
+    "abc_0365-thicken": "ok",
+    "abc_0374-through-hole": "ok",
+    "abc_0380-boss-union": "ok",
+    "abc_0382-hole-pattern": "ok",
+    "abc_0396-corner-fillet": "ok",
+    "abc_0397-thicken": "ok"
+   }
+  },
+  "armB": {
+   "arm": "baseline",
+   "convention": "cad-score-proxy/v1:interface-null-renormalized-0.7",
+   "n_samples": 20,
+   "n_valid": 16,
+   "n_invalid": 4,
+   "n_missing": 2,
+   "validity_rate": 0.8,
+   "aggregate_score": 0.45080517840582407,
+   "mean_rounds_used": 1.25,
+   "per_sample_scores": {
+    "abc_0123-fill-hole": 0.14285714285714288,
+    "abc_0128-fill-hole": 0.13070483391844454,
+    "abc_0067-fill-hole": 0.0,
+    "abc_0098-thicken": 0.186242705750967,
+    "abc_0011-thicken": 0.0,
+    "abc_0232-thicken": 0.0,
+    "abc_0003-boss-union": 1.0000042305166703,
+    "abc_0228-boss-union": 0.9999999995323892,
+    "abc_0054-boss-union": 0.999999999968029,
+    "abc_0285-hole-pattern": 0.14285714285714288,
+    "abc_0262-hole-pattern": 0.10495626822157433,
+    "abc_0152-through-hole": 0.022857142857142864,
+    "abc_0294-through-hole": 0.9998323427468369,
+    "abc_0368-fill-hole": 0.16577286162950333,
+    "abc_0365-thicken": 0.0,
+    "abc_0374-through-hole": 0.9771617561393873,
+    "abc_0380-boss-union": 0.9999999982641082,
+    "abc_0382-hole-pattern": 0.14285714285714288,
+    "abc_0396-corner-fillet": 1.0,
+    "abc_0397-thicken": 1.0
+   },
+   "per_sample_status": {
+    "abc_0123-fill-hole": "ok",
+    "abc_0128-fill-hole": "ok",
+    "abc_0067-fill-hole": "ok",
+    "abc_0098-thicken": "ok",
+    "abc_0011-thicken": "missing",
+    "abc_0232-thicken": "missing",
+    "abc_0003-boss-union": "ok",
+    "abc_0228-boss-union": "ok",
+    "abc_0054-boss-union": "ok",
+    "abc_0285-hole-pattern": "ok",
+    "abc_0262-hole-pattern": "ok",
+    "abc_0152-through-hole": "ok",
+    "abc_0294-through-hole": "ok",
+    "abc_0368-fill-hole": "ok",
+    "abc_0365-thicken": "ok",
+    "abc_0374-through-hole": "ok",
+    "abc_0380-boss-union": "ok",
+    "abc_0382-hole-pattern": "ok",
+    "abc_0396-corner-fillet": "ok",
+    "abc_0397-thicken": "ok"
+   }
+  }
+ },
+ "compare_arms": {
+  "convention": "cad-score-proxy/v1:interface-null-renormalized-0.7",
+  "harness_arm": "harness",
+  "baseline_arm": "baseline",
+  "harness_aggregate_score": 0.7115033875129956,
+  "baseline_aggregate_score": 0.45080517840582407,
+  "harness_validity_rate": 0.95,
+  "baseline_validity_rate": 0.8,
+  "delta": 0.2606982091071715,
+  "beats_baseline": true,
+  "n_samples": 20
+ },
+ "contamination": {
+  "contaminated_ids": [
+   "abc_0123-fill-hole",
+   "abc_0128-fill-hole",
+   "abc_0067-fill-hole",
+   "abc_0098-thicken",
+   "abc_0011-thicken"
+  ],
+  "n_contaminated": 5,
+  "armA_all_samples": {
+   "n": 20,
+   "mean_cad_score_proxy": 0.7115033875129956,
+   "median_cad_score_proxy": 0.9999998469088436,
+   "validity_rate": 0.95,
+   "n_valid": 19,
+   "n_missing": 0
+  },
+  "armA_clean_subset": {
+   "n": 15,
+   "mean_cad_score_proxy": 0.6811880434563908,
+   "median_cad_score_proxy": 0.9999997073438358,
+   "validity_rate": 0.9333333333333333,
+   "n_valid": 14,
+   "n_missing": 0
+  },
+  "armB_protocol_conformant": true
+ },
+ "armA_rounds": {
+  "ledger_rounds_used_distribution": {
+   "2": 9,
+   "1": 4,
+   "None": 5,
+   "3": 1,
+   "4": 1
+  },
+  "real_rounds_used_distribution": {
+   "1": 18,
+   "2": 1,
+   "3": 1
+  },
+  "note": "real_rounds_used = len(report.json rounds[]) where available (the ledger double-counts: a ledger-usage slip records a default valid=false round before the real outcome; per-sample note_on_rounds where present), else ledger rounds_used. Samples with ledger_rounds_used=null had no ledger.json rounds_used field.",
+  "mean_real_rounds_used": 1.15
+ },
+ "scoring_notes": {
+  "sample_reductions": [
+   {
+    "arm": "armA",
+    "id": "abc_0368-fill-hole",
+    "n_samples": 5000,
+    "reason": "OOM (exit 137) at default 20000 surface samples"
+   },
+   {
+    "arm": "armA",
+    "id": "abc_0365-thicken",
+    "n_samples": 5000,
+    "reason": "OOM (exit 137) at default 20000 surface samples"
+   },
+   {
+    "arm": "armB",
+    "id": "abc_0368-fill-hole",
+    "n_samples": 5000,
+    "reason": "OOM (exit 137) at default 20000 surface samples"
+   },
+   {
+    "arm": "armB",
+    "id": "abc_0365-thicken",
+    "n_samples": 5000,
+    "reason": "OOM (exit 137) at default 20000 surface samples"
+   }
+  ],
+  "frame_disagreements": [
+   {
+    "arm": "armA",
+    "id": "abc_0365-thicken"
+   },
+   {
+    "arm": "armB",
+    "id": "abc_0067-fill-hole"
+   },
+   {
+    "arm": "armB",
+    "id": "abc_0365-thicken"
+   }
+  ],
+  "missing_outputs": [
+   {
+    "arm": "armB",
+    "id": "abc_0011-thicken"
+   },
+   {
+    "arm": "armB",
+    "id": "abc_0232-thicken"
+   }
+  ]
+ }
+}

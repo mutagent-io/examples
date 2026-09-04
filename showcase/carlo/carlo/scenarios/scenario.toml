@@ -1,0 +1,43 @@
+# CARlo — OFFICIAL SUBMISSION scenario (IJCAI-ECAI 2026 Track 1).
+#
+# Shape per car-bench-ijcai/README.md#submission-instructions:
+#   - [evaluator] MUST be the organizer-published image; participants never submit an evaluator.
+#   - [agent_under_test].image MUST be a public, DIGEST-PINNED GHCR reference (never a mutable tag).
+#   - [agent_under_test.env] lists variable NAMES only — never secret values.
+#   - [config] uses task_split = "hidden" and -1 for every task count.
+
+[evaluator]
+image = "ghcr.io/car-bench/car-bench-evaluator:latest"
+
+[evaluator.env]
+GEMINI_API_KEY = "${GEMINI_API_KEY:?Set GEMINI_API_KEY}"
+LOGURU_LEVEL = "${LOGURU_LEVEL:-INFO}"
+
+[agent_under_test]
+# TODO before submitting: replace with the pushed digest of ghcr.io/<org>/carlo.
+image = "ghcr.io/bruno-mutagent/carlo@sha256:0000000000000000000000000000000000000000000000000000000000000000"
+
+[agent_under_test.env]
+# Backbone (spec-pinned model; every provider knob is env-configurable per the competition rule).
+CARLO_MODEL = "${CARLO_MODEL:-gemini-3.5-flash}"
+CARLO_TEMPERATURE = "${CARLO_TEMPERATURE:-0}"
+CARLO_THINKING_BUDGET = "${CARLO_THINKING_BUDGET:-0}"
+CARLO_MAX_TURNS = "${CARLO_MAX_TURNS:-50}"
+CARLO_VERIFY_MODE = "${CARLO_VERIFY_MODE:-risk}"
+# Vertex AI access. NOTE (build-report gap G-D): gemini-3.5-flash resolved only at `global` on the
+# development project — if the organizers host it elsewhere, set GOOGLE_CLOUD_LOCATION accordingly.
+GOOGLE_CLOUD_PROJECT = "${GOOGLE_CLOUD_PROJECT:?Set GOOGLE_CLOUD_PROJECT}"
+GOOGLE_CLOUD_LOCATION = "${GOOGLE_CLOUD_LOCATION:-global}"
+GOOGLE_GENAI_USE_VERTEXAI = "${GOOGLE_GENAI_USE_VERTEXAI:-true}"
+# Application Default Credentials file mounted by the organizers (open question Q5 in the build
+# report: the submission template is API-key shaped, while Vertex needs ADC).
+GOOGLE_APPLICATION_CREDENTIALS = "${GOOGLE_APPLICATION_CREDENTIALS:-}"
+LOGURU_LEVEL = "${LOGURU_LEVEL:-INFO}"
+
+[config]
+num_trials = 3
+task_split = "hidden"
+tasks_base_num_tasks = -1
+tasks_hallucination_num_tasks = -1
+tasks_disambiguation_num_tasks = -1
+max_steps = 50
